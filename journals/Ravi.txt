@@ -1,2 +1,6 @@
 Week 1
-- 
+- Joined group "Romantic Cheese" in W18C
+- Selected "Wait Management System" as topic
+- Selected Sami as Scrum Master.
+- Setup Jira for the project
+- Plans for proposal and next meeting
