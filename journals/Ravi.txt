@@ -1,6 +1,15 @@
 Week 1
-- Joined group "Romantic Cheese" in W18C
-- Selected "Wait Management System" as topic
-- Selected Sami as Scrum Master.
-- Setup Jira for the project
-- Plans for proposal and next meeting
+  Joined group "Romantic Cheese" in W18C
+  Selected "Wait Management System" as topic
+  Selected Sami as Scrum Master.
+  Setup Jira for the project
+  Plans for proposal and next meeting
+
+Week 2
+  Discussed proposal (background, objectives, functionality, etc.)
+  Brainstormed novelty functions of the WMS (personalised recommendations, restaurant management)
+  Divide tasks for each member based on user stories
+  Added user stories and sprints in Jira, including epics and issues with respective subtasks 
+    (Mine is personalised recs and table service)
+  Divide tasks for the proposal diagrams for next week 
+    (Mine is Flow Diagram)
