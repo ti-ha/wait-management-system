@@ -4,3 +4,9 @@ Week 1
 •	Created the Jira site and added the team.
 •	Decided on the topic – Wait Management System
 •	Discussed with team on plan to tackle the proposal – set up next meeting and agenda for Week 2 meetings.
+
+Week 2
+•	Finished background and user stories with the team.
+•   Added user stories to Jira.
+•   Decided on sprint structure and assigned user stories to sprints with the team.
+•   Started creating on interface and flow diagrams for our web application.
