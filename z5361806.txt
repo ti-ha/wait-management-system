@@ -1,0 +1,35 @@
+- what was planned for the period since the last work diary entry.
+- what was finished.
+- what were the main technical and non-technical obstacles and how they were
+overcome (or what was tried and did not work).
+- what was not finished, why this happened, how this affects the overall project
+progress and what adjustments (if any) are needed so the success of the project is not
+endangered.
+- what is planned for the next period (e.g., next week).
+
+
+Week 1
+
+The team came together and established their identity. 
+They appointed a Scrum Master and set up the Jira Site. 
+They collaborated with fellow group members to choose a topic and engaged
+in brainstorming sessions to determine the novel features of the project. 
+Additionally, they explored and had conversations with the team about various 
+software tools and libraries that could be utilized for the project.
+
+Week 2
+
+We have chosen topic one: Wait Management System. 
+We organised the funcitonalities into epic stories, stories and sub-stories.
+We represented this information in Jira.
+We also researched the background. I compiled together the problems that are being
+addressed by our project.
+Next week we will conitnue with the diagrams required for the proposal.
+Everything seems to be on track to be completed for the proposal due date.
+
+Week 3
+
+
+
+
+
