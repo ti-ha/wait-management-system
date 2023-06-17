@@ -27,3 +27,23 @@ Run `npm install`.
 Once that is completed, run `npm start`.
 
 The frontend will be running on http://localhost:3000
+
+## Creating the database
+
+Make sure you have the latest version of PostgreSQL installed and the virtual environment running
+
+### Windows
+
+Open psql.exe and run the following command:
+`\i 'C:/PATHTOREPO/create_db.sql'`
+
+### Mac/UNIX
+
+In the working directory, run the following:
+```sudo su - postgres
+psql -U postgres -f PATHTOREPO/create_db_.sql```
+
+## Running the database
+
+With the virtual environment running, run `python init_db.py` in the working directory
+>>>>>>> backend_setup
