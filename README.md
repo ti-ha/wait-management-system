@@ -22,6 +22,7 @@ ________________________________________________________________________________
 
 Make sure you have the latest version of node installed.
 
+Ensure you are in the ## frontend folder. (cd `frontend`)
 Run `npm install`.
 Once that is completed, run `npm start`.
 
