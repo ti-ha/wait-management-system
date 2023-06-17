@@ -1,0 +1,3 @@
+Week 1: Proposal research - Summarised points on existing systems
+Week 2: In meeting, with team - Assisted in composing user stories
+Week 3: Composed initial UML Diagram
