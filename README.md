@@ -40,10 +40,9 @@ Open psql.exe and run the following command:
 ### Mac/UNIX
 
 In the working directory, run the following:
-```sudo su - postgres
-psql -U postgres -f PATHTOREPO/create_db_.sql```
+`sudo su - postgres`
+`psql -U postgres -f PATHTOREPO/create_db_.sql`
 
 ## Running the database
 
 With the virtual environment running, run `python init_db.py` in the working directory
->>>>>>> backend_setup
