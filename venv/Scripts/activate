@@ -67,3 +67,6 @@ fi
 if [ -n "${BASH:-}" -o -n "${ZSH_VERSION:-}" ] ; then
     hash -r 2> /dev/null
 fi
+
+set DB_USERNAME = "dummy"
+set DB_PASSWORD = "password"
