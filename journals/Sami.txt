@@ -10,3 +10,10 @@ Week 2
 •   Added user stories to Jira.
 •   Decided on sprint structure and assigned user stories to sprints with the team.
 •   Started creating on interface and flow diagrams for our web application.
+
+Week 3
+•   Created storyboards and flow diagrams for the Project Proposal.
+•   Worked on the User Types write up for the Project Proposal.
+•   Worked with team to finish off and submit the Project Proposal.
+•   Meeting with team to set up the app.
+•   Created a frontend setup using create-react-app and updated the Readme.
