@@ -15,8 +15,8 @@ class User:
         self.__lastname = lastname
 
     # Getters
-    def get_firstname():
+    def get_firstname(self):
         return self.__firstname
 
-    def get_lastname():
+    def get_lastname(self):
         return self.__lastname
