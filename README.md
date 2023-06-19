@@ -36,13 +36,18 @@ Make sure you have the latest version of PostgreSQL installed and the virtual en
 ### Windows
 
 Open psql.exe and run the following command:
-`\i 'C:/PATHTOREPO/create_db.sql'`
+```
+$   \i 'C:/%PATHTOREPO%/create_db.sql'
+```
 
 ### Mac/UNIX
 
 In the working directory, run the following:
-`sudo su - postgres`
-`psql -U postgres -f PATHTOREPO/create_db_.sql`
+```
+$   initdb /usr/local/var/postgres
+$   pg_ctl -D /usr/local/var/postgres start
+$   psql -U postgres -f %PATHTOREPO%/create_db_.sql
+```
 
 ## Running the database
 
