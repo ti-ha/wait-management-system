@@ -4,6 +4,7 @@ import Landing from './components/Landing/Landing';
 import StaffLanding from './components/Staff/StaffLanding'
 import TableSelection from './components/Customer/TableSelection';
 import Manager from './components/Manager/Manager';
+import Customer from './components/Customer/Customer';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/staff" element={<StaffLanding />} />
         <Route path="/select-table" element={<TableSelection />} />
         <Route path="/manager" element={<Manager />} />
+        <Route path="/customer" element={<Customer />} />
       </Routes>
     </BrowserRouter>
   );
