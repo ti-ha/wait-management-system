@@ -2,7 +2,7 @@ import User
 
 class KitchenStaff(User):
     def __init__(self, firstname, lastname):
-        super().__init__(self, firstname, lastname)
+        super().__init__(firstname, lastname)
         self.__orders = []
 
     # Add to list of orders

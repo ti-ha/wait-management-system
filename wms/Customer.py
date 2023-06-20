@@ -1,11 +1,8 @@
-import User
+from User import User
 
 class Customer(User):
-    def __init__(self, firstname, lastname):
-        super().__init__(self, firstname, lastname)
-
-    def __init__(self, firstname, lastname, table):
-        super().__init__(self, firstname, lastname)
+    def __init__(self, firstname="Guest", lastname="Customer", table=None):
+        super().__init__(firstname, lastname)
         self.__table = table
     
     # Getters and Setters

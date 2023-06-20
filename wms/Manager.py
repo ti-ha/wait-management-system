@@ -4,5 +4,5 @@ import User
 # only important difference is type. Also can see OrderManager
 class Manager(User):
     def __init__(self, firstname, lastname):
-        super().__init__(self, firstname, lastname)
+        super().__init__(firstname, lastname)
         pass
