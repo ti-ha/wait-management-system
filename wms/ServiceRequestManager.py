@@ -1,4 +1,4 @@
-import ServiceRequest
+from .ServiceRequest import ServiceRequest
 
 class ServiceRequestManager:
     def __init__(self):
