@@ -1,3 +1,6 @@
 frontend/node_modules/
-wms/__pycache__/*
+wms/__pycache__/
+wms/__pycache__/Category.cpython-311.pyc
+wms/__pycache__/Deal.cpython-311.pyc
+wms/__pycache__/MenuItem.cpython-311.pyc
 venv/Lib/
