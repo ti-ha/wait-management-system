@@ -1,0 +1,38 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.appName {
+    margin-bottom: 50px;
+    padding: 1em;
+    font-size: 2em;
+    border: 2px solid black;
+}
+
+.linksContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 75%;
+}
+
+.linkContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    width: 30%;
+    border: 2px solid black;
+    background-color: lightgray;
+    font-size: 2em;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 32px;
+}
+
+.linkContainer:hover {
+    background-color: gray;
+}

@@ -1,24 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Landing from './components/Landing/Landing';
+import StaffLanding from './components/Staff/StaffLanding'
+import TableSelection from './components/Customer/TableSelection';
+import Manager from './components/Manager/Manager';
+import Customer from './components/Customer/Customer';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route exact path="/" element={<Landing />} />
+        <Route path="/staff" element={<StaffLanding />} />
+        <Route path="/select-table" element={<TableSelection />} />
+        <Route path="/manager" element={<Manager />} />
+        <Route path="/customer" element={<Customer />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

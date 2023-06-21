@@ -1,0 +1,35 @@
+.container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+.boxContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+
+.dropdownBox {
+    border: 1px solid black;
+    border-radius: 16px;
+    padding: 10px;
+    width: 300px;
+    background-color: #fafafa;
+}
+
+.confirmButton {
+    margin-top: 20px;
+  }
+
+.formHeading {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.formControl {
+    width: 0px;
+}

@@ -1,6 +1,6 @@
 import itertools
-from Order import Order
-from Customer import Customer
+from .Order import Order
+from .Customer import Customer
 
 class Table:
 
@@ -8,9 +8,10 @@ class Table:
     __id_iter = itertools.count()
 
     # Constructor for Table class
-    def __init__(self, tablelimit, orders=[]):
+    def __init__(self, tablelimit, orders=None):
         self.__id = next(Table.__id_iter)
-        self.__orders = orders
+        # Initialize empty list
+        self.__orders = [] if orders == None else orders
         self.__customers = []
         self.__occupied = False
         self.__tablelimit = tablelimit

@@ -1,4 +1,4 @@
-import User
+from .User import User
 
 # Has no other attributes differentiating itself from a user
 # only important difference is type. Also can see OrderManager

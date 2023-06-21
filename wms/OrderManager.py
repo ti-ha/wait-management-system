@@ -1,4 +1,4 @@
-import Order
+from .Order import Order
 
 class OrderManager:
     def __init__(self):

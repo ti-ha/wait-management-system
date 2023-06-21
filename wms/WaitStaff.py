@@ -1,4 +1,4 @@
-from User import User
+from .User import User
 
 class WaitStaff(User):
     def __init__(self, firstname, lastname):
