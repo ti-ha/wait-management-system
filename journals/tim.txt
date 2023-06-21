@@ -1,3 +1,28 @@
-Week 1: Proposal research - Summarised points on existing systems
-Week 2: In meeting, with team - Assisted in composing user stories
-Week 3: Composed initial UML Diagram
+Week 1: 
+
+We had an initial meeting to discuss the assignment. We selected the Wait
+Management System as our topic. We began writing the proposal. I was assigned
+to elaborate on two of the existing systems. We had a discussion a few days after our 
+initial meeting to discuss who would work on which user stories. I did the ones pertaining to 
+Restaurant Management.
+
+Week 2: 
+In our tutorial, we finished the writeup of the user stories, including 8 epic stories and their
+sub-stories. We have not given any thought to programming just yet but have assigned different people
+different tasks within the design of the program. I was assigned to work on the backend.
+
+Week 3: 
+We finished the proposal in our Wednesday tutorial. I drew a rudimentary UML diagram which will serve as
+basic design of the backend.
+On Saturday, we met up to initialise the environments of the frontend, backend, data and REST API layer.
+I initialised and configured the Python virtual environment while Sami set up and walked the team through running
+the React.js frontend layer. As a team, we discussed how best to implement a Postgres data layer into our project.
+
+Week 4:
+Coding has begun! We split the team up (loosely) into 2 frontend and 3 backend developers.
+I am a backend developer for the project until I am needed elsewhere. Together with Gordon and Ravi, I wrote the
+basic class structure skeleton, including class files (one for each class), establishing inheritance where
+appropriate, and constructors. We don't really have a plan as to who is coding what part of the backend
+following a first-come-first-serve system. I coded the Menu subsystem and fixed some bugs that made their way in 
+when I was setting up. Still to do is to write all the remaining classes in the backend and connect them to
+the frontend via REST API.
