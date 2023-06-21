@@ -55,6 +55,13 @@ class Category():
         
         self.__menu_items.remove(menu_item)
         return menu_item
+    
+    def jsonify(self):
+        out = {"id": self.id(), "name": self.name(), "menu_items": []}
+        for i in self.menu_items():
+            out["menu_items"].append(i.jsonify())
+        return out
+    
 
 
         

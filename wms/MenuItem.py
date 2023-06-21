@@ -37,3 +37,6 @@ class MenuItem():
             return True
         except ValueError:
             return False
+        
+    def jsonify(self):
+        return {"id": self.id(), "name": self.name(), "price": self.price()}

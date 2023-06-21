@@ -76,5 +76,14 @@ class Menu():
         
         self.__deals.remove(deal)
         return deal
+    
+    def jsonify(self):
+        output = {'categories': [], 'deals': []}
+        for i in self.categories():
+            output['categories'].append(i.jsonify())
+        for j in self.deals():
+            output['deals'].append(j.jsonify())
+        
+        return output
 
         
