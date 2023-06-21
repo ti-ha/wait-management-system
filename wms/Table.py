@@ -1,6 +1,6 @@
 import itertools
-from .Order import Order
-from .Customer import Customer
+from Order import Order
+from Customer import Customer
 
 class Table:
 
@@ -36,7 +36,12 @@ class Table:
     def add_customers(self, customer):
         if not isinstance(customer, Customer):
             raise TypeError("Table: add_customers(): Object is not of type Customer")
+        
+        if customer in self.__customers:
+            raise ValueError("Table: add_customers(): Customer already exists")
+        
         self.__customers.append(customer)
+        customer.set_table(self)
         if len(self.__customers) >= self.__tablelimit:
             self.__occupied = True
 
@@ -44,6 +49,10 @@ class Table:
     def add_order(self, order):
         if not isinstance(order, Order):
             raise TypeError("Table: add_order(): Object is not of type Order")
+        
+        if order in self.__orders:
+            raise ValueError("Table: add_order(): Order already exists")
+        
         self.__orders.append(order)
 
     # Getting the current bill for the table
