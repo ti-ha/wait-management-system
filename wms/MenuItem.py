@@ -26,12 +26,12 @@ class MenuItem():
         self.__name = name
     
     def set_price(self, price):
-        if not self.isfloat(price):
+        if not MenuItem.isfloat(price):
             raise TypeError("MenuItem: menu_item.set_price(price): argument is not floatable")
 
         self.__price = price
         
-    def isfloat(self, num):
+    def isfloat(num):
         try:
             float(num)
             return True

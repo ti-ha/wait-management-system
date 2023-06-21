@@ -50,10 +50,11 @@ class Deal():
     
     # Sets the discount.
     def set_discount(self, discount):
-        if self.isfloat(discount):
+        if Deal.isfloat(discount):
             self.__discount = float(discount)
-        
-        return ValueError("Deal: deal.set_discount(num): num is not floatable")
+            return
+        else:
+            raise ValueError("Deal: deal.set_discount(num): num is not floatable")
 
     
     # Checks if the deal is applicable to a specific menu_item.
@@ -67,7 +68,7 @@ class Deal():
         return False
     
     # Helper function for parsing input
-    def isfloat(self, num):
+    def isfloat(num):
         try:
             float(num)
             return True
