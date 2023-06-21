@@ -1,6 +1,6 @@
 import itertools
-import Order
-import Customer
+from Order import Order
+from Customer import Customer
 
 class Table:
 
@@ -32,11 +32,15 @@ class Table:
 
     # Adding to the list of customers/orders
     def add_customers(self, customer):
+        if not isinstance(customer, Customer):
+            raise TypeError("Table: add_customers(): Object is not of type Customer")
         self.__customers.append(customer)
         if len(self.__customers) >= self.__tablelimit:
             self.__occupied = True
 
     def add_order(self, order):
+        if not isinstance(order, Order):
+            raise TypeError("Table: add_order(): Object is not of type Order")
         self.__orders.append(order)
 
     # Getting the current/final bill for the table
