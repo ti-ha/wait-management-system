@@ -1,4 +1,4 @@
-import Menu
+from .Menu import Menu
 
 class RestaurantManager:
     def __init__(self, menu):

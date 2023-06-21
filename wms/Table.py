@@ -1,5 +1,5 @@
 import itertools
-import Order
+from .Order import Order
 
 class Table:
 
