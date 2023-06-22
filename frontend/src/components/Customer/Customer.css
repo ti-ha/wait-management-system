@@ -36,10 +36,41 @@
     margin-right: 10%;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+}
+
+.categoryBox {
+    border: 1px solid black;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.categoryBox:hover {
+    cursor: pointer;
+    background-color: #f0f0f0;
+}
+
+.selectedCategoryBox {
+    border: 1px solid black;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    background-color: #808080;
 }
 
 .items {
     width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.itemContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
 }
   
 .itemBox {
@@ -47,4 +78,9 @@
     padding: 10px;
     margin-bottom: 10px;
     max-width: 75%;
+    width: calc(50% - 50px);
+}
+.itemBox img {
+    max-width: 100%;
+    display: block;
 }
