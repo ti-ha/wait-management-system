@@ -27,7 +27,7 @@
 .customerContainer {
     display: flex;
     padding: 20px;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .categories {
@@ -64,6 +64,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-right: 5%;
 }
 
 .itemContainer {
@@ -83,4 +84,22 @@
 .itemBox img {
     max-width: 100%;
     display: block;
+}
+
+.orders {
+    width: 25%;
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+.itemContainer {
+    max-height: calc(100vh - 400px); /* Adjust as needed */
+    overflow-y: auto;
+}
+
+.itemsTitle {
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }

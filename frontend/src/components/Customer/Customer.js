@@ -40,7 +40,7 @@ export default function Customer() {
                 </div>
 
                 <div className="items">
-                    <h2>{currentCategory}</h2>
+                    <h2 className="itemsTitle">{currentCategory}</h2>
                     <div className="itemContainer">
                         {currentItems.map((item, index) => (
                             <div className="itemBox" key={index}>
@@ -50,6 +50,10 @@ export default function Customer() {
                             </div>
                         ))}
                     </div>
+                </div>
+
+                <div className="orders">
+                    <h2>Current Order</h2>
                 </div>
             </div>
         </div>
