@@ -1,6 +1,7 @@
 from .Category import Category
 from .MenuItem import MenuItem
 from .Deal import Deal
+import json
 
 class Menu():
 
@@ -84,6 +85,6 @@ class Menu():
         for j in self.deals():
             output['deals'].append(j.jsonify())
         
-        return output
+        return json.dumps(output, indent = 8)
 
         
