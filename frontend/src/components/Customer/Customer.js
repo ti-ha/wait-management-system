@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
+import ItemModal from "./ItemModal";
 import './Customer.css'
 
 // Temporary mock data
@@ -9,6 +10,9 @@ export default function Customer() {
 
     const [currentCategory, setCurrentCategory] = useState("");
     const [currentItems, setCurrentItems] = useState([]);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [quantity, setQuantity] = useState(1);
+    const [currentOrder, setCurrentOrder] = useState([]);
 
     // First category is rendered by default
     useEffect(() => {
@@ -20,6 +24,19 @@ export default function Customer() {
         setCurrentCategory(category);
         setCurrentItems(menuItems.filter(item => item.category === category))
     };
+
+    const handleOpenModal = (item) => {
+        setSelectedItem(item);
+    }
+
+    const handleCloseModal = () => {
+        setSelectedItem(null);
+    }
+
+    const handleAddToOrder = () => {
+        setCurrentOrder(prevOrder => [...prevOrder, {...selectedItem, quantity }])
+        handleCloseModal();
+    }
 
     return (
         <div className="customerPage">
@@ -43,7 +60,7 @@ export default function Customer() {
                     <h2 className="itemsTitle">{currentCategory}</h2>
                     <div className="itemContainer">
                         {currentItems.map((item, index) => (
-                            <div className="itemBox" key={index}>
+                            <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
                                 <img src={item.imageURL} alt={item.name}/>
                                 <p>{item.name}</p>
                                 <p>{item.cost}</p>
@@ -54,8 +71,26 @@ export default function Customer() {
 
                 <div className="orders">
                     <h2>Current Order</h2>
+                    {currentOrder.map((order, index) => (
+                        <div key={index}>
+                            <p>{order.name}</p>
+                            <p>Quantity: {order.quantity}</p>
+                            <p>Cost: {order.cost}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
+
+            {selectedItem && 
+                <ItemModal 
+                    item={selectedItem}
+                    onClose={handleCloseModal}
+                    onAddToOrder={handleAddToOrder}
+                    quantity={quantity}
+                    setQuantity={setQuantity}
+                />
+            }
+
         </div>
     )
 }
