@@ -4,6 +4,4 @@ wms/__pycache__/Category.cpython-311.pyc
 wms/__pycache__/Deal.cpython-311.pyc
 wms/__pycache__/MenuItem.cpython-311.pyc
 venv/Lib/
-venv/Scripts/pip3.11.exe
-venv/Scripts/pip3.exe
-venv/Scripts/flask.exe
+venv/Scripts/*.exe

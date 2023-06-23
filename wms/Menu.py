@@ -1,6 +1,7 @@
 from .Category import Category
 from .MenuItem import MenuItem
 from .Deal import Deal
+import json
 
 class Menu():
 
@@ -76,5 +77,14 @@ class Menu():
         
         self.__deals.remove(deal)
         return deal
+    
+    def jsonify(self):
+        output = {'categories': [], 'deals': []}
+        for i in self.categories():
+            output['categories'].append(i.jsonify())
+        for j in self.deals():
+            output['deals'].append(j.jsonify())
+        
+        return json.dumps(output, indent = 8)
 
         

@@ -74,3 +74,10 @@ class Deal():
             return True
         except ValueError:
             return False
+        
+    def jsonify(self):
+        output = {"id": self.id(), "discount": self.discount(), "menu_items": []}
+        for i in self.menu_items():
+            output["menu_items"].append(i.jsonify())
+
+        return output
