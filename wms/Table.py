@@ -35,6 +35,11 @@ class Table:
     def get_tablelimit(self):
         return self.__tablelimit
 
+    # Unique getter to show how many open seats there are
+    def get_open_seats(self):
+        open_seats = self.__tablelimit - len(self.__customers)
+        return str(open_seats) + " / " + str(self.__tablelimit) if open_seats != 0 else "FULL"
+
     # Adding a custoemr to the list of customers
     def add_customers(self, customer):
         if not isinstance(customer, Customer):
@@ -42,6 +47,9 @@ class Table:
         
         if customer in self.__customers:
             raise ValueError("Table: add_customers(): Customer already exists")
+        
+        if self.__occupied:
+            raise ValueError("Table: add_customers(): Table is full")
         
         self.__customers.append(customer)
         customer.set_table(self)
