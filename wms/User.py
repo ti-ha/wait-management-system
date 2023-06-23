@@ -15,3 +15,6 @@ class User:
 
     def get_lastname(self):
         return self.__lastname
+    
+    def get_id(self):
+        return self.__id

@@ -17,6 +17,9 @@ class Table:
         self.__tablelimit = tablelimit
 
     # Getters
+    def get_id(self):
+        return self.__id
+
     def is_occupied(self):
         return self.__occupied
     
