@@ -1,10 +1,10 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, current_app
 from wms import *
 import json
 
 app = Flask(__name__)
 
-menu = Menu()
+wms = Application()
 
 # A lot of the logic in here needs to be refactored to a new class. Speedrunning for now to get API working for frontend
 
@@ -14,14 +14,12 @@ def home():
 
 @app.route('/menu', methods=['GET'])
 def get_menu():
-    return menu.jsonify()
+    return current_app.response_class(wms.menu_json(), mimetype="application/json")
 
 @app.route('/menu/categories', methods=['GET','POST'])
 def create_category():
     if request.method == "GET":
-        categories = menu.categories()
-        output = [i.jsonify() for i in categories]
-        return output
+        return current_app.response_class(wms.jsonify_menu_categories(), mimetype="application/json")
     elif request.method == "POST":
         '''
         JSON FORMAT:
@@ -30,16 +28,15 @@ def create_category():
         content_type = request.headers.get('Content-Type')
         if (content_type == 'application/json'):
             obj = request.json
-            menu.add_category(Category(obj["name"]))
+            wms.add_menu_category(obj["name"])
             return ("Successfully added category " + obj["name"])
         else:
             return "Incorrect content-type"
 
 @app.route('/menu/categories/<category>', methods=['GET', 'POST', 'DELETE'])
 def specific_category(category):
-    cat = menu.get_category(category)
     if request.method == 'GET':
-        return cat.jsonify()
+        return current_app.response_class(wms.jsonify_menu_category(category), mimetype="application/json")
     elif request.method == 'POST':
         '''
         ADDING A NEW MENU ITEM TO CATEGORY.
@@ -47,7 +44,6 @@ def specific_category(category):
         {"name": "string",
          "price": float}
         '''
-
         content_type = request.headers.get('Content-Type')
         if (content_type == 'application/json'):
             obj = request.json
@@ -57,16 +53,15 @@ def specific_category(category):
             except:
                 return "Incorrect fields"
             
-            menu_item = MenuItem(name, price)
-            cat.add_menu_item(menu_item)
-            return ("Successfully added menuitem " + obj["name"])
+            wms.add_menu_item(category, name, price)
+            return ("Successfully added menuitem " + name)
         
     elif request.method == 'DELETE':
         '''
         REMOVING A SPECIFIC CATEGORY. DELETE METHOD FOR MENUITEM
         IS IN THE SPECIFIC ROUTE FOR SPECIFIC MENU ITEM
         '''
-        menu.remove_category(category)
+        wms.remove_menu_category(category)
         return ("Successfully deleted category" + category)
 
     else:
@@ -74,16 +69,14 @@ def specific_category(category):
     
 @app.route('/menu/categories/<category>/<menu_item>', methods=['GET', 'DELETE'])
 def menu_item(category, menu_item):
-    item = menu.get_category(category).menu_item(menu_item)
-
-    if item == None:
+    if wms.menu_item(category, menu_item) == None:
         return "Unrecognised menu_item"
     
     if request.method == 'GET':
-        return item.jsonify()
+        return current_app.response_class(wms.menu_item_json(category, menu_item), mimetype="application/json")
         
     elif request.method == 'DELETE':
-        menu.get_category(category).remove_menu_item(item)
+        wms.remove_menu_item(category, menu_item)
         return "Successfully removed menuitem "+menu_item+" in category "+category
     else:
         return "Unrecognised request"
@@ -91,9 +84,8 @@ def menu_item(category, menu_item):
 @app.route('/menu/deals', methods=['GET','POST'])
 def create_deal():
     if request.method == 'GET':
-        deals = menu.deals()
-        output = [i.jsonify() for i in deals]
-        return output
+        return current_app.response_class(wms.get_deals_json(), mimetype="application/json")
+        
     elif request.method == 'POST':
         '''
         JSON FORMAT:
@@ -113,18 +105,11 @@ def create_deal():
             except:
                 return "Incorrect fields"
             
-            deal_items = []
-            for i in menu.categories():
-                for j in i.menu_items():
-                    if j.name() in menu_item_lookup:
-                        deal_items.append(j)
+            proc = wms.add_deal(obj["discount"], menu_item_lookup)
+            if proc == None:
+                return "One or more menu items is not present in the menu"
             
-            if len(menu_item_lookup) != len(deal_items):
-                return "One or more menu items does not exist"
-            deal = Deal(obj["discount"], deal_items)
-            menu.add_deal(deal)
-
-            return ("Successfully added deal with new id "+str(deal.id()))
+            return ("Successfully added deal with new id "+str(proc))
         
         else:
             return "Incorrect content-type"
