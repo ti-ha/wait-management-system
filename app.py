@@ -166,5 +166,26 @@ def add_user():
             return "Unable to create user"
         return ("Successfully added user " + str(user_id))
     
+@app.route('/table/add/customer', methods=['POST'])
+def add_table_customer():
+    '''
+    JSON FORMAT:
+    {"table_id": int,
+     "customer_id": int}
+    '''
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        obj = request.json
+        try:
+            table_id = obj["table_id"]
+            customer_id = obj["customer_id"]
+        except:
+            return "Incorrect fields"
+        
+        status = wms.add_table_customer(table_id, customer_id)
+        if not status:
+            return "Unable to move customer to table"
+        return ("Successfully added customer to table")
+
 if __name__ == '__main__':
     app.run(port=5000)

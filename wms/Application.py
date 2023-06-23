@@ -64,7 +64,8 @@ class Application():
         tableDict = {}
         for table in self.__tables:
             table_num = "Table_" + str(table.get_id())
-            tableDict[table_num] = {"table limit": table.get_tablelimit(), 
+            tableDict[table_num] = {"availability": table.get_open_seats(),
+                                    "table limit": table.get_tablelimit(), 
                                     "is occupied": table.is_occupied()}
         return json.dumps(tableDict)
     
@@ -97,3 +98,24 @@ class Application():
         self.__users.append(new_user)
         return new_user.get_id()
         
+    def add_table_customer(self, table_id, customer_id):
+        table = self.id_to_table(table_id)
+        customer = self.id_to_user(customer_id)
+        try:
+            table.add_customers(customer)
+        except:
+            return False
+        return True
+    
+    # Might need to move these to a helper file 
+    def id_to_user(self, id):
+        for user in self.__users:
+            if user.get_id() == id:
+                return user
+        return None
+    
+    def id_to_table(self, id):
+        for table in self.__tables:
+            if table.get_id() == id:
+                return table
+        return None
