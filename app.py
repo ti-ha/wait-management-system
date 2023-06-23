@@ -116,5 +116,55 @@ def create_deal():
     else:
         return "Unrecognised request"
 
+@app.route('/table', methods=['GET'])
+def get_table():
+    return current_app.response_class(wms.get_tables_json(), mimetype="application/json")
+
+@app.route('/table/add', methods=['POST'])
+def add_table():
+    '''
+    JSON FORMAT:
+    {"table_limit": int,
+     "orders": List<Order>}
+    '''
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        obj = request.json
+        try:
+            table_limit = obj["table_limit"]
+            orders = obj["orders"]
+        except:
+            return "Incorrect fields"
+        
+        table_id = wms.add_table(table_limit, orders)
+        return ("Successfully added table " + str(table_id))
+
+@app.route('/user', methods=['GET'])
+def get_user():
+    return current_app.response_class(wms.get_users_json(), mimetype="application/json")
+
+@app.route('/user/add', methods=['POST'])
+def add_user():
+    '''
+    JSON FORMAT:
+    {"first_name": string,
+     "last_name": string,
+     "user_type": string}
+    '''
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        obj = request.json
+        try:
+            first_name = obj["first_name"]
+            last_name = obj["last_name"]
+            user_type = obj["user_type"]
+        except:
+            return "Incorrect fields"
+        
+        user_id = wms.add_user(first_name, last_name, user_type)
+        if user_id == None:
+            return "Unable to create user"
+        return ("Successfully added user " + str(user_id))
+    
 if __name__ == '__main__':
     app.run(port=5000)
