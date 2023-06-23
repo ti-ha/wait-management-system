@@ -1,5 +1,5 @@
-from Order import Order
-from User import User
+from .Order import Order
+from .User import User
 
 class OrderManager:
     # Constructor for the Order Manager class

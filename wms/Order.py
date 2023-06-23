@@ -1,8 +1,8 @@
 import itertools
 from enum import Enum
-from Bill import Bill
-from Deal import Deal
-from MenuItem import MenuItem
+from .Bill import Bill
+from .Deal import Deal
+from .MenuItem import MenuItem
 
 class State(Enum):
     ORDERED = 0

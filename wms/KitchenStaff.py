@@ -1,5 +1,5 @@
-from Order import Order
-from User import User
+from .Order import Order
+from .User import User
 
 class KitchenStaff(User):
     def __init__(self, firstname, lastname):

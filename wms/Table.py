@@ -1,6 +1,6 @@
 import itertools
-from Order import Order
-from Customer import Customer
+from .Order import Order
+from .Customer import Customer
 
 class Table:
 
