@@ -8,4 +8,13 @@ class User:
         self.__id = next(User.__id_iter)
         self.__firstname = firstname
         self.__lastname = lastname
-        
+
+    # Getters
+    def get_firstname(self):
+        return self.__firstname
+
+    def get_lastname(self):
+        return self.__lastname
+    
+    def get_id(self):
+        return self.__id
