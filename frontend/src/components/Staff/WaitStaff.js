@@ -21,6 +21,15 @@ export default function WaitStaff() {
                     </Link>
                 </div>
             </header>
+
+            <main className="waitStaffBody">
+                <section className='toBeServed'>
+                    <h2>To Be Served</h2>
+                </section>
+                <section className='assistanceRequired'>
+                    <h2>Assistance Required</h2>
+                </section>
+            </main>
         </div>
     )
 }

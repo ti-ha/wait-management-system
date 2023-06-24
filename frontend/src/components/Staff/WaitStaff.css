@@ -15,3 +15,19 @@
     display: flex;
     gap: 20px;
 }
+
+.waitStaffBody {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.toBeServed, .assistanceRequired {
+    width: 45%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}

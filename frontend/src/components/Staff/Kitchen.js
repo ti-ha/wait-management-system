@@ -5,8 +5,8 @@ import { Button } from '@mui/material'
 
 export default function Kitchen() {
     return (
-        <div className="kitchenStaffContainer">
-            <header className="kitchenStaffHeader">
+        <div className="kitchenContainer">
+            <header className="kitchenHeader">
                 <h1>Kitchen View</h1>
                 <div className='headerButtons'>
                     <Link to="/wait-staff">
@@ -21,6 +21,15 @@ export default function Kitchen() {
                     </Link>
                 </div>
             </header>
+
+            <main className="kitchenBody">
+                <section className='ordersReceived'>
+                    <h2>Orders Received</h2>
+                </section>
+                <section className='preparing'>
+                    <h2>Preparing</h2>
+                </section>
+            </main>
         </div>
     )
 }
