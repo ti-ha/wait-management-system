@@ -27,7 +27,7 @@
 .customerContainer {
     display: flex;
     padding: 20px;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .categories {
@@ -64,6 +64,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-right: 5%;
 }
 
 .itemContainer {
@@ -83,4 +84,47 @@
 .itemBox img {
     max-width: 100%;
     display: block;
+}
+
+.orders {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid black;
+    padding: 10px;
+    height: calc(100% - 50px);
+}
+
+.itemContainer {
+    max-height: calc(100vh - 400px); /* Adjust as needed */
+    overflow-y: auto;
+}
+
+.itemsTitle {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.orderItem {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tableNumber {
+    width: 80%;
+    padding: 10px;
+    text-align: center;
+    margin: auto;
+}
+
+.orderContainer {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+}
+
+.ordersList {
+    flex-grow: 1;
+    overflow-y: auto;
 }

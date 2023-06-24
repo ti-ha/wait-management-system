@@ -1,15 +1,22 @@
 import React, { useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import './TableSelection.css'
 
 
 export default function TableSelection() {
 
+    const navigate = useNavigate();
+
     const [tableNo, setTableNo] = useState("");
 
     const handleChange = (event) => {
         setTableNo(event.target.value);
+    }
+
+    const handleConfirm = () => {
+        console.log(`Table ${tableNo} selected`);
+        navigate(`/customer/${tableNo}`)
     }
 
     return (
@@ -47,9 +54,7 @@ export default function TableSelection() {
                         color="secondary"
                         className="confirmButton"
                         disabled={!tableNo}
-                        onClick={() => console.log(`Table ${tableNo} selected`)}
-                        component={Link}
-                        to="/customer"
+                        onClick={handleConfirm}
                     >
                         Confirm
                     </Button>

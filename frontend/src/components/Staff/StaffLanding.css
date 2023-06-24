@@ -1,0 +1,13 @@
+.staffLandingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 50px;
+}
+
+.staffButton {
+    padding: 20px;
+    width: 300px;
+    height: 200px;
+}
