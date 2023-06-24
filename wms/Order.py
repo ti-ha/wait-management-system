@@ -19,7 +19,7 @@ class Order:
         self.__menu_items = menu_items
         self.__deals = deals
         self.__bill = Bill(0)
-        self.__state: State
+        self.__state = State.ORDERED
 
     # Getters
     def get_bill(self):
@@ -34,6 +34,9 @@ class Order:
     def get_state(self):
         return self.__state
     
+    def get_id(self):
+        return self.__id
+    
     # Adding and removing deal items to the order
     def add_deal(self, deal):
         if not isinstance(deal, Deal):
@@ -41,8 +44,7 @@ class Order:
         
         if deal in self.__deals:
             raise ValueError("Order: add_deal(): Deal already exists")
-        self.__deals.append(deal)
-        self.__bill.add_price(deal.get_price())
+        # TODO: Unsure how deals work
 
     def remove_deal(self, deal):
         if not isinstance(deal, Deal):
@@ -50,8 +52,7 @@ class Order:
         
         if deal not in self.__deals:
             raise ValueError("Order: remove_deal(): Deal does not exist")
-        self.__deals.remove(deal)
-        self.__bill.reduce_price(deal.get_price())
+        # TODO: Unsure how deals work
     
     # Adding and removing menu items to the order
     def add_menu_item(self, menuItem):
@@ -61,7 +62,7 @@ class Order:
         if menuItem in self.__menu_items:
             raise ValueError("Order: add_menu_item(): MenuItem already exists")
         self.__menu_items.append(menuItem)
-        self.__bill.add_price(menuItem.get_price())
+        self.__bill.add_price(menuItem.price())
 
     def remove_menu_item(self, menuItem):
         if not isinstance(menuItem, MenuItem):
@@ -70,18 +71,22 @@ class Order:
         if menuItem not in self.__menu_items:
             raise ValueError("Order: remove_menu_item(): MenuItem does not exist")
         self.__menu_items.remove(menuItem)
-        self.__bill.reduce_price(menuItem.get_price())
+        self.__bill.reduce_price(menuItem.price())
     
     # Progress through states
     def change_state(self):
-        if (self.__state is State.SERVED):
+        if (self.__state == State.SERVED):
             raise ValueError("Order: change_state(): Already at the final state")
-        elif (self.__state is State.COOKED):
+        elif (self.__state == State.COOKED):
             self.__state = State.SERVED
-        elif (self.__state is State.ORDERED):
+        elif (self.__state == State.ORDERED):
             self.__state = State.COOKED
 
     # Return final bill and set boolean to paid
     def calculate_bill(self):
+        # This needs work -> Do we need to check the state before paying the bill?
+        # Should we prohibit adding/removing items when bill is paid?
+        if not (self.__state == State.SERVED):
+            raise ValueError("Order: calculate_bill(): Order has not been served yet")
         self.__bill.pay()
         return self.__bill.get_price()

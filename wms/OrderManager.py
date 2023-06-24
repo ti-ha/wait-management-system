@@ -19,19 +19,16 @@ class OrderManager:
             raise ValueError("OrderManager: add_order(): Order already exists")
         self.__orders.append(order)
 
-    # Returns a specific order based off provided integer
-    def get_order(self, orderNum):
-        if orderNum > len(self.__orders):
-            return ValueError("OrderManager: get_order(): Not enough orders")
-        return self.__orders[orderNum]
-    
+    # Returns a specific order based off provided order ID
+    def get_order(self, order_ID):
+        for order in self.__orders:
+            if (order.get_id() == order_ID):
+                return order
+        return ValueError("OrderManager: get_order(): Order doesn't exist")
+        
     # Move item along to the next stage
-    def mark_as_complete(self, order):
+    def mark_as_complete(self, order_ID):
+        order = self.get_order(order_ID)
         if not isinstance(order, Order):
             raise TypeError("OrderManager: mark_as_complete(): Object is not of type Order")
-        
-        if order not in self.__orders:
-            raise ValueError("OrderManager: mark_as_complete(): Order does not exists")
-
-        orderIndex = self.__orders.index(order)
-        self.__orders(orderIndex).change_state()
+        order.change_state()

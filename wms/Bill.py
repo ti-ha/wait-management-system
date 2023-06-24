@@ -13,10 +13,14 @@ class Bill:
     
     # Method to accumulate bill from menu items
     def add_price(self, price):
+        if (self.__paid == True):
+            raise ValueError("Bill: add_price(): Bill has already been paid")
         self.__price += price
 
     # Method to reduce bill from menu items
     def reduce_price(self, price):
+        if (self.__paid == True):
+            raise ValueError("Bill: reduce_price(): Bill has already been paid")
         self.__price -= price
 
     # When bill is paid, set bool to true
