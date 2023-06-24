@@ -1,9 +1,23 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@mui/material";
+import './StaffLanding.css'
 
 export default function StaffLanding() {
     return (
-        <h1>
-            Staff Landing Page coming soon!
-        </h1>
+        <div className="staffLandingContainer">
+            <Link to="/kitchen">
+                <Button variant="contained" className="staffButton" style={{fontSize: "2em"}}>
+                    Kitchen Staff
+                </Button>
+            </Link>
+            <Link to="/waitstaff">
+                <Button variant="contained" className="staffButton" style={{fontSize: "2em"}}>
+                    Wait Staff
+                </Button>
+            </Link>
+
+
+        </div>
     )
 }
