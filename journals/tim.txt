@@ -24,5 +24,5 @@ I am a backend developer for the project until I am needed elsewhere. Together w
 basic class structure skeleton, including class files (one for each class), establishing inheritance where
 appropriate, and constructors. We don't really have a plan as to who is coding what part of the backend
 following a first-come-first-serve system. I coded the Menu subsystem and fixed some bugs that made their way in 
-when I was setting up. Still to do is to write all the remaining classes in the backend and connect them to
-the frontend via REST API.
+when I was setting up. I also implemented the rest api for the menu classes, leaving only the database connection 
+functionality to be completed for that subsystem.
