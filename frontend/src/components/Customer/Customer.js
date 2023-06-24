@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ItemModal from "./ItemModal";
 import './Customer.css'
 
 // Temporary mock data
 import { categories, menuItems } from '../../mocks/menu_items.js'
+import { Button } from "@mui/material";
 
 export default function Customer() {
 
@@ -13,6 +14,7 @@ export default function Customer() {
     const [selectedItem, setSelectedItem] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const [currentOrder, setCurrentOrder] = useState([]);
+    const { tableNumber } = useParams();
 
     // First category is rendered by default
     useEffect(() => {
@@ -69,16 +71,33 @@ export default function Customer() {
                     </div>
                 </div>
 
-                <div className="orders">
-                    <h2>Current Order</h2>
-                    {currentOrder.map((order, index) => (
-                        <div key={index} className="orderItem">
-                            <p>{order.name}</p>
-                            <p>{order.quantity}</p>
-                            <p>{order.cost}</p>
+                <div className="orderContainer">
+                    <div>
+                        <h2 className="tableNumber">
+                            Table Number: {tableNumber}
+                        </h2>
+                    </div>
+
+                    <div className="orders">
+                        <div className="ordersList">
+                            <h2>Current Order</h2>
+                            {currentOrder.map((order, index) => (
+                                <div key={index} className="orderItem">
+                                    <p>{order.name}</p>
+                                    <p>{order.quantity}</p>
+                                    <p>{order.cost}</p>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                        
+                        <Button variant="contained">
+                            Send Order
+                        </Button>
+                    </div>
+
                 </div>
+
+
             </div>
 
             {selectedItem && 
