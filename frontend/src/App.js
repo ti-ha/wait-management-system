@@ -14,7 +14,7 @@ function App() {
         <Route path="/staff" element={<StaffLanding />} />
         <Route path="/select-table" element={<TableSelection />} />
         <Route path="/manager" element={<Manager />} />
-        <Route path="/customer" element={<Customer />} />
+        <Route path="/customer/:tableNumber" element={<Customer />} />
       </Routes>
     </BrowserRouter>
   );
