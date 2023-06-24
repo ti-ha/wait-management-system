@@ -103,3 +103,8 @@
     top: 0;
     z-index: 1;
 }
+
+.orderItem {
+    display: flex;
+    justify-content: space-between;
+}

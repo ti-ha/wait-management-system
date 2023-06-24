@@ -72,10 +72,10 @@ export default function Customer() {
                 <div className="orders">
                     <h2>Current Order</h2>
                     {currentOrder.map((order, index) => (
-                        <div key={index}>
+                        <div key={index} className="orderItem">
                             <p>{order.name}</p>
-                            <p>Quantity: {order.quantity}</p>
-                            <p>Cost: {order.cost}</p>
+                            <p>{order.quantity}</p>
+                            <p>{order.cost}</p>
                         </div>
                     ))}
                 </div>

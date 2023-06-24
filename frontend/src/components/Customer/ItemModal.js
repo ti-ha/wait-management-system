@@ -1,5 +1,7 @@
 import React from "react";
-import { Modal, Fade, Box } from "@mui/material"
+import { Modal, Fade, Box, IconButton } from "@mui/material"
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 export default function ItemModal({ item, onClose, onAddToOrder, quantity, setQuantity }) {
 
@@ -36,9 +38,13 @@ export default function ItemModal({ item, onClose, onAddToOrder, quantity, setQu
                         <img src={item.imageURL} alt={item.name} />
                         <div>
                             <p>Quantity</p>
-                            <button onClick={handleDecreaseQuantity}>-</button>
+                            <IconButton onClick={handleDecreaseQuantity}>
+                                <RemoveIcon />
+                            </IconButton>
                             <span>{quantity}</span>
-                            <button onClick={handleIncreaseQuantity}>+</button>
+                            <IconButton onClick={handleIncreaseQuantity}>
+                                <AddIcon />
+                            </IconButton>
                         </div>
                         <button onClick={onAddToOrder}>Add to Order</button>
                         <button onClick={onClose}>Cancel</button>
