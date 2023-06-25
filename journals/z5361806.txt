@@ -28,8 +28,13 @@ Next week we will conitnue with the diagrams required for the proposal.
 Everything seems to be on track to be completed for the proposal due date.
 
 Week 3
+In our Wednesday tutorial, we completed the proposal. 
+I helped complete the write-up and wireframing.
+On Saturday, we gathered to set up the environments for the frontend, backend, data, and REST API layer.
+During the meeting we managed to set up the Python virtual environment, as well as the React.js frontend layer.
+Together, we deliberated on the optimal approach to incorporate a Postgres data layer into our project.
 
-
+Week 4
 
 
 
