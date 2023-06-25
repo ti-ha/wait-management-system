@@ -8,9 +8,18 @@ class Deal():
 
     def __init__(self, discount, menu_items=None):
         self.__id = next(Deal.__id_iter)
+        # A float value between 0 and 1 (percentage discount)
         self.__discount = float(discount)
         self.__menu_items = menu_items
         # getting around annoying python default value behaviour
+
+        # We need this for when someone passes only one menu item into the deal so it still ends up as an array.
+        # Not sure where else this is a problem
+        if isinstance(menu_items, MenuItem):
+            self.__menu_items = [menu_items]
+        else:
+            self.__menu_items = menu_items
+
         if self.__menu_items is None:
             self.__menu_items = []
 
@@ -23,7 +32,7 @@ class Deal():
         return self.__discount
     
     # Returns all menu items associated with the deal
-    def menu_items(self):
+    def menu_items(self) -> list[MenuItem]:
         return self.__menu_items
     
     # Adds a menu item to the deal.
