@@ -190,4 +190,4 @@ def add_table_customer():
         return ("Successfully added customer to table")
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(host='0.0.0.0', port=5000)
