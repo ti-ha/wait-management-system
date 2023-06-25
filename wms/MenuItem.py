@@ -5,10 +5,11 @@ class MenuItem():
     # Unique id
     __id_iter = itertools.count()
 
-    def __init__(self, name, price):
+    def __init__(self, name, price, imageURL="None"):
         self.__id = next(MenuItem.__id_iter)
         self.__name = name
         self.__price = price
+        self.__imageURL = imageURL
 
     def id(self):
         return self.__id
@@ -18,6 +19,9 @@ class MenuItem():
     
     def price(self):
         return self.__price
+    
+    def imageURL(self): 
+        return self.__imageURL
     
     def set_name(self, name):
         if not isinstance(name, str):
@@ -30,6 +34,9 @@ class MenuItem():
             raise TypeError("MenuItem: menu_item.set_price(price): argument is not floatable")
 
         self.__price = price
+
+    def set_image_url(self, imageurl: str):
+        self.__imageURL = imageurl
         
     def isfloat(num):
         try:
@@ -39,4 +46,4 @@ class MenuItem():
             return False
         
     def jsonify(self):
-        return {"id": self.id(), "name": self.name(), "price": self.price()}
+        return {"id": self.id(), "name": self.name(), "price": self.price(), "imageURL": self.imageURL()}

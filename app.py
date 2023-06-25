@@ -42,7 +42,8 @@ def specific_category(category):
         ADDING A NEW MENU ITEM TO CATEGORY.
         JSON FORMAT:
         {"name": "string",
-         "price": float}
+         "price": float  ,
+         "image_url": "string"}
         '''
         content_type = request.headers.get('Content-Type')
         if (content_type == 'application/json'):
@@ -50,10 +51,11 @@ def specific_category(category):
             try:
                 name = obj["name"]
                 price = obj["price"]
+                imageURL = obj["image_url"]
             except:
                 return "Incorrect fields"
             
-            wms.add_menu_item(category, name, price)
+            wms.add_menu_item(category, name, price, imageURL)
             return ("Successfully added menuitem " + name)
         
     elif request.method == 'DELETE':
