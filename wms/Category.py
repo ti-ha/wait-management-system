@@ -36,11 +36,11 @@ class Category():
 
 
     # Adds a menu_item to the category
-    def add_menu_item(self, name, price):
+    def add_menu_item(self, name, price, imageurl):
         if self.menu_item(name) != None:
             raise ValueError("Category: add_menu_item(): MenuItem already in category")
         
-        self.__menu_items.append(MenuItem(name, price))
+        self.__menu_items.append(MenuItem(name, price, imageurl))
 
     # Removes a menu_item from the category
     def remove_menu_item(self, name):
