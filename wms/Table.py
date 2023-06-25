@@ -66,7 +66,17 @@ class Table:
         
         self.__orders.append(order)
 
+    def remove_order(self, order):
+        if not isinstance(order, Order):
+            raise TypeError("Table: remove_order(): Object is not of type Order")
+        
+        if order not in self.__orders:
+            raise ValueError("Table: remove_order(): Order does not exist")
+        
+        self.__orders.remove(order)
+
     # Getting the current bill for the table
+    # TODO: Rewrite this so that it works for all order functionality
     def request_bill(self):
         curr_bill = 0
         for order in self.__orders:

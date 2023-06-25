@@ -44,12 +44,18 @@ class Order:
 
     def __init__(self, menu_items=None, deals=None):
         self.__id = next(Order.__id_iter)
-        self.__menu_items = menu_items
+        self.__bill = None
+        self.__state = State()
 
         if isinstance(deals, Deal):
             self.__deals = [deals]
         else:
             self.__deals = deals
+
+        if isinstance(menu_items, MenuItem):
+            self.__menu_items = [menu_items]
+        else:
+            self.__menu_items = menu_items
 
         if self.__menu_items == None:
             self.__menu_items = []
@@ -57,8 +63,7 @@ class Order:
         if self.__deals == None:
             self.__deals = []
 
-        self.__bill = None
-        self.__state = State()
+        
 
     # Getters
     def bill(self) -> Bill | None:

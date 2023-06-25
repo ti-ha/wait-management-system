@@ -6,6 +6,7 @@ snack = MenuItem("snack",  20.0)
 drink = MenuItem("drink", 5.0)
 deal = Deal(0.4, [burger, snack])
 deal2 = Deal(0.2, drink)
+table = Table(5)
 
 def test1():
     order1 = Order()
