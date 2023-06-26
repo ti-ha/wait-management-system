@@ -14,6 +14,8 @@ ordermanager = OrderManager()
 def home():
     return "Hello world!"
 
+#### MENU ENDPOINTS
+
 @app.route('/menu', methods=['GET'])
 def get_menu():
     return current_app.response_class(wms.menu_json(), mimetype="application/json")
@@ -55,10 +57,10 @@ def specific_category(category):
                 price = obj["price"]
                 imageURL = obj["image_url"]
             except:
-                return "Incorrect fields"
+                return jsonify("Incorrect fields"), 403
             
             wms.add_menu_item(category, name, price, imageURL)
-            return ("Successfully added menuitem " + name)
+            return jsonify("Successfully added menuitem " + name), 200
         
     elif request.method == 'DELETE':
         '''
@@ -66,24 +68,24 @@ def specific_category(category):
         IS IN THE SPECIFIC ROUTE FOR SPECIFIC MENU ITEM
         '''
         wms.remove_menu_category(category)
-        return ("Successfully deleted category" + category)
+        return jsonify("Successfully deleted category" + category), 200
 
     else:
-        return "Not a valid request"
+        return jsonify("Not a valid request"), 403
     
 @app.route('/menu/categories/<category>/<menu_item>', methods=['GET', 'DELETE'])
 def menu_item(category, menu_item):
     if wms.menu_item(category, menu_item) == None:
-        return "Unrecognised menu_item"
+        return jsonify("Unrecognised menu_item"), 403
     
     if request.method == 'GET':
         return current_app.response_class(wms.menu_item_json(category, menu_item), mimetype="application/json")
         
     elif request.method == 'DELETE':
         wms.remove_menu_item(category, menu_item)
-        return "Successfully removed menuitem "+menu_item+" in category "+category
+        return jsonify("Successfully removed menuitem "+menu_item+" in category "+category), 200
     else:
-        return "Unrecognised request"
+        return jsonify("Unrecognised request"), 403
 
 @app.route('/menu/deals', methods=['GET','POST'])
 def create_deal():
@@ -107,18 +109,20 @@ def create_deal():
             try: 
                 menu_item_lookup = [i["name"] for i in obj["menu_items"]]
             except:
-                return "Incorrect fields"
+                return jsonify("Incorrect fields"), 403
             
             proc = wms.add_deal(obj["discount"], menu_item_lookup)
             if proc == None:
                 return "One or more menu items is not present in the menu"
             
-            return ("Successfully added deal with new id "+str(proc))
+            return jsonify("Successfully added deal with new id "+str(proc)), 200
         
         else:
-            return "Incorrect content-type"
+            return jsonify("Incorrect content-type"), 403
     else:
-        return "Unrecognised request"
+        return jsonify("Unrecognised request"), 403
+
+#### TABLE AND USER ENDPOINTS
 
 @app.route('/table', methods=['GET'])
 def get_table():
@@ -138,10 +142,10 @@ def add_table():
             table_limit = obj["table_limit"]
             orders = obj["orders"]
         except:
-            return "Incorrect fields"
+            return jsonify("Incorrect fields"), 403
         
         table_id = wms.add_table(table_limit, orders)
-        return ("Successfully added table " + str(table_id))
+        return jsonify("Successfully added table " + str(table_id)), 200
 
 @app.route('/user', methods=['GET'])
 def get_user():
@@ -163,12 +167,12 @@ def add_user():
             last_name = obj["last_name"]
             user_type = obj["user_type"]
         except:
-            return "Incorrect fields"
+            return jsonify("Incorrect fields"), 403
         
         user_id = wms.add_user(first_name, last_name, user_type)
         if user_id == None:
-            return "Unable to create user"
-        return ("Successfully added user " + str(user_id))
+            return jsonify("Unable to create user"), 403
+        return jsonify("Successfully added user " + str(user_id)), 200
     
 @app.route('/table/add/customer', methods=['POST'])
 def add_table_customer():
@@ -184,12 +188,12 @@ def add_table_customer():
             table_id = obj["table_id"]
             customer_id = obj["customer_id"]
         except:
-            return "Incorrect fields"
+            return jsonify("Incorrect fields"), 403
         
         status = wms.add_table_customer(table_id, customer_id)
         if not status:
-            return "Unable to move customer to table"
-        return ("Successfully added customer to table")
+            return jsonify("Unable to move customer to table"), 403
+        return jsonify("Successfully added customer to table"), 200
     
 #### ORDER MANAGER ENDPOINTS
     
@@ -364,7 +368,6 @@ def affect_order_state(order_id):
         ordermanager.change_state(oID)
         return jsonify("Successfully changed state to "+order.state()), 200
 
-        
     else:
         return jsonify("Unrecognised request"), 403
 
