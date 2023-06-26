@@ -7,7 +7,7 @@ class KitchenStaff(User):
     __tablename__ = 'kitchen_staff'
     __mapper_args__ = {'polymorphic_identity': 'kitchen_staff'}
     orderId = Column(Integer, ForeignKey('order.orderId'))
-    userId = Column(Integer, ForeignKey('user.userId'), primary_key=True)
+    id = Column(Integer, ForeignKey('user.userId'), primary_key=True)
 
     def __init__(self, firstname, lastname):
         super().__init__(firstname, lastname)
