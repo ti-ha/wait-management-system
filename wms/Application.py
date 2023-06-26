@@ -37,6 +37,9 @@ class Application():
     def get_menu_item(self, category, name):
         return self.__menu.get_category(category).menu_item(name)
     
+    def get_menu_item_by_id(self, id):
+        return self.__menu.menu_item_lookup(id)
+
     def remove_menu_item(self, category, name):
         self.__menu.get_category(category).remove_menu_item(name)
     
@@ -45,6 +48,12 @@ class Application():
     
     def get_deals_json(self):
         return [i.jsonify() for i in self.__menu.deals()]
+    
+    def get_deal_by_id(self, id):
+        for i in self.__menu.deals():
+            if i.id() == id:
+                return i
+        return None
     
     def add_deal(self, discount, menu_items):
         deal_items = []
@@ -114,7 +123,7 @@ class Application():
                 return user
         return None
     
-    def id_to_table(self, id):
+    def id_to_table(self, id) -> Table:
         for table in self.__tables:
             if table.get_id() == id:
                 return table

@@ -41,7 +41,8 @@ def test2():
 def test3():
     order3 = Order()
     orderMan = OrderManager()
-    orderMan.add_order(order3)
+    table1 = Table(4)
+    orderMan.add_order(order3, table1)
     assert(len(orderMan.orders()) == 1)
     order3_ID = order3.id()
     assert(order3 == orderMan.get_order(order3_ID))
@@ -71,6 +72,29 @@ def test4():
     assert(order4.state() == "completed")
     print("Test4 pass")
 
+def test5():
+    orderman = OrderManager()
+    table1 = Table(4)
+    orderA = Order([burger, snack, drink], [deal, deal2])
+    orderB = Order(snack)
+    orderman.add_order(orderA, table1)
+    orderman.add_order(orderB, table1)
+    try:
+        orderman.calculate_table_bill(table1.get_id())
+    except ValueError:
+        pass
+    orderman.change_to_state(orderA, "served")
+    orderman.change_to_state(orderB, "served")
+    bill = orderman.calculate_table_bill(table1.get_id())
+    assert(bill.get_price() == 48.0)
+    print(orderman.map())
+    assert(len(orderman.orders()) == 2)
+    orderman.remove_order(orderA, table1)
+    assert(len(orderman.orders()) == 1)
+
+
+
+
 
 
 if __name__ == '__main__':
@@ -78,3 +102,4 @@ if __name__ == '__main__':
     test2()
     test3()
     test4()
+    test5()

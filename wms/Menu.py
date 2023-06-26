@@ -17,11 +17,11 @@ class Menu():
             self.__deals = []
 
     # Returns a list of categories 
-    def categories(self):
+    def categories(self) -> list[Category]:
         return self.__categories
     
     # Returns a list of deals
-    def deals(self):
+    def deals(self) -> list[Deal]:
         return self.__deals
     
 
@@ -77,6 +77,19 @@ class Menu():
         
         self.__deals.remove(deal)
         return deal
+    
+    def menu_items(self) -> list[MenuItem]:
+        output = []
+        for i in self.categories():
+            output += i.menu_items()
+        
+        return output
+    
+    def menu_item_lookup(self, id):
+        for i in self.menu_items():
+            if i.id() == id:
+                return i
+        return None
     
     def jsonify(self):
         output = {'categories': [], 'deals': []}

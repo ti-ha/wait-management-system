@@ -1,3 +1,5 @@
+import json
+
 class Bill:
     # Constructor for the final bill
     def __init__(self, price):
@@ -14,3 +16,7 @@ class Bill:
     # When bill is paid, set bool to true
     def pay(self):
         self.__paid = True
+
+    def jsonify(self) -> str:
+        output = {"price": self.__price, "paid": self.__paid}
+        return output

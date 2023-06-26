@@ -3,6 +3,7 @@ from enum import Enum
 from .Bill import Bill
 from .Deal import Deal
 from .MenuItem import MenuItem
+import json
 
 class States(Enum):
     ORDERED = 0
@@ -16,6 +17,10 @@ class States(Enum):
         if v > 4:
             raise ValueError("Enumeration ended")
         return States(v)
+    
+    @staticmethod
+    def list():
+        return States._member_names_
 
 class State:
 
@@ -69,7 +74,7 @@ class Order:
     def bill(self) -> Bill | None:
         return self.__bill
     
-    def deals(self) -> list:
+    def deals(self) -> list[Deal]:
         return self.__deals
     
     def menu_items(self) -> list[MenuItem]:
@@ -132,10 +137,8 @@ class Order:
     def calculate_bill(self) -> Bill:
         # This needs work -> Do we need to check the state before paying the bill?
         # Should we prohibit adding/removing items when bill is paid?
-        # I think so yeah. if you've paid for your order you need to make a new order
-        if not (self.__state.state() == "served"):
-            raise ValueError("Order: calculate_bill(): Order has not been served yet")
-        
+        # Yes, but just make it so they can't pay the bill until order has been served
+                
         # Create a NEW dictionary of {menuitem: price, ... , menuitem: price}. We do not want to modify the existing objects
         pricedict = {}
         for i in self.menu_items():
@@ -153,7 +156,7 @@ class Order:
     
     def mark_as_paid(self):
         if not self.state() == "served":
-            raise ValueError("Order: mark_as_paid(): Order has not been served yet")
+            raise ValueError("Order: mark_as_paid(): Order "+self.id()+" has not been served yet")
         
         if self.bill() == None:
             raise ValueError("Order: bill has not been calculated yet. (Try order.calculate_bill())")
@@ -167,6 +170,25 @@ class Order:
     
     def bill_paid(self):
         return self.bill().is_paid()
+    
+    def jsonify(self):
+        if self.__bill != None:
+            bill = self.__bill.jsonify()
+        else:
+            bill = None
+        output = {"id": self.__id, 
+                  "bill": bill,
+                  "state": self.state(),
+                  "menu_items": [],
+                  "deals": []}
+        for i in self.menu_items():
+            output["menu_items"].append(i.jsonify())
+        for i in self.deals():
+            output["deals"].append(i.jsonify())
+        
+        return output
+        
+        
 
         
 

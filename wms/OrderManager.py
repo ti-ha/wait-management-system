@@ -1,6 +1,8 @@
-from .Order import Order
+from .Order import Order, States
 from .User import User
 from .Table import Table
+from .Bill import Bill
+import json
 
 class OrderManager:
     # Constructor for the Order Manager class
@@ -22,7 +24,7 @@ class OrderManager:
         for order in self.orders():
             if (order.id() == order_ID):
                 return order
-        raise ValueError("OrderManager: get_order(): Order doesn't exist")
+        return None
     
     # Returns a list of orders at a specific table
     def get_table_orders(self, table_id: int) -> list[Order]:
@@ -42,7 +44,10 @@ class OrderManager:
         if order in self.__orders:
             raise ValueError("OrderManager: add_order(): Order already exists")
         self.__orders.append(order)
-        self.__map[table.get_id()] += [order.id()]
+        if table.get_id() in self.__map.keys():
+            self.__map[table.get_id()] += [order.id()]
+        else:
+            self.__map[table.get_id()] = [order.id()]
         table.add_order(order)
 
     # Removing orders from list of orders and relational map
@@ -58,10 +63,62 @@ class OrderManager:
             raise ValueError("OrderManager: remove_order(): Table does not have supplied order")
         
     # Move item along to the next stage
-    def change_state(self, order_ID):
-        order = self.get_order(order_ID)
-        if not isinstance(order, Order):
-            raise TypeError("OrderManager: mark_as_complete(): Object is not of type Order")
+    def change_state(self, order: int | Order):
+        if isinstance(order, int):
+            order = self.get_order(order)
+        elif isinstance(order, Order):
+            pass
+        else:
+            raise TypeError("OrderManager: change_state(): Not a valid Order obj or order_id")
         order.change_state()
+
+    def change_to_state(self, order: int | Order, string: str):
+        if isinstance(order, int):
+            order = self.get_order(order)
+        elif isinstance(order, Order):
+            pass
+        else:
+            raise TypeError("OrderManager: change_to_state(): Not a valid Order obj or order_id")
+        if string.upper() in States.list():
+            while order.state() != string:
+                order.change_state()
+            return True
+        
+        return False
+        
+
+
+    def calculate_table_bill(self, table_id: int) -> Bill:
+        if isinstance(table_id, int):
+            pass
+        else:
+            raise TypeError("OrderManager: calculate_table_bill(): Not a valid id")
+        
+        orderlist = self.get_table_orders(table_id)
+        bills = []
+        for i in orderlist:
+            bills.append(i.calculate_bill())
+        
+        if None in bills:
+            raise ValueError("OrderManager: calculate_table_bill(): One or more orders have not been served yet")
+        subtotal = sum([(i.get_price(),0)[i.is_paid()] for i in bills])
+        
+        return Bill(subtotal)
+    
+    def orders_json(self):
+        output = {"orders": []}
+        for i in self.orders():
+            output["orders"].append(i.jsonify())
+        
+        return json.dumps(output, indent = 8)
+    
+    def jsonify(self):
+        output = {"orders": [],
+                  "table_order_map": self.map()}
+        for i in self.orders():
+            output["orders"].append(i.jsonify())
+        
+        return json.dumps(output, indent = 8)
+
 
 
