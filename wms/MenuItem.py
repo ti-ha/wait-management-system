@@ -23,6 +23,9 @@ class MenuItem():
     def imageURL(self): 
         return self.__imageURL
     
+    def get_name(self):
+        return self.__name
+
     def set_name(self, name):
         if not isinstance(name, str):
             raise TypeError("MenuItem: menu_item.set_name(name): argument is not string")
@@ -37,6 +40,15 @@ class MenuItem():
 
     def set_image_url(self, imageurl: str):
         self.__imageURL = imageurl
+    
+    def is_equal(self, menu_item):
+        if isinstance(menu_item, MenuItem):
+            if self.__name == menu_item.get_name():
+                return True
+            else: 
+                return False
+        else:
+            return False
         
     def isfloat(num):
         try:

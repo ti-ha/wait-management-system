@@ -1,6 +1,7 @@
 import itertools
 from .Order import Order
 from .Customer import Customer
+from .Bill import Bill
 
 class Table:
 
@@ -15,6 +16,7 @@ class Table:
         self.__customers = []
         self.__occupied = False
         self.__tablelimit = tablelimit
+        self.__bill = None
 
     # Getters
     def get_id(self):
@@ -34,6 +36,12 @@ class Table:
     
     def get_tablelimit(self):
         return self.__tablelimit
+    
+    def get_bill(self):
+        return self.__bill
+    
+    def set_bill(self, bill: Bill):
+        self.__bill = bill
 
     # Unique getter to show how many open seats there are
     def get_open_seats(self):
@@ -66,7 +74,17 @@ class Table:
         
         self.__orders.append(order)
 
+    def remove_order(self, order):
+        if not isinstance(order, Order):
+            raise TypeError("Table: remove_order(): Object is not of type Order")
+        
+        if order not in self.__orders:
+            raise ValueError("Table: remove_order(): Order does not exist")
+        
+        self.__orders.remove(order)
+
     # Getting the current bill for the table
+    # TODO: Rewrite this so that it works for all order functionality
     def request_bill(self):
         curr_bill = 0
         for order in self.__orders:
