@@ -86,8 +86,10 @@
 }
 
 .orderItem {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    justify-self: center;
 }
 
 .tableNumber {
@@ -106,6 +108,12 @@
 .ordersList {
     flex-grow: 1;
     overflow-y: auto;
+}
+
+.ordersHeader {
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
 .customerPageHeader {
