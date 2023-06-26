@@ -31,8 +31,8 @@ class Application():
         output = [i.jsonify() for i in categories]
         return output
     
-    def add_menu_item(self, category, name, price):
-        self.__menu.get_category(category).add_menu_item(name, price)
+    def add_menu_item(self, category, name, price, imageurl):
+        self.__menu.get_category(category).add_menu_item(name, price, imageurl)
 
     def get_menu_item(self, category, name):
         return self.__menu.get_category(category).menu_item(name)
