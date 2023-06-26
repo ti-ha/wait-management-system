@@ -11,7 +11,7 @@ export default function StaffLanding() {
                     Kitchen Staff
                 </Button>
             </Link>
-            <Link to="/waitstaff">
+            <Link to="/wait-staff">
                 <Button variant="contained" className="staffButton" style={{fontSize: "2em"}}>
                     Wait Staff
                 </Button>
