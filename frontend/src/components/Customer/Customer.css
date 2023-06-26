@@ -1,27 +1,6 @@
 .customerPage {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    width: 100%;
     height: 100vh;
-}
-
-.landingPageButton {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 75px;
-    width: 125px;
-    border: 2px solid black;
-    background-color: lightgray;
-    font-size: 1.5em;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 16px;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    text-align: center;
 }
 
 .customerContainer {
@@ -107,8 +86,10 @@
 }
 
 .orderItem {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    justify-self: center;
 }
 
 .tableNumber {
@@ -127,4 +108,18 @@
 .ordersList {
     flex-grow: 1;
     overflow-y: auto;
+}
+
+.ordersHeader {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.customerPageHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0px 3px 6px #00000023;
 }

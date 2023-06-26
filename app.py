@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request, current_app
+from flask_cors import CORS, cross_origin
 from wms import *
 import json
 
 app = Flask(__name__)
-
+CORS(app)
 wms = Application()
 ordermanager = OrderManager()
 
@@ -20,7 +21,7 @@ def get_menu():
 @app.route('/menu/categories', methods=['GET','POST'])
 def create_category():
     if request.method == "GET":
-        return current_app.response_class(wms.jsonify_menu_categories(), mimetype="application/json")
+        return jsonify(wms.jsonify_menu_categories()), 200
     elif request.method == "POST":
         '''
         JSON FORMAT:
@@ -30,20 +31,21 @@ def create_category():
         if (content_type == 'application/json'):
             obj = request.json
             wms.add_menu_category(obj["name"])
-            return ("Successfully added category " + obj["name"])
+            return jsonify({"message": f"Successfully added category {obj['name']}"}), 200
         else:
-            return "Incorrect content-type"
+            return jsonify({"error": "Incorrect content-type"}), 400
 
 @app.route('/menu/categories/<category>', methods=['GET', 'POST', 'DELETE'])
 def specific_category(category):
     if request.method == 'GET':
-        return current_app.response_class(wms.jsonify_menu_category(category), mimetype="application/json")
+        return jsonify(wms.jsonify_menu_category(category)), 200
     elif request.method == 'POST':
         '''
         ADDING A NEW MENU ITEM TO CATEGORY.
         JSON FORMAT:
         {"name": "string",
-         "price": float}
+         "price": float  ,
+         "image_url": "string"}
         '''
         content_type = request.headers.get('Content-Type')
         if (content_type == 'application/json'):
@@ -51,10 +53,11 @@ def specific_category(category):
             try:
                 name = obj["name"]
                 price = obj["price"]
+                imageURL = obj["image_url"]
             except:
                 return "Incorrect fields"
             
-            wms.add_menu_item(category, name, price)
+            wms.add_menu_item(category, name, price, imageURL)
             return ("Successfully added menuitem " + name)
         
     elif request.method == 'DELETE':
@@ -391,4 +394,4 @@ def manage_order_bill(order_id):
         return jsonify("Unrecognised request"), 403
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(host='0.0.0.0', port=5000)
