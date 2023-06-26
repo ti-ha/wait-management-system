@@ -36,7 +36,7 @@ export default function Kitchen() {
                         <h3>Ready to Prepare</h3>
                     </div>
                     {orders.map((order, index) => (
-                        <div key={index} className='subheadings'>
+                        <div key={index} className='orderBox'>
                             <p>{order.tableNumber}</p>
                             <p>{order.name}</p>
                             <Button variant="contained" startIcon={<Check />}>Ready</Button>
