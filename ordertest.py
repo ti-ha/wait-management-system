@@ -87,7 +87,6 @@ def test5():
     orderman.change_to_state(orderB, "served")
     bill = orderman.calculate_table_bill(table1.get_id())
     assert(bill.get_price() == 48.0)
-    print(orderman.map())
     assert(len(orderman.orders()) == 2)
     orderman.remove_order(orderA, table1)
     assert(len(orderman.orders()) == 1)
