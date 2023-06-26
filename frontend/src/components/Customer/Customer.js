@@ -66,7 +66,14 @@ export default function Customer() {
 
     return (
         <div className="customerPage">
-            <Link to="/" className="landingPageButton">Landing Page</Link>
+            <header className="customerPageHeader">
+                <div></div>
+                <Link to="/">
+                        <Button variant="contained">
+                            Landing Page
+                        </Button>
+                </Link>
+            </header>
 
             <div className="customerContainer">
                 <div className="categories">
