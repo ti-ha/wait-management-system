@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request, current_app
+from flask_cors import CORS, cross_origin
 from wms import *
 import json
 
 app = Flask(__name__)
-
+CORS(app)
 wms = Application()
 
 # A lot of the logic in here needs to be refactored to a new class. Speedrunning for now to get API working for frontend
@@ -19,7 +20,7 @@ def get_menu():
 @app.route('/menu/categories', methods=['GET','POST'])
 def create_category():
     if request.method == "GET":
-        return current_app.response_class(wms.jsonify_menu_categories(), mimetype="application/json")
+        return jsonify(wms.jsonify_menu_categories()), 200
     elif request.method == "POST":
         '''
         JSON FORMAT:
@@ -29,14 +30,14 @@ def create_category():
         if (content_type == 'application/json'):
             obj = request.json
             wms.add_menu_category(obj["name"])
-            return ("Successfully added category " + obj["name"])
+            return jsonify({"message": f"Successfully added category {obj['name']}"}), 200
         else:
-            return "Incorrect content-type"
+            return jsonify({"error": "Incorrect content-type"}), 400
 
 @app.route('/menu/categories/<category>', methods=['GET', 'POST', 'DELETE'])
 def specific_category(category):
     if request.method == 'GET':
-        return current_app.response_class(wms.jsonify_menu_category(category), mimetype="application/json")
+        return jsonify(wms.jsonify_menu_category(category)), 200
     elif request.method == 'POST':
         '''
         ADDING A NEW MENU ITEM TO CATEGORY.
