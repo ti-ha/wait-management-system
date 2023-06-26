@@ -1,10 +1,12 @@
 import sqlalchemy as db
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import json
 from wms import Menu, OrderManager, ServiceRequestManager, RestaurantManager, Category, Deal, Table, Customer, KitchenStaff, WaitStaff, Manager
 
 engine = db.create_engine('sqlite:///:memory', echo=True)
-
+Session = sessionmaker(engine)
+session = Session()
 Base = declarative_base()
 
 # A decorator class for managing the app
@@ -21,6 +23,7 @@ class Application():
         return self.__menu.jsonify()
     
     def add_menu_category(self, category):
+        session.add(category)
         self.__menu.add_category(Category(category))
 
     def get_menu_category(self, category):
@@ -63,6 +66,7 @@ class Application():
                 return None
         
         deal = Deal(discount, deal_items)
+        session.add(deal)
         self.__menu.add_deal(deal)
         return deal.id()
         
@@ -77,6 +81,7 @@ class Application():
     
     def add_table(self, table_limit, orders):
         table = Table(table_limit, orders)
+        session.add(table)
         self.__tables.append(table)
         return table.get_id()
     
@@ -101,6 +106,7 @@ class Application():
             new_user = Manager(firstname, lastname)
         else:
             return None
+        session.add(new_user)
         self.__users.append(new_user)
         return new_user.get_id()
         

@@ -16,7 +16,6 @@ class WaitStaff(User):
     def get_requests(self):
         return self.__requests
         
-    
     def assign_requests(self, order):
         if not isinstance(order, Order):
             raise TypeError("WaitStaff: assign_requests(): Object is not of type Order")

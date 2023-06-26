@@ -9,7 +9,7 @@ class MenuItem(Base):
 
     __tablename__ = 'menu_item'
 
-    id = Column(Integer, primary_key=True, autoincrement='auto')
+    _id = Column(Integer, primary_key=True, autoincrement='auto')
     _name = Column(String(40), nullable=False)
     _price = Column(Double(2), nullable=False)
     _category = Column(Integer, ForeignKey('category.categoryId'))
@@ -21,17 +21,16 @@ class MenuItem(Base):
         self._price = price
         self._image_url = image_url
 
-    @property
-    def get_id(self):
+    def id(self):
         return self.id
     
-    def get_name(self):
+    def name(self):
         return self._name
     
-    def get_price(self):
+    def price(self):
         return self._price
     
-    def get_image_url(self): 
+    def image_url(self): 
         return self._image_url
     
     def set_name(self, name):
