@@ -25,9 +25,18 @@ export default function WaitStaff() {
             <main className="waitStaffBody">
                 <section className='toBeServed'>
                     <h2>To Be Served</h2>
+                    <div className="subheadings">
+                        <h3>Table No</h3>
+                        <h3>Item</h3>
+                        <h3>Served</h3>
+                    </div>
                 </section>
                 <section className='assistanceRequired'>
                     <h2>Assistance Required</h2>
+                    <div className="subheadings">
+                        <h3>Table No</h3>
+                        <h3>Done</h3>
+                    </div>
                 </section>
             </main>
         </div>

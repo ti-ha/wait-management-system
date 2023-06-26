@@ -31,3 +31,9 @@
     justify-content: center;
     flex-direction: column;
 }
+
+.subheadings {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
