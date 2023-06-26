@@ -13,25 +13,26 @@ class WaitStaff(User):
     def get_requests(self):
         return self.__requests
     
+    # Added order that is cooked to list of requests
     def assign_requests(self, order):
         if not isinstance(order, Order):
             raise TypeError("WaitStaff: assign_requests(): Object is not of type Order")
         
         if order not in self.__requests:
             self.__requests.append(order)
-            # print("Added order number " + str(order.get_id()) + " to Wait Staff")
 
+    # Remove order that has been served
     def remove_requests(self, order):
         if not isinstance(order, Order):
             raise TypeError("WaitStaff: remove_requests(): Object is not of type Order")
         
         if order in self.__requests:
             self.__requests.remove(order)
-            # print("Removed order number " + str(order.get_id()) + " from Wait Staff") 
 
+    # Observer update function
     def order_manager_update(self, orders):
         for order in orders:
-            if order.get_state() == State.COOKED:
+            if order.state() == "ready":
                 self.assign_requests(order)
             else:
                 self.remove_requests(order)

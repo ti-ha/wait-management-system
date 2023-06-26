@@ -17,6 +17,7 @@ class OrderManager:
     def orders(self) -> list[Order]:
         return self.__orders
     
+    # Observer attach and update functions
     def observer_attach(self, observer):
         self.__observers.append(observer)
 

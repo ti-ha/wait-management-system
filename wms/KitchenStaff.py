@@ -1,5 +1,5 @@
 from .User import User
-from .Order import Order, State
+from .Order import Order
 from .OrderManager import OrderManager
 
 class KitchenStaff(User):
@@ -19,7 +19,6 @@ class KitchenStaff(User):
         
         if order not in self.__orders:
             self.__orders.append(order)
-            # print("Added order number " + str(order.get_id()) + " to Kitchen Staff")
 
     # Remove order once complete
     def remove_order(self, order):
@@ -28,12 +27,13 @@ class KitchenStaff(User):
         
         if order in self.__orders:
             self.__orders.remove(order) 
-            # print("Removed order number " + str(order.get_id()) + " from Kitchen Staff") 
 
     # Order manager observer update
     def order_manager_update(self, orders):
         for order in orders:
-            if order.get_state() == State.ORDERED:
+            if order.state() == "ordered":
                 self.assign_order(order)
+            elif order.state() == "cooking":
+                self.__order_manager.change_state(order)
             else:
                 self.remove_order(order)

@@ -1,3 +1,4 @@
+from __future__ import annotations
 import itertools
 from enum import Enum
 from .Bill import Bill
@@ -67,8 +68,6 @@ class Order:
 
         if self.__deals == None:
             self.__deals = []
-
-        
 
     # Getters
     def bill(self) -> Bill | None:

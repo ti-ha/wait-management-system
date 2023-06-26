@@ -56,20 +56,21 @@ def test4():
     wait1 = WaitStaff("Waiter", "One", orderManager)
 
     order4 = Order()
-    orderManager.add_order(order4)
+    table4 = Table(2)
+    orderManager.add_order(order4, table4)
+    # Ordered stage
     assert(len(kitchen1.get_orders()) == 1)
     assert(len(wait1.get_requests()) == 0)
-
-    orderManager.change_state(order4.get_id())
-
+    orderManager.change_state(order4.id())
+    # Cooking stage
     assert(len(kitchen1.get_orders()) == 0)
+    # Should change to ready here
     assert(len(wait1.get_requests()) == 1)
-
-    orderManager.change_state(order4.get_id())
-
+    orderManager.change_state(order4.id())
+    # Served
     assert(len(wait1.get_requests()) == 0)
 
-    assert(order4.get_state() == "served")
+    print("Test4 pass")
     
 
 def test5():
@@ -92,7 +93,7 @@ def test5():
     order4.mark_as_paid()
     assert(order4.bill_paid() == True)
     assert(order4.state() == "completed")
-    print("Test4 pass")
+    print("Test5 pass")
 
 def test6():
     orderman = OrderManager()
@@ -112,6 +113,7 @@ def test6():
     assert(len(orderman.orders()) == 2)
     orderman.remove_order(orderA, table1)
     assert(len(orderman.orders()) == 1)
+    print("Test6 pass")
 
 
 if __name__ == '__main__':

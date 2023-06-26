@@ -1,3 +1,4 @@
+from __future__ import annotations
 from .MenuItem import MenuItem
 import itertools
 
