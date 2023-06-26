@@ -1,6 +1,7 @@
 from .MenuItem import MenuItem
 import itertools
 
+
 class Deal():
 
     # Primary key

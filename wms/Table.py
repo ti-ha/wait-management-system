@@ -1,12 +1,16 @@
 import itertools
 from .Order import Order
 from .Customer import Customer
-
+from .Application import Base
+from sqlalchemy import Column, Integer, Double, String, ForeignKey
 class Table:
 
     # Unique identifier starting from 0
     __id_iter = itertools.count()
-
+    __tablename__ = 'table'
+    tableId = Column(Integer, primary_key=True)
+    occupied = Column(bool)
+    
     # Constructor for Table class
     def __init__(self, tablelimit, orders=None):
         self.__id = next(Table.__id_iter)

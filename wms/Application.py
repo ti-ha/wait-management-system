@@ -1,5 +1,11 @@
-from wms import *
+import sqlalchemy as db
+from sqlalchemy.ext.declarative import declarative_base
 import json
+from wms import Menu, OrderManager, ServiceRequestManager, RestaurantManager, Category, Deal, Table, Customer, KitchenStaff, WaitStaff, Manager
+
+engine = db.create_engine('sqlite:///:memory', echo=True)
+
+Base = declarative_base()
 
 # A decorator class for managing the app
 class Application():

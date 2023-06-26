@@ -1,9 +1,17 @@
 import itertools
+from .Application import Base
+from sqlalchemy import Column, Integer, Double, String, ForeignKey
 
-class MenuItem():
+class MenuItem(Base):
 
     # Unique id
     __id_iter = itertools.count()
+    
+    __tablename__ = 'menu_item'
+    itemId = Column(Integer, primary_key=True)
+    itemName = Column(String(40), nullable=False)
+    itemPrice = Column(Double(2), nullable=False)
+    itemCategory = Column(Integer, ForeignKey('category.categoryId'))
 
     def __init__(self, name, price, imageURL="None"):
         self.__id = next(MenuItem.__id_iter)

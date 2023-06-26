@@ -3,6 +3,8 @@ from enum import Enum
 from .Bill import Bill
 from .Deal import Deal
 from .MenuItem import MenuItem
+from .Application import Base
+from sqlalchemy import Column, Integer, Double, String, ForeignKey
 
 class State(Enum):
     ORDERED = 0
@@ -13,6 +15,9 @@ class Order:
 
     # Unique identifier starting from 0
     __id_iter = itertools.count()
+    __tablename__ = "order"
+    orderId = Column(Integer, primary_key=True)
+    items = Column(Integer, ForeignKey('menu_item.itemId'))
 
     def __init__(self, menu_items=[], deals=[]):
         self.__id = next(Order.__id_iter)

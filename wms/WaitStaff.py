@@ -1,7 +1,13 @@
 from .User import User
 from .Order import Order
+from sqlalchemy import Column, Integer, Double, String, ForeignKey
 
 class WaitStaff(User):
+
+    __tablename__ = "wait_staff"
+    requestId = Column(Integer, ForeignKey('order.orderId'))
+    id = Column(Integer, ForeignKey('user.userId'), primary_key=True)
+
     def __init__(self, firstname, lastname):
         super().__init__(firstname, lastname)
         self.__requests = []
@@ -9,6 +15,7 @@ class WaitStaff(User):
     # Get list of requests
     def get_requests(self):
         return self.__requests
+        
     
     def assign_requests(self, order):
         if not isinstance(order, Order):

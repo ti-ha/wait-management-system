@@ -1,7 +1,14 @@
 from .MenuItem import MenuItem
 import itertools
+from .Application import Base
+from sqlalchemy import Column, Integer, String, ForeignKey
 
-class Category():
+
+class Category(Base):
+
+    __tablename__ = 'category'
+    categoryId = Column(Integer, primary_key=True)
+    categoryName = Column(String(40), nullable=False)
 
     __id_iter = itertools.count()
 
