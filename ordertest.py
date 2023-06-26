@@ -1,4 +1,4 @@
-from wms import Menu, Category, MenuItem, Order, Bill, OrderManager
+from wms import Menu, MenuItem, Order, OrderManager, KitchenStaff, WaitStaff
 from wms.Order import State
 
 menu = Menu()
@@ -38,5 +38,32 @@ def test3():
     assert(len(orderMan.get_orders()) == 1)
     order3_ID = order3.get_id()
     assert(order3 == orderMan.get_order(order3_ID))
-    orderMan.mark_as_complete(order3_ID)
+    orderMan.progress_order(order3_ID)
     assert(order3.get_state() == State.COOKED)
+
+def test4():
+    orderManager = OrderManager()
+    kitchen1 = KitchenStaff("Chef", "One", orderManager)
+    wait1 = WaitStaff("Waiter", "One", orderManager)
+
+    order4 = Order()
+    orderManager.add_order(order4)
+    assert(len(kitchen1.get_orders()) == 1)
+    assert(len(wait1.get_requests()) == 0)
+
+    orderManager.progress_order(order4.get_id())
+
+    assert(len(kitchen1.get_orders()) == 0)
+    assert(len(wait1.get_requests()) == 1)
+
+    orderManager.progress_order(order4.get_id())
+
+    assert(len(wait1.get_requests()) == 0)
+
+    assert(order4.get_state() == State.SERVED)
+
+if __name__ == '__main__':
+    #test1()
+    #test2()
+    #test3()
+    test4()

@@ -88,11 +88,11 @@ class Application():
         if user_type == "Customer":
             new_user = Customer(firstname, lastname)
         elif user_type == "Kitchen Staff":
-            new_user = KitchenStaff(firstname, lastname)
+            new_user = KitchenStaff(firstname, lastname, self.__order_manager)
         elif user_type == "Wait Staff":
-            new_user = WaitStaff(firstname, lastname)
+            new_user = WaitStaff(firstname, lastname, self.__order_manager)
         elif user_type == "Manager":
-            new_user = Manager(firstname, lastname)
+            new_user = Manager(firstname, lastname, self.__order_manager)
         else:
             return None
         self.__users.append(new_user)
