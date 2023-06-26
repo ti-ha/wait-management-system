@@ -5,6 +5,7 @@ from .Deal import Deal
 from .MenuItem import MenuItem
 from .Application import Base
 from sqlalchemy import Column, Integer, Double, String, ForeignKey
+from sqlalchemy.orm import sessionmaker
 
 class State(Enum):
     ORDERED = 0
