@@ -94,8 +94,7 @@ export default function Customer() {
                     <div className="itemContainer">
                         {currentItems.map((item, index) => (
                             <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
-                                {/* Image URL Pending to be added to menu item class*/}
-                                {/* <img src={item.imageURL} alt={item.name}/> */} 
+                                <img src={item.imageURL} alt={item.name}/> 
                                 <p>{item.name}</p>
                                 <p>${item.price}</p>
                             </div>
@@ -112,7 +111,7 @@ export default function Customer() {
 
                     <div className="orders">
                         <div className="ordersList">
-                            <h2>Current Order</h2>
+                            <h2 className="ordersHeader">Current Order</h2>
                             {currentOrder.map((order, index) => (
                                 <div key={index} className="orderItem">
                                     <p>{order.name}</p>
@@ -144,4 +143,4 @@ export default function Customer() {
 
         </div>
     )
-}
+};

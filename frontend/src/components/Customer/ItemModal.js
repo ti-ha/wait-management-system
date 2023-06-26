@@ -34,11 +34,10 @@ export default function ItemModal({ item, onClose, onAddToOrder, quantity, setQu
                 <Box sx={style}>
                     <div className="modalContent">
                         <h2>{item.name}</h2>
-                        {/* Pending ImageURL to be added to menuitem class */}
-                        {/* <img 
+                        <img 
                             src={item.imageURL} 
                             alt={item.name} 
-                        /> */}
+                        />
                         <div>
                             <p>Quantity</p>
                             <IconButton onClick={handleDecreaseQuantity}>
