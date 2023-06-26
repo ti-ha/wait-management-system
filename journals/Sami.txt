@@ -17,3 +17,12 @@ Week 3
 •   Worked with team to finish off and submit the Project Proposal.
 •   Meeting with team to set up the app.
 •   Created a frontend setup using create-react-app and updated the Readme.
+
+Week 4
+•   Development work - frontend of the project.
+•   Created Landing Pages, Customer Pages, Staff Pages and placeholder for Manager pages.
+•   Standup meeting with the team to update on progress.
+
+Week 5
+•   Continued on development work in the frontend.
+•   Linked the frontend to the backend APIs.
