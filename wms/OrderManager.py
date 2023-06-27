@@ -3,7 +3,6 @@ from .Order import Order, States
 from .User import User
 from .Table import Table
 from .Bill import Bill
-import json
 
 class OrderManager:
     # Constructor for the Order Manager class
@@ -25,10 +24,6 @@ class OrderManager:
         for observer in self.__observers:
             observer.order_manager_update(self.__orders)
 
-    # Adding orders to list of orders
-    def add_order(self, order):
-        if not isinstance(order, Order):
-            raise TypeError("OrderManager: add_order(): Object is not of type Order")
     def map(self) -> dict:
         return self.__map
     
