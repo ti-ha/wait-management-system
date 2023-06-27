@@ -116,6 +116,7 @@ class OrderManager:
         orderlist = self.get_table_orders(table_id)
         bills = []
         for i in orderlist:
+            i.calculate_bill()
             bills.append(i.bill())
         
         if None in bills:

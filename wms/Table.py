@@ -1,3 +1,4 @@
+from __future__ import annotations
 import itertools
 from .Order import Order
 from .Customer import Customer
@@ -82,13 +83,3 @@ class Table:
             raise ValueError("Table: remove_order(): Order does not exist")
         
         self.__orders.remove(order)
-
-    # Getting the current bill for the table
-    # TODO: Rewrite this so that it works for all order functionality
-    def request_bill(self):
-        curr_bill = 0
-        for order in self.__orders:
-            if not isinstance(order, Order):
-                raise TypeError("Table: request_bill(): Object is not of type Order")
-            curr_bill += order.calculate_bill().get_price()
-        return curr_bill 
