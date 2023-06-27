@@ -35,7 +35,7 @@ class Application():
         self.__menu.get_category(category).add_menu_item(MenuItem(name, price, imageURL))
 
     def get_menu_item(self, category, name):
-        return self.__menu.get_category(category).menu_item(name)
+        return self.__menu.get_category(category).is_menu_item(name)
     
     def get_menu_item_by_id(self, id):
         return self.__menu.menu_item_lookup(id)

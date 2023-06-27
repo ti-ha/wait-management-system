@@ -47,11 +47,9 @@ class Category():
 
     # Removes a menu_item from the category
     def remove_menu_item(self, name):
-        if self.is_menu_item(name) == None:
-            raise ValueError("Category: category.remove_menu_item(): not an existing menu item")
-        
-        self.__menu_items.remove(name)
-    
+        dummy = MenuItem(name, None, None)
+        self.menu_items = [m for m in self.get_menu_items() if not m.is_equal(dummy)]
+            
     def jsonify(self):
         out = {"id": self.id(), "name": self.name(), "menu_items": []}
         for i in self.menu_items():

@@ -24,7 +24,7 @@ class MenuTests(unittest.TestCase):
         self.app.add_menu_category("Burgers")
         self.app.add_menu_item("Burgers", "Cheeseburger", 20.00, "/cheeseburger.png")
         self.app.remove_menu_item("Burgers", "Cheeseburger")
-        self.assertRaises(ValueError, self.app.get_menu_item("Burgers", "Cheeseburger"))
+        self.assertIsNone(self.app.get_menu_item("Burgers", "Cheeseburger"))
     
 
     # menu = Menu()
