@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import ItemModal from "./ItemModal.js";
 import BillModal from "./BillModal.js";
 import './Customer.css'
-import { Button } from "@mui/material";
+import { Button, Icon, IconButton } from "@mui/material";
+import { Add, Remove } from "@mui/icons-material"
 
 
 export default function Customer() {
@@ -66,7 +67,7 @@ export default function Customer() {
     }
 
     const sendOrderToKitchen = async () => {
-        const menu_items = currentOrder.map(order => ({ id: order.id }));
+        const menu_items = currentOrder.flatMap(order => Array(order.quantity).fill({ id: order.id }));
         const deals = []
 
         try {
@@ -92,18 +93,28 @@ export default function Customer() {
     // TODO: Not working - cannot find Table ID
     const fetchBill = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${tableNumber}`);
-            if (!response.ok) { 
-                const responseBody = await response.json();
-                console.error('Server response:', responseBody); 
-                throw new Error(`HTTP Error with status: ${response.status}`);
-            }
-            const data = await response.json();
-            setBillOrders(data.orders);
+            // const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${tableNumber}`);
+            // if (!response.ok) { 
+            //     const responseBody = await response.json();
+            //     console.error('Server response:', responseBody); 
+            //     throw new Error(`HTTP Error with status: ${response.status}`);
+            // }
+            // const data = await response.json();
+            // setBillOrders(data.orders);
             setIsBillOpen(true);
         } catch (error) {
             console.error("Error fetching bill orders:", error);
         }
+    };
+
+    const updateQuantity = (itemID, amount) => {
+        setCurrentOrder(prevOrder => prevOrder.map(order => {
+            if (order.id === itemID) {
+                return { ...order, quantity: Math.max(0, order.quantity + amount) };
+            } else {
+                return order;
+            }
+        }).filter(order => order.quantity > 0));
     };
 
     return (
@@ -157,7 +168,15 @@ export default function Customer() {
                             {currentOrder.map((order, index) => (
                                 <div key={index} className="orderItem">
                                     <p>{order.name}</p>
-                                    <p>{order.quantity}</p>
+                                    <p>
+                                        <IconButton onClick={() => updateQuantity(order.id, -1)}>
+                                            <Remove />
+                                        </IconButton>
+                                            {order.quantity}
+                                        <IconButton onClick={() => updateQuantity(order.id, 1)}>
+                                            <Add />
+                                        </IconButton>
+                                    </p>
                                     <p>${order.price}</p>
                                 </div>
                             ))}
