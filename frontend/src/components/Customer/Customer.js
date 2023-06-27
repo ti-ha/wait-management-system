@@ -71,7 +71,7 @@ export default function Customer() {
         const deals = []
 
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/orders/add/${tableNumber}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/orders/add/${tableNumber - 1}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -90,17 +90,17 @@ export default function Customer() {
         }
     }
 
-    // TODO: Not working - cannot find Table ID
     const fetchBill = async () => {
         try {
-            // const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${tableNumber}`);
-            // if (!response.ok) { 
-            //     const responseBody = await response.json();
-            //     console.error('Server response:', responseBody); 
-            //     throw new Error(`HTTP Error with status: ${response.status}`);
-            // }
-            // const data = await response.json();
-            // setBillOrders(data.orders);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${tableNumber - 1}`);
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            const data = await response.json();
+            setBillOrders(data.orders);
+            console.log('The bill orders are:', billOrders);
             setIsBillOpen(true);
         } catch (error) {
             console.error("Error fetching bill orders:", error);
@@ -168,7 +168,7 @@ export default function Customer() {
                             {currentOrder.map((order, index) => (
                                 <div key={index} className="orderItem">
                                     <p>{order.name}</p>
-                                    <p>
+                                    <div style={{display: 'flex', alignItems: 'center'}}>
                                         <IconButton onClick={() => updateQuantity(order.id, -1)}>
                                             <Remove />
                                         </IconButton>
@@ -176,7 +176,7 @@ export default function Customer() {
                                         <IconButton onClick={() => updateQuantity(order.id, 1)}>
                                             <Add />
                                         </IconButton>
-                                    </p>
+                                    </div>
                                     <p>${order.price}</p>
                                 </div>
                             ))}
@@ -203,7 +203,6 @@ export default function Customer() {
                 />
             }
 
-            {/* TODO: WIP */}
             {isBillOpen && 
                 <BillModal 
                     orders={billOrders}

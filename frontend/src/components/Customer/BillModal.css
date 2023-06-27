@@ -1,0 +1,4 @@
+.billOrder {
+    display: flex;
+    justify-content: space-between;
+}

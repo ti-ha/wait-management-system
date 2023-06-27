@@ -1,5 +1,6 @@
 import React from 'react';
-import { Modal, Box } from '@mui/material';
+import { Modal, Box, Button } from '@mui/material';
+import './BillModal.css'
 
 export default function BillModal({ orders, onClose }) {
 
@@ -15,6 +16,10 @@ export default function BillModal({ orders, onClose }) {
         p: 4,
     };
 
+    const total = orders.reduce((sum, order) => {
+        return sum + order.menu_items.reduce((itemSum, item) => itemSum + item.price, 0);
+    }, 0);
+
     return (
         <Modal
             open={true}
@@ -22,14 +27,23 @@ export default function BillModal({ orders, onClose }) {
         >
             <Box sx={style}>
                 <h2>Bill</h2>
-                {/* {orders.map((order, index) => (
-                    <div key={index} className="billOrder">
-                        <p>{order.name}</p>
-                        <p>{order.quantity}</p>
-                        <p>${order.price}</p>
-                    </div>
-                ))} */}
-                <button onClick={onClose}>Close</button>
+                <div className="billOrder">
+                    <strong>Item Name</strong>
+                    <strong>Price</strong>
+                </div>
+                {orders.map((order, index) => (
+                    order.menu_items.map((item, index) => (
+                        <div key={index} className="billOrder">
+                            <p>{item.name}</p>
+                            <p>${item.price.toFixed(2)}</p>
+                        </div>
+                    ))
+                ))}
+                <div className="billOrder">
+                    <strong>Total:</strong>
+                    <strong>${total.toFixed(2)}</strong>
+                </div>
+                <Button variant="contained" onClick={onClose}>Close</Button>
             </Box>
         </Modal>
     );
