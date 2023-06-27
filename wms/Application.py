@@ -70,10 +70,10 @@ class Application():
         return deal.id()
         
     def get_tables_json(self):
-        tableDict = {}
+        tableDict = {"tables": []}
         for table in self.__tables:
-            table_num = "Table_" + str(table.get_id())
-            tableDict[table_num] = {"availability": table.get_open_seats(),
+            tableDict["tables"] = { "id":table.get_id(),
+                                    "availability": table.get_open_seats(),
                                     "table limit": table.get_tablelimit(), 
                                     "is occupied": table.is_occupied()}
         return tableDict
