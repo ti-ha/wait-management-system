@@ -72,10 +72,10 @@ class Application():
     def get_tables_json(self):
         tableDict = {"tables": []}
         for table in self.__tables:
-            tableDict["tables"] = { "id":table.get_id(),
+            tableDict["tables"].append({ "id":table.get_id(),
                                     "availability": table.get_open_seats(),
                                     "table limit": table.get_tablelimit(), 
-                                    "is occupied": table.is_occupied()}
+                                    "is occupied": table.is_occupied()})
         return tableDict
     
     def add_table(self, table_limit, orders):
