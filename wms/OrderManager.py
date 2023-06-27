@@ -26,6 +26,11 @@ class OrderManager:
                 return order
         return None
     
+    def get_table_from_order(self, order_ID) -> int:
+        for i in self.map().keys():
+            if order_ID in self.map()[i]:
+                return i
+    
     # Returns a list of orders at a specific table
     def get_table_orders(self, table_id: int) -> list[Order]:
         if table_id not in self.map().keys():
@@ -113,10 +118,10 @@ class OrderManager:
         return json.dumps(output, indent = 8)
     
     def jsonify(self):
-        output = {"orders": [],
-                  "table_order_map": self.map()}
+        output = {"orders": []}
         for i in self.orders():
-            output["orders"].append(i.jsonify())
+            table_id = self.get_table_from_order(i.id())
+            output["orders"].append(i.jsonify(table_id))
         
         return json.dumps(output, indent = 8)
 

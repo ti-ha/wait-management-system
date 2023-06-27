@@ -171,7 +171,7 @@ class Order:
     def bill_paid(self):
         return self.bill().is_paid()
     
-    def jsonify(self):
+    def jsonify(self, table_id=None):
         if self.__bill != None:
             bill = self.__bill.jsonify()
         else:
@@ -185,6 +185,9 @@ class Order:
             output["menu_items"].append(i.jsonify())
         for i in self.deals():
             output["deals"].append(i.jsonify())
+
+        if table_id != None:
+            output["table_id"] = table_id
         
         return output
         
