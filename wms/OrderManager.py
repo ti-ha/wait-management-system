@@ -123,7 +123,7 @@ class OrderManager:
             table_id = self.get_table_from_order(i.id())
             output["orders"].append(i.jsonify(table_id))
         
-        return json.dumps(output, indent = 8)
+        return output
 
 
 

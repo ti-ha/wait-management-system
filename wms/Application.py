@@ -31,8 +31,9 @@ class Application():
         output = [i.jsonify() for i in categories]
         return output
     
-    def add_menu_item(self, category, name, price, imageURL):
-        self.__menu.get_category(category).add_menu_item(MenuItem(name, price, imageURL))
+    def add_menu_item(self, category, name, price, imageurl):
+        item = MenuItem(name, price, imageurl)
+        self.__menu.get_category(category).add_menu_item(item)
 
     def get_menu_item(self, category, name):
         return self.__menu.get_category(category).menu_item(name)
@@ -76,7 +77,7 @@ class Application():
             tableDict[table_num] = {"availability": table.get_open_seats(),
                                     "table limit": table.get_tablelimit(), 
                                     "is occupied": table.is_occupied()}
-        return json.dumps(tableDict)
+        return tableDict
     
     def add_table(self, table_limit, orders):
         table = Table(table_limit, orders)
