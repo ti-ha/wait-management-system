@@ -6,7 +6,6 @@ import json
 app = Flask(__name__)
 CORS(app)
 wms = Application()
-ordermanager = OrderManager()
 
 # A lot of the logic in here needs to be refactored to a new class. Speedrunning for now to get API working for frontend
 
