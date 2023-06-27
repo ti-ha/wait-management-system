@@ -196,14 +196,14 @@ def add_table_customer():
 @app.route('/ordermanager', methods=['GET'])
 def get_order_manager():
     if request.method == 'GET':
-        return jsonify(ordermanager.jsonify()), 200
+        return jsonify(wms.jsonify_order_manager()), 200
     else:
         return jsonify("Unrecognised request"), 403
     
 @app.route('/ordermanager/orders', methods=['GET'])
 def get_orders():
     if request.method == 'GET':
-        return jsonify(ordermanager.orders_json()), 200
+        return jsonify(wms.jsonify_order_manager_orders()), 200
     else:
         return jsonify("Unrecognised request"), 403
 
@@ -224,29 +224,11 @@ def add_order(table_id):
             except:
                 return jsonify("Incorrect fields"), 403
             
-            table = wms.id_to_table(int(table_id))
-            if table == None:
-                return jsonify("Table does not exist"), 403
+            try:
+                wms.add_order_to_order_manager(table_id, menu_items_ids, deals_ids)
+            except ValueError:
+                return jsonify("Invalid args in json"), 403
             
-            menu_items = []
-            for i in menu_items_ids:
-                item = wms.get_menu_item_by_id(i)
-                if item == None:
-                    return jsonify("MenuItem doees not exist"), 403
-                else:
-                    menu_items.append(item)
-
-            deals = []
-            for i in deals_ids:
-                deal = wms.get_deal_by_id(i)
-                if deal == None:
-                    return jsonify("Deal does not exist"), 403
-                else:
-                    deals.append(deal)
-
-            order = Order(menu_items, deals)
-
-            ordermanager.add_order(order, table)
             return jsonify("Successfully added order"), 200
 
     else:
@@ -254,17 +236,11 @@ def add_order(table_id):
     
 @app.route('/ordermanager/orders/remove/<table_id>/<order_id>', methods=['DELETE'])
 def remove_order(table_id, order_id):
-    tID = int(table_id)
-    oID = int(order_id)
     if request.method == 'DELETE':
-        table = wms.id_to_table(tID)
-        order = ordermanager.get_order(oID)
-        if (table == None or order == None):
-            return jsonify("Incorrect fields"), 403
         try:
-            ordermanager.remove_order(order, table)
+            wms.remove_order_from_order_manager(table_id, order_id)
         except:
-            return jsonify("Order either doesn't exist or is not assigned to a table"), 403
+            return jsonify("Bad request (See backend server for details)"), 403
         
         return jsonify("Successfully deleted order"), 200
     else:
@@ -292,53 +268,39 @@ def manage_table_bill(table_id):
     '''
     EMPTY POST REQUEST. NO DATA EXPECTED
     '''
-    tID = int(table_id)
     if request.method == 'GET':
         try:
-            bill = ordermanager.calculate_table_bill(tID)
-        except TypeError:
-            return jsonify("Not a valid table_id"), 403
-        except ValueError:
-            return jsonify("One or more orders have not been served yet. Try paying for each bill individually"), 403
-        
-        wms.id_to_table(tID).set_bill(bill)
-        output = {"price": bill.get_price(), "is_paid": bill.is_paid()}
+            output = wms.calculate_and_return_bill(table_id)
+        except Exception as e:
+            return jsonify(e.args), 403
+
         return jsonify(output), 200
 
     
     elif request.method == 'POST':
-        table = wms.id_to_table(tID)
-        if table == None:
-            return jsonify("Not a valid table_id"), 403
-        bill = table.get_bill()
-        if bill == None:
-            return jsonify("Bill not created yet. try calculating it"), 403
-        bill.pay()
+        try:
+            wms.pay_table_bill(table_id)
+        except Exception as e:
+            return jsonify(e.args), 403
+        
         return jsonify("Successfully paid bill"), 200
     else:
         return jsonify("Unrecognised request", 403)
     
 @app.route("/ordermanager/orders/<order_id>", methods=['GET','DELETE'])
 def manage_order_by_id(order_id):
-    oID = int(order_id)
     if request.method == 'GET':
-        order = ordermanager.get_order(oID)
-        if order == None:
-            return jsonify("Not a valid order_id"), 403
-        return jsonify(order.jsonify()), 200
+        try:
+            order = wms.get_order_by_id(order_id)
+        except Exception as e:
+            return jsonify(e.args), 403
+        return jsonify(order), 200
+    
     elif request.method == 'DELETE':
-        order = ordermanager.get_order(oID)
-        if order == None:
-            return jsonify("Not a valid order_id"), 403
-        
-        tID = -1
-        for i in ordermanager.map():
-            if oID in ordermanager.map()[i]:
-                tID = i
-        
-        if tID == -1:
-            return jsonify("Order is not in a table. How did you manage that?"), 403
-        ordermanager.remove_order(order, wms.id_to_table(tID))
+        try:
+            wms.delete_order_by_id(order_id)
+        except Exception as e:
+            return jsonify(e.args), 403
         return jsonify("Successfully removed order from ordermanager"), 200
 
     else:
@@ -346,23 +308,22 @@ def manage_order_by_id(order_id):
     
 @app.route("/ordermanager/orders/<order_id>/state", methods=['GET', 'POST'])
 def affect_order_state(order_id):
-    oID = int(order_id)
     if request.method == 'GET':
-        order = ordermanager.get_order(oID)
-        if order == None:
-            return jsonify("Not a valid order_id"), 403
-        output = {"state": order.state()}
+        try:
+            output = wms.get_order_state(order_id)
+        except Exception as e:
+            return jsonify(e.args), 403
         return jsonify(output), 200
     
     elif request.method == 'POST':
         '''
         EMPTY FOR NOW. WE WILL EXPAND THIS LATER TO INCLUDE STATE LEAPS IF WE WANT
         '''
-        order = ordermanager.get_order(oID)
-        if order == None: 
-            return jsonify("Not a valid order_id", 403)
-        ordermanager.change_state(oID)
-        return jsonify("Successfully changed state to "+order.state()), 200
+        try:
+            output = wms.change_order_state(order_id)
+        except Exception as e:
+            return jsonify(e.args), 403
+        return jsonify("Successfully changed state to "+output), 200
 
         
     else:
@@ -372,24 +333,19 @@ def affect_order_state(order_id):
 def manage_order_bill(order_id):
     oID = int(order_id)
     if request.method == 'GET':
-        order = ordermanager.get_order(oID)
-        if order == None:
-            return jsonify("Not a valid order_id"), 403
-        if order.bill() == None:
-            order.calculate_bill()
-        output = {"price": order.bill().get_price(), "paid": order.bill().is_paid()}
-        return jsonify(output), 200
-    elif request.method == 'POST':
-        order = ordermanager.get_order(oID)
-        if order == None:
-            return jsonify("Not a valid order_id"), 403
-        if order.bill() == None:
-            return jsonify("Order does not have a bill. Try calculating it first"), 403
         try:
-            order.mark_as_paid()
-        except:
-            return jsonify("Order is unable to be paid at this time"), 403
-        return jsonify("Bill has been paid"), 200
+            output = wms.get_order_bill(order_id)
+        except Exception as e:
+            return jsonify(e.args), 403
+        
+        return jsonify(output), 200
+    
+    elif request.method == 'POST':
+        try:
+            wms.pay_order_bill(order_id)
+        except Exception as e:
+            return jsonify(e.args), 403
+        return jsonify("Successfully paid bill"), 200
     else:
         return jsonify("Unrecognised request"), 403
 
