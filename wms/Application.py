@@ -123,6 +123,7 @@ class Application():
     def jsonify_order_manager_orders(self):
         return self.__order_manager.orders_json()
     
+    
     def add_order_to_order_manager(self, table_id, menu_items_ids, deals_ids):
         table = self.id_to_table(int(table_id))
         if table == None:
@@ -160,6 +161,18 @@ class Application():
         except:
             raise ValueError("Application(OrderManager): remove_order_from_order_manager(): Order either doesn't exist or is not assigned to a table")
         
+    def get_table_orders(self, table_id):
+        tID = int(table_id)
+        try:
+            orders = self.__order_manager.get_table_orders(tID)
+        except ValueError:
+            raise ValueError("table_id does not exist in map")
+        
+        output = {"orders": []}
+        for i in orders:
+            output["orders"].append(i.jsonify())
+        return output
+    
     def calculate_and_return_bill(self, table_id):
         tID = int(table_id)
         try: 
