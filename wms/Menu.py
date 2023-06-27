@@ -98,6 +98,6 @@ class Menu():
         for j in self.deals():
             output['deals'].append(j.jsonify())
         
-        return json.dumps(output, indent = 8)
+        return output
 
         

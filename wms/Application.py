@@ -71,12 +71,12 @@ class Application():
         return deal.id()
         
     def get_tables_json(self):
-        tableDict = {}
+        tableDict = {"tables": []}
         for table in self.__tables:
-            table_num = "Table_" + str(table.get_id())
-            tableDict[table_num] = {"availability": table.get_open_seats(),
+            tableDict["tables"].append({ "id":table.get_id(),
+                                    "availability": table.get_open_seats(),
                                     "table limit": table.get_tablelimit(), 
-                                    "is occupied": table.is_occupied()}
+                                    "is occupied": table.is_occupied()})
         return tableDict
     
     def add_table(self, table_limit, orders):
@@ -91,7 +91,7 @@ class Application():
             userDict[user_num] = {"first name": user.get_firstname(),
                                   "last name": user.get_lastname(),
                                   "type": user.__class__.__name__}
-        return json.dumps(userDict)
+        return userDict
     
     def add_user(self, firstname, lastname, user_type):
         new_user = None
@@ -179,6 +179,12 @@ class Application():
         bill = table.get_bill()
         if bill == None:
             raise ValueError("Bill not created yet. Try calculating it with a GET")
+        
+        payable = True
+        for i in table.get_orders():
+            if i.state() not in ["served", "completed"]:
+                payable == False
+                raise ValueError("One or more orders hasn't been served yet")
         bill.pay()
 
     def get_order_by_id(self, order_id):

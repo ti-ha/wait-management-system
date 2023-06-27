@@ -25,7 +25,7 @@ class Table:
     def is_occupied(self):
         return self.__occupied
     
-    def get_orders(self):
+    def get_orders(self) -> list[Order]:
         return self.__orders
     
     def get_order(self, orderNumber):
