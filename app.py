@@ -248,16 +248,12 @@ def remove_order(table_id, order_id):
     
 @app.route('/ordermanager/tables/<table_id>', methods=['GET'])
 def get_table_orders(table_id):
-    tID = int(table_id)
     if request.method == 'GET':
         try:
-            orders = ordermanager.get_table_orders(tID)
-        except ValueError:
-            return jsonify({"error": "table_id does not exist in map"}), 400
+            output = wms.get_table_orders(table_id)
+        except Exception as e:
+            return jsonify({"error": e.args}), 400
         
-        output = {"orders": []}
-        for i in orders:
-            output["orders"].append(i.jsonify())
         return jsonify(output), 200
 
     else:
