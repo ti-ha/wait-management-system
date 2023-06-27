@@ -206,7 +206,7 @@ def get_orders():
     else:
         return jsonify({"error": "Unrecognised request"}), 400
 
-@app.route('/ordermanager/orders/add/<table_id>', methods=['POST'])
+@app.route('/ordermanager/orders/add/<table_id>' , methods=['POST'])
 def add_order(table_id):
     '''
     JSON FORMAT:
