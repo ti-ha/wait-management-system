@@ -331,7 +331,6 @@ def affect_order_state(order_id):
 
 @app.route("/ordermanager/orders/<order_id>/bill", methods=['GET', 'POST'])
 def manage_order_bill(order_id):
-    oID = int(order_id)
     if request.method == 'GET':
         try:
             output = wms.get_order_bill(order_id)
