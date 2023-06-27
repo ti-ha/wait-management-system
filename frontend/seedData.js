@@ -72,3 +72,29 @@ Promise.all(categoryPromises).then(() => {
         });
     });
 });
+
+
+const tables = [1, 2, 3];
+
+tables.forEach(async () => {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/table/add`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ table_limit: 3, orders: [] })
+        });
+
+        if (!response.ok) { 
+            const responseBody = await response.json();
+            console.error('Server response:', responseBody); 
+            throw new Error(`HTTP Error with status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Successfully added table", data);
+    } catch (error) {
+        console.error("Error adding table:", error);
+    }
+});
