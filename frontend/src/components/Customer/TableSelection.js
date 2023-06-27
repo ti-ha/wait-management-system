@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import './TableSelection.css'
@@ -8,7 +8,27 @@ export default function TableSelection() {
 
     const navigate = useNavigate();
 
+    const [tables, setTables] = useState([]);
     const [tableNo, setTableNo] = useState("");
+
+    useEffect(() => {
+        const fetchTables = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/table`);
+                if (!response.ok) { 
+                    const responseBody = await response.json();
+                    console.error('Server response:', responseBody); 
+                    throw new Error(`HTTP Error with status: ${response.status}`);
+                }
+                const data = await response.json();
+                setTables(data.tables);
+            } catch (error) {
+                console.error("Error fetching tables:", error);
+            }
+        }
+        fetchTables();
+    }, []);
+    
 
     const handleChange = (event) => {
         setTableNo(event.target.value);
@@ -44,9 +64,11 @@ export default function TableSelection() {
                             onChange={handleChange}
                             label="Table Number"
                         >
-                            <MenuItem value={1}>Table 1</MenuItem>
-                            <MenuItem value={2}>Table 2</MenuItem>
-                            <MenuItem value={3}>Table 3</MenuItem>
+                            {tables.map((table) => (
+                                <MenuItem key={table.id + 1} value={table.id + 1}>
+                                    {`Table ${table.id + 1}`}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                     <Button 

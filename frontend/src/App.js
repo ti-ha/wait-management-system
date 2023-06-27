@@ -7,11 +7,9 @@ import Manager from './components/Manager/Manager.js';
 import Customer from './components/Customer/Customer.js';
 import Kitchen from './components/Staff/Kitchen.js';
 import WaitStaff from './components/Staff/WaitStaff.js';
-import { OrderProvider } from './contexts/OrderContext.js';
 
 function App() {
   return (
-    <OrderProvider>
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<Landing />} />
@@ -23,7 +21,6 @@ function App() {
           <Route path="/wait-staff" element={<WaitStaff />} />
         </Routes>
       </BrowserRouter>
-    </OrderProvider>
   );
 }
 

@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from 'react-router-dom';
 import ItemModal from "./ItemModal.js";
-import { OrderContext } from "../../contexts/OrderContext.js";
+import BillModal from "./BillModal.js";
 import './Customer.css'
-import { Button } from "@mui/material";
+import { Button, Icon, IconButton } from "@mui/material";
+import { Add, Remove } from "@mui/icons-material"
+
 
 export default function Customer() {
 
@@ -14,15 +16,20 @@ export default function Customer() {
     const [quantity, setQuantity] = useState(1);
     const [currentOrder, setCurrentOrder] = useState([]);
     const { tableNumber } = useParams();
-    const { setOrders } = useContext(OrderContext);
-    
+    const [orders, setOrders] = useState([]);
+    const [billOrders, setBillOrders] = useState([]);
+    const [isBillOpen, setIsBillOpen] = useState(false);
 
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories`);
-                if (!res.ok) { throw res }
-                const data = await res.json();
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories`);
+                if (!response.ok) { 
+                    const responseBody = await response.json();
+                    console.error('Server response:', responseBody); 
+                    throw new Error(`HTTP Error with status: ${response.status}`);
+                }
+                const data = await response.json();
                 setCategories(data);
                 setCurrentCategory(data[0].name);
                 fetchItems(data[0].name);
@@ -34,8 +41,8 @@ export default function Customer() {
     }, []);
 
     const fetchItems = async (category) => {
-        const res = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
-        const data = await res.json();
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
+        const data = await response.json();
         setCurrentItems(data.menu_items);
     }
 
@@ -59,10 +66,56 @@ export default function Customer() {
         handleCloseModal();
     }
 
-    const sendOrderToKitchen = () => {
-        setOrders(prevOrders => [...prevOrders, ...currentOrder]);
-        setCurrentOrder([]);
+    const sendOrderToKitchen = async () => {
+        const menu_items = currentOrder.flatMap(order => Array(order.quantity).fill({ id: order.id }));
+        const deals = []
+
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/orders/add/${tableNumber - 1}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ menu_items: menu_items, deals: deals })
+            });
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            setOrders(prevOrders => [...prevOrders, ...currentOrder]);
+            setCurrentOrder([]);            
+        } catch (error) {
+            console.error('Error sending order to kitchen:', error);
+        }
     }
+
+    const fetchBill = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${tableNumber - 1}`);
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            const data = await response.json();
+            setBillOrders(data.orders);
+            console.log('The bill orders are:', billOrders);
+            setIsBillOpen(true);
+        } catch (error) {
+            console.error("Error fetching bill orders:", error);
+        }
+    };
+
+    const updateQuantity = (itemID, amount) => {
+        setCurrentOrder(prevOrder => prevOrder.map(order => {
+            if (order.id === itemID) {
+                return { ...order, quantity: Math.max(0, order.quantity + amount) };
+            } else {
+                return order;
+            }
+        }).filter(order => order.quantity > 0));
+    };
 
     return (
         <div className="customerPage">
@@ -115,7 +168,15 @@ export default function Customer() {
                             {currentOrder.map((order, index) => (
                                 <div key={index} className="orderItem">
                                     <p>{order.name}</p>
-                                    <p>{order.quantity}</p>
+                                    <div style={{display: 'flex', alignItems: 'center'}}>
+                                        <IconButton onClick={() => updateQuantity(order.id, -1)}>
+                                            <Remove />
+                                        </IconButton>
+                                            {order.quantity}
+                                        <IconButton onClick={() => updateQuantity(order.id, 1)}>
+                                            <Add />
+                                        </IconButton>
+                                    </div>
                                     <p>${order.price}</p>
                                 </div>
                             ))}
@@ -126,9 +187,10 @@ export default function Customer() {
                         </Button>
                     </div>
 
+                    <Button variant="contained" onClick={fetchBill}>
+                        View Bill
+                    </Button>
                 </div>
-
-
             </div>
 
             {selectedItem && 
@@ -138,6 +200,13 @@ export default function Customer() {
                     onAddToOrder={handleAddToOrder}
                     quantity={quantity}
                     setQuantity={setQuantity}
+                />
+            }
+
+            {isBillOpen && 
+                <BillModal 
+                    orders={billOrders}
+                    onClose={() => setIsBillOpen(false)}
                 />
             }
 
