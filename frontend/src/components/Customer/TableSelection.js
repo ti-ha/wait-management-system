@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import './TableSelection.css'
@@ -18,6 +18,40 @@ export default function TableSelection() {
         console.log(`Table ${tableNo} selected`);
         navigate(`/customer/${tableNo}`)
     }
+
+    // Create tables in the backend
+    // TODO: Fix table creation. This is being called on every render.
+    const createTables = async () => {
+        const tables = [1, 2, 3];
+
+        tables.forEach(async (tableNumber) => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/table/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ table_limit: 3, orders: [] })
+                });
+
+                if (!response.ok) { 
+                    const responseBody = await response.json();
+                    console.error('Server response:', responseBody); 
+                    throw new Error(`HTTP Error with status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Successfully added table", data);
+            } catch (error) {
+                console.error("Error adding table:", error);
+            }
+        });
+
+    }
+
+    useEffect(() => {
+        createTables();
+    }, []);
 
     return (
         <div className="container">
