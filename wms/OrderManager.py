@@ -39,6 +39,11 @@ class OrderManager:
                 return order
         return None
     
+    def get_table_from_order(self, order_ID) -> int:
+        for i in self.map().keys():
+            if order_ID in self.map()[i]:
+                return i
+    
     # Returns a list of orders at a specific table
     def get_table_orders(self, table_id: int) -> list[Order]:
         if table_id not in self.map().keys():
@@ -111,11 +116,15 @@ class OrderManager:
         orderlist = self.get_table_orders(table_id)
         bills = []
         for i in orderlist:
-            bills.append(i.calculate_bill())
+            bills.append(i.bill())
         
         if None in bills:
             raise ValueError("OrderManager: calculate_table_bill(): One or more orders have not been served yet")
-        subtotal = sum([(i.get_price(),0)[i.is_paid()] for i in bills])
+        
+        subtotal = 0
+        for i in bills:
+            if i.is_paid() == False:
+                subtotal += i.get_price()
         
         return Bill(subtotal)
     
@@ -124,15 +133,15 @@ class OrderManager:
         for i in self.orders():
             output["orders"].append(i.jsonify())
         
-        return json.dumps(output, indent = 8)
+        return output
     
     def jsonify(self):
-        output = {"orders": [],
-                  "table_order_map": self.map()}
+        output = {"orders": []}
         for i in self.orders():
-            output["orders"].append(i.jsonify())
+            table_id = self.get_table_from_order(i.id())
+            output["orders"].append(i.jsonify(table_id))
         
-        return json.dumps(output, indent = 8)
+        return output
 
 
 

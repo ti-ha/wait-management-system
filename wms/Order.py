@@ -70,7 +70,7 @@ class Order:
             self.__deals = []
 
     # Getters
-    def bill(self) -> Bill | None:
+    def bill(self) -> Bill:
         return self.__bill
     
     def deals(self) -> list[Deal]:
@@ -155,22 +155,22 @@ class Order:
     
     def mark_as_paid(self):
         if not self.state() == "served":
-            raise ValueError("Order: mark_as_paid(): Order "+self.id()+" has not been served yet")
+            raise ValueError("Order: mark_as_paid(): Order "+str(self.id())+" has not been served yet")
         
-        if self.bill() == None:
+        if self.__bill == None:
             raise ValueError("Order: bill has not been calculated yet. (Try order.calculate_bill())")
         
-        if self.bill().is_paid():
+        if self.__bill.is_paid():
             return "Bill already paid"
         
         else:
-            self.bill().pay()
+            self.__bill.pay()
             self.change_state()
     
     def bill_paid(self):
-        return self.bill().is_paid()
+        return self.__bill.is_paid()
     
-    def jsonify(self):
+    def jsonify(self, table_id=None):
         if self.__bill != None:
             bill = self.__bill.jsonify()
         else:
@@ -184,6 +184,9 @@ class Order:
             output["menu_items"].append(i.jsonify())
         for i in self.deals():
             output["deals"].append(i.jsonify())
+
+        if table_id != None:
+            output["table_id"] = table_id
         
         return output
         
