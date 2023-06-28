@@ -3,41 +3,49 @@ import { config } from 'dotenv';
 
 config();
 
+const imageLinks = {
+    "Meatloaf": "https://www.spendwithpennies.com/wp-content/uploads/2022/12/1200-The-Best-Meatloaf-Recipe-SpendWithPennies.jpg",
+    "Arancini Balls": "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/arancini_balls-db2b1df.jpg?quality=90&webp=true&resize=440,400",
+    "Greek Salad": "https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2018/08/Greek-Salad-main.jpg",
+    "Salt and Pepper Squid": "https://redhousespice.com/wp-content/uploads/2022/02/squid-with-salt-and-pepper-seasoning-scaled.jpg",
+    "Placeholder": "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg"
+}
+
 const categories = [
-    "Drinks",
+    "Entrees",
     "Mains",
     "Snacks"
 ];
 
 const menuItems = [
     {
-        category: "Drinks",
+        category: "Entrees",
         items: [
-            { name: "Orange Juice", price: 3, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Apple Juice", price: 3, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Happy Dad", price: 6.5, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Prime Hydration", price: 8.5, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" }
+            { name: "Meatloaf", price: 3, image_url: imageLinks["Meatloaf"] },
+            { name: "Arancini Balls", price: 9, image_url: imageLinks["Arancini Balls"] },
+            { name: "Greek Salad", price: 6.5, image_url: imageLinks["Greek Salad"] },
+            { name: "Salt and Pepper Squid", price: 8.5, image_url: imageLinks["Salt and Pepper Squid"] }
         ]
     },
     {
         category: "Mains",
         items: [
-            { name: "Burger", price: 12, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Item 2", price: 12, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Item 3", price: 12, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Item 4", price: 12, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Item 5", price: 12, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Item 6", price: 12, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" }
+            { name: "Burger", price: 12, image_url: imageLinks["Placeholder"] },
+            { name: "Item 2", price: 12, image_url: imageLinks["Placeholder"] },
+            { name: "Item 3", price: 12, image_url: imageLinks["Placeholder"] },
+            { name: "Item 4", price: 12, image_url: imageLinks["Placeholder"] },
+            { name: "Item 5", price: 12, image_url: imageLinks["Placeholder"] },
+            { name: "Item 6", price: 12, image_url: imageLinks["Placeholder"] }
         ]
     },
     {
         category: "Snacks",
         items: [
-            { name: "Item 7", price: 10, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Item 8", price: 10, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Item 9", price: 10, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Item 10", price: 10, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" },
-            { name: "Item 11", price: 10, image_url: "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg" }
+            { name: "Item 7", price: 10, image_url: imageLinks["Placeholder"] },
+            { name: "Item 8", price: 10, image_url: imageLinks["Placeholder"] },
+            { name: "Item 9", price: 10, image_url: imageLinks["Placeholder"] },
+            { name: "Item 10", price: 10, image_url: imageLinks["Placeholder"] },
+            { name: "Item 11", price: 10, image_url: imageLinks["Placeholder"] }
         ]
     }
 ]
