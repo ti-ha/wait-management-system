@@ -22,6 +22,9 @@ export default function ItemModal({ item, onClose, onAddToOrder, quantity, setQu
         border: '2px solid #000',
         boxShadow: 24,
         p: 4,
+        display: 'flex',     
+        flexDirection: 'column',
+        alignItems: 'center',
     };
 
     return (
@@ -34,9 +37,15 @@ export default function ItemModal({ item, onClose, onAddToOrder, quantity, setQu
                 <Box sx={style}>
                     <div className="modalContent">
                         <h2>{item.name}</h2>
-                        <img 
+                        <Box 
+                            component="img"
                             src={item.imageURL} 
                             alt={item.name} 
+                            sx={{
+                                width: '100%',
+                                maxHeight: '200px',
+                                objectFit: 'cover',
+                            }}
                         />
                         <div>
                             <p>Quantity</p>

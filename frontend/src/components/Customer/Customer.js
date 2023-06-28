@@ -147,9 +147,13 @@ export default function Customer() {
                     <div className="itemContainer">
                         {currentItems.map((item, index) => (
                             <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
-                                <img src={item.imageURL} alt={item.name}/> 
-                                <p>{item.name}</p>
-                                <p>${item.price}</p>
+                                <div className="imageContainer">
+                                    <img src={item.imageURL} alt={item.name}/> 
+                                </div>
+                                <div className="itemInfo">
+                                    <p>{item.name}</p>
+                                    <p>${item.price}</p>
+                                </div>
                             </div>
                         ))}
                     </div>
