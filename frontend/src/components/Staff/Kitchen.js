@@ -85,7 +85,7 @@ export default function Kitchen() {
                     {receivedOrders && receivedOrders.flatMap((order, index) =>
                         order.menu_items.map((item, itemIndex) => (
                             <div key={`${index}-${itemIndex}`} className='orderBox'>
-                                <p>Table {order.table_id}</p>
+                                <p>Table {order.table_id + 1}</p>
                                 <p>{item.name}</p>
                                 <Button 
                                     variant="contained" 
@@ -105,7 +105,7 @@ export default function Kitchen() {
                     {preparingOrders && preparingOrders.flatMap((order, index) =>
                         order.menu_items.map((item, itemIndex) => (
                             <div key={`${index}-${itemIndex}`} className='orderBox'>
-                                <p>Table {order.table_id}</p>
+                                <p>Table {order.table_id + 1}</p>
                                 <p>{item.name}</p>
                                 <Button 
                                     variant="contained" 

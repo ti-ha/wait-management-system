@@ -85,7 +85,7 @@ export default function WaitStaff() {
                     {toBeServedOrders && toBeServedOrders.flatMap((order, index) =>
                         order.menu_items.map((item, itemIndex) => (
                             <div key={`${index}-${itemIndex}`} className='orderBox'>
-                                <p>Table {order.table_id}</p>
+                                <p>Table {order.table_id + 1}</p>
                                 <p>{item.name}</p>
                                 <Button 
                                     variant="contained" 
