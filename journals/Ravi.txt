@@ -18,5 +18,9 @@ Week 3
   Finished proposal with the group
   Met with the group to discuss role assignments
   Worked on database scheme and structure
-  
+
+Week 4
+  Implemented draft of SQLalchemy tables and data structure
+  Recreated unit testing for menus (categories, items) -> (not done)
+  Refactored some code for manageability in future -> (not done, plan for W6)
   
