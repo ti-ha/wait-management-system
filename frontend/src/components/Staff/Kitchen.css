@@ -1,0 +1,49 @@
+.kitchenContainer {
+    width: 100%;
+    height: 100vh;
+}
+
+.kitchenHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0px 3px 6px #00000023;
+}
+
+.headerButtons {
+    display: flex;
+    gap: 20px;
+}
+
+.kitchenBody {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.ordersReceived, .preparing {
+    width: 45%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    
+}
+
+.subheadings, .orderBox {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+}
+
+.orderBox {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 16px;
+}
