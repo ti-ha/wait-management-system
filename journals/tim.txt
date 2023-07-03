@@ -37,3 +37,10 @@ next week resolving, thankfully with no deadline.
 After wednesday we were all exhausted so we took the rest of the week off. I think in the next sprint we'll take full advantage
 of having double the amount of time we had for this sprint, not so much to get double the work done, but to stave off burnout a 
 bit better.
+
+Week 6 (flex week):
+We had a meeting on Monday about what to get done this week. The consensus was that we don't want to do anything extensive this week.
+So, to compromise and still keep progress moving, we're going to pay off the tech debt accumulated in the code,
+but we're not going to add any new functionality into the backend specifically. This gives time for the database
+team to catch up. The frontend will work on implementing a few outstanding API calls and then UX. Database team will
+aim to have database persistence implemented by the end of the week.
