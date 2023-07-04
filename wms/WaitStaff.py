@@ -1,16 +1,36 @@
+from __future__ import annotations
 from .User import User
 from .Order import Order
 
 class WaitStaff(User):
     def __init__(self, firstname, lastname):
+        """ Constructor of the WaitStaff class that inherits the User Class
+
+        Args:
+            firstname (string): First Name of the User
+            lastname (string): Last Name of the User
+        """
         super().__init__(firstname, lastname)
         self.__requests = []
 
-    # Get list of requests
-    def get_requests(self):
+    def get_requests(self) -> list[Order]:
+        """ Get list of requests
+
+        Returns:
+            list[Order]: List of orders assigned to the wait staff
+        """
         return self.__requests
     
     def assign_requests(self, order):
+        """ Add an order to the list of requests
+
+        Args:
+            order (Order): Order to be added to the list of requests
+
+        Raises:
+            TypeError: Raised when order argument is not of type Order
+            ValueError: Raised when the Order already exists
+        """
         if not isinstance(order, Order):
             raise TypeError("WaitStaff: assign_requests(): Object is not of type Order")
         
@@ -19,6 +39,15 @@ class WaitStaff(User):
         self.__requests.append(order)
 
     def remove_requests(self, order):
+        """ Remove an order from the list of requests
+
+        Args:
+            order (Order): Order to be removed from the list of requests
+
+        Raises:
+            TypeError: Raised when order argument is not of type Order
+            ValueError: Raised when the Order does not exist
+        """
         if not isinstance(order, Order):
             raise TypeError("WaitStaff: remove_requests(): Object is not of type Order")
         
