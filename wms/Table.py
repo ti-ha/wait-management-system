@@ -27,10 +27,10 @@ class Table:
         self.__bill = None
 
     # Getters for the class variables
-    def get_id(self):
+    def get_id(self) -> itertools.count:
         return self.__id
 
-    def is_occupied(self):
+    def is_occupied(self) -> bool:
         return self.__occupied
     
     def get_orders(self) -> list[Order]:
@@ -39,7 +39,7 @@ class Table:
     def get_customers(self) -> list[Customer]:
         return self.__customers
     
-    def get_table_limit(self):
+    def get_table_limit(self) -> int:
         return self.__table_limit
     
     def get_bill(self) -> Bill:
@@ -49,7 +49,7 @@ class Table:
     def set_bill(self, bill: Bill):
         self.__bill = bill
 
-    def get_open_seats(self):
+    def get_open_seats(self) -> str:
         """ Unique getter to show how many open seats there are
 
         Returns:
