@@ -19,5 +19,7 @@ from .MenuHandler import MenuHandler
 from .OrderManagerHandler import OrderManagerHandler
 from .TableHandler import TableHandler
 from .UserHandler import UserHandler
+from .SRMHandler import SRMHandler
+from .RestaurantManagerHandler import RestaurantManagerHandler
 from .Application import Application
 
