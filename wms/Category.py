@@ -29,9 +29,15 @@ class Category():
     
     # Returns a specific menu item from category
     # Returns None if no menu item exists
-    def is_menu_item(self, menu_item):
+    def get_menu_item(self, menu_item):
         for i in self.__menu_items:
             if i.is_equal(menu_item):
+                return i
+        return None
+    
+    def get_menu_item_by_name(self, name):
+        for i in self.__menu_items:
+            if i.name() == name:
                 return i
         return None
     
@@ -40,14 +46,14 @@ class Category():
 
     # Adds a menu_item to the category
     def add_menu_item(self, menu_item):
-        if self.is_menu_item(menu_item) != None:
+        if self.get_menu_item(menu_item) != None:
             raise ValueError("Category: add_menu_item(): MenuItem already in category")
         
         self.__menu_items.append(menu_item)
 
     # Removes a menu_item from the category
     def remove_menu_item(self, name):
-        if self.is_menu_item(name) == None:
+        if self.get_menu_item(name) == None:
             raise ValueError("Category: category.remove_menu_item(): not an existing menu item")
         
         self.__menu_items.remove(name)

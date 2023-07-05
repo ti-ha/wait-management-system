@@ -15,12 +15,12 @@ def home():
 
 @app.route('/menu', methods=['GET'])
 def get_menu():
-    return jsonify(wms.menu_json()), 200
+    return jsonify(wms.menu_handler.jsonify()), 200
 
 @app.route('/menu/categories', methods=['GET','POST'])
 def create_category():
     if request.method == "GET":
-        return jsonify(wms.jsonify_menu_categories()), 200
+        return jsonify(wms.menu_handler.jsonify_categories()), 200
     elif request.method == "POST":
         '''
         JSON FORMAT:
@@ -29,7 +29,7 @@ def create_category():
         content_type = request.headers.get('Content-Type')
         if (content_type == 'application/json'):
             obj = request.json
-            wms.add_menu_category(obj["name"])
+            wms.menu_handler.add_category(obj["name"])
             return jsonify({"message": f"Successfully added category {obj['name']}"}), 200
         else:
             return jsonify({"error": "Incorrect content-type"}), 400
@@ -37,7 +37,7 @@ def create_category():
 @app.route('/menu/categories/<category>', methods=['GET', 'POST', 'DELETE'])
 def specific_category(category):
     if request.method == 'GET':
-        return jsonify(wms.jsonify_menu_category(category)), 200
+        return jsonify(wms.menu_handler.jsonify_category(category)), 200
     elif request.method == 'POST':
         '''
         ADDING A NEW MENU ITEM TO CATEGORY.
@@ -56,7 +56,7 @@ def specific_category(category):
             except:
                 return jsonify({"error": "Incorrect fields"}), 400
             
-            wms.add_menu_item(category, name, price, imageURL)
+            wms.menu_handler.add_menu_item(category, name, price, imageURL)
             return jsonify({"message": f"Successfully added menuitem {name}"}), 200
         
     elif request.method == 'DELETE':
@@ -64,7 +64,7 @@ def specific_category(category):
         REMOVING A SPECIFIC CATEGORY. DELETE METHOD FOR MENUITEM
         IS IN THE SPECIFIC ROUTE FOR SPECIFIC MENU ITEM
         '''
-        wms.remove_menu_category(category)
+        wms.menu_handler.remove_category(category)
         return jsonify({"message": f"Successfully deleted category {category}"}), 200
 
     else:
@@ -72,14 +72,14 @@ def specific_category(category):
     
 @app.route('/menu/categories/<category>/<menu_item>', methods=['GET', 'DELETE'])
 def menu_item(category, menu_item):
-    if wms.menu_item(category, menu_item) == None:
+    if wms.menu_handler.get_menu_item(category, menu_item) == None:
         return jsonify({"error": "Unrecognised menu_item"}), 400
     
     if request.method == 'GET':
-        return jsonify(wms.menu_item_json(category, menu_item)), 200
+        return jsonify(wms.menu_handler.jsonify_menu_item(category, menu_item)), 200
         
     elif request.method == 'DELETE':
-        wms.remove_menu_item(category, menu_item)
+        wms.menu_handler.remove_menu_item(category, menu_item)
         return jsonify({"message": f"Successfully removed menuitem {menu_item} in category {category})"}), 200
     else:
         return jsonify({"error": "Unrecognised request"}), 400
@@ -87,7 +87,7 @@ def menu_item(category, menu_item):
 @app.route('/menu/deals', methods=['GET','POST'])
 def create_deal():
     if request.method == 'GET':
-        return jsonify(wms.get_deals_json()), 200
+        return jsonify(wms.menu_handler.jsonify_deals()), 200
         
     elif request.method == 'POST':
         '''
@@ -108,7 +108,7 @@ def create_deal():
             except:
                 return jsonify({"error": "Incorrect fields"})
             
-            proc = wms.add_deal(obj["discount"], menu_item_lookup)
+            proc = wms.menu_handler.add_deal(obj["discount"], menu_item_lookup)
             if proc == None:
                 return jsonify({"error": "One or more menu items is not present in the menu"})
             

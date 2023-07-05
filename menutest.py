@@ -186,7 +186,7 @@ def test16():
 
 def test18():
     foo = MenuItem("foo", 33.0, None)
-    o = burgers.is_menu_item(foo)
+    o = burgers.get_menu_item(foo)
     if o != None:
         print("test18 FAIL")
         return False
@@ -197,7 +197,7 @@ def test18():
 def test19():
     shoestring_fries = MenuItem("Shoestring fries", 33.0, None)
     burgers.add_menu_item(shoestring_fries)
-    if burgers.is_menu_item(shoestring_fries) != None:
+    if burgers.get_menu_item(shoestring_fries) != None:
         print("test19 PASS")
         return shoestring_fries
     
@@ -207,7 +207,7 @@ def test19():
 def test20(out):
     shoestring_fries = MenuItem("Shoestring fries", 33.0, None)
     burgers.remove_menu_item(out)
-    if burgers.is_menu_item(shoestring_fries) == None:
+    if burgers.get_menu_item(shoestring_fries) == None:
         print("test20 PASS")
         return True
     
