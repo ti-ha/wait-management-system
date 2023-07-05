@@ -155,8 +155,8 @@ class Application():
         if order == None:
             raise ValueError("Not a valid order_id")
         tID = -1
-        for i in self.__order_manager.map():
-            if oID in self.__order_manager.map()[i]:
+        for i in self.__order_manager.get_map():
+            if oID in self.__order_manager.get_map()[i]:
                 tID = i
         
         if tID == -1:
