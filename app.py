@@ -121,7 +121,7 @@ def create_deal():
 
 @app.route('/table', methods=['GET'])
 def get_table():
-    return jsonify(wms.get_tables_json()), 200
+    return jsonify(wms.table_handler.jsonify()), 200
 
 @app.route('/table/add', methods=['POST'])
 def add_table():
@@ -139,12 +139,12 @@ def add_table():
         except:
             return jsonify({"error": "Incorrect fields"}), 400
         
-        table_id = wms.add_table(table_limit, orders)
+        table_id = wms.table_handler.add_table(table_limit, orders)
         return jsonify({"message": f"Successfully added table {str(table_id)}"}), 200
 
 @app.route('/user', methods=['GET'])
 def get_user():
-    return jsonify(wms.get_users_json()), 200
+    return jsonify(wms.user_handler.jsonify()), 200
 
 @app.route('/user/add', methods=['POST'])
 def add_user():
@@ -164,7 +164,7 @@ def add_user():
         except:
             return jsonify({"error": "Incorrect fields"}), 400
         
-        user_id = wms.add_user(first_name, last_name, user_type)
+        user_id = wms.user_handler.add_user(first_name, last_name, user_type)
         if user_id == None:
             return jsonify({"error": "Unable to create user"}), 400
         return jsonify({"message": f"Successfully added user {str(user_id)}"}), 200
@@ -185,7 +185,7 @@ def add_table_customer():
         except:
             return jsonify({"error": "Incorrect fields"}), 400
         
-        status = wms.add_table_customer(table_id, customer_id)
+        status = wms.table_handler.add_customer(table_id, wms.id_to_user(customer_id))
         if not status:
             return jsonify({"error": "Unable to move customer to table"}), 400
         return jsonify({"message": "Successfully added customer to table"}), 200
@@ -195,14 +195,14 @@ def add_table_customer():
 @app.route('/ordermanager', methods=['GET'])
 def get_order_manager():
     if request.method == 'GET':
-        return jsonify(wms.jsonify_order_manager()), 200
+        return jsonify(wms.om_handler.jsonify()), 200
     else:
         return jsonify({"error": "Unrecognised request"}), 400
     
 @app.route('/ordermanager/orders', methods=['GET'])
 def get_orders():
     if request.method == 'GET':
-        return jsonify(wms.jsonify_order_manager_orders()), 200
+        return jsonify(wms.om_handler.jsonify_orders()), 200
     else:
         return jsonify({"error": "Unrecognised request"}), 400
 
@@ -224,7 +224,7 @@ def add_order(table_id):
                 return jsonify({"error": "Incorrect fields"}), 400
             
             try:
-                wms.add_order_to_order_manager(table_id, menu_items_ids, deals_ids)
+                wms.om_handler.add_order(table_id, menu_items_ids, deals_ids)
             except ValueError:
                 return jsonify({"error":"Invalid args in json"}), 400
             
@@ -237,7 +237,7 @@ def add_order(table_id):
 def remove_order(table_id, order_id):
     if request.method == 'DELETE':
         try:
-            wms.remove_order_from_order_manager(table_id, order_id)
+            wms.om_handler.remove_order(table_id, order_id)
         except:
             return jsonify({"error": "Bad request (See backend server for details)"}), 400
         
@@ -249,7 +249,7 @@ def remove_order(table_id, order_id):
 def get_table_orders(table_id):
     if request.method == 'GET':
         try:
-            output = wms.get_table_orders(table_id)
+            output = wms.om_handler.get_table_orders(table_id)
         except Exception as e:
             return jsonify({"error": e.args}), 400
         
@@ -265,7 +265,7 @@ def manage_table_bill(table_id):
     '''
     if request.method == 'GET':
         try:
-            output = wms.calculate_and_return_bill(table_id)
+            output = wms.om_handler.calculate_and_return_bill(table_id)
         except Exception as e:
             return jsonify({"error": e.args}), 400
 
@@ -274,7 +274,7 @@ def manage_table_bill(table_id):
     
     elif request.method == 'POST':
         try:
-            wms.pay_table_bill(table_id)
+            wms.om_handler.pay_table_bill(table_id)
         except Exception as e:
             return jsonify({"error": e.args}), 400
         
@@ -286,14 +286,14 @@ def manage_table_bill(table_id):
 def manage_order_by_id(order_id):
     if request.method == 'GET':
         try:
-            order = wms.get_order_by_id(order_id)
+            order = wms.om_handler.get_order_by_id(order_id)
         except Exception as e:
             return jsonify({"error": e.args}), 400
         return jsonify(order), 200
     
     elif request.method == 'DELETE':
         try:
-            wms.delete_order_by_id(order_id)
+            wms.om_handler.delete_order_by_id(order_id)
         except Exception as e:
             return jsonify({"error": e.args}), 400
         return jsonify({"message": "Successfully removed order from ordermanager"}), 200
@@ -305,7 +305,7 @@ def manage_order_by_id(order_id):
 def affect_order_state(order_id):
     if request.method == 'GET':
         try:
-            output = wms.get_order_state(order_id)
+            output = wms.om_handler.get_order_state(order_id)
         except Exception as e:
             return jsonify({"error": e.args}), 400
         return jsonify(output), 200
@@ -315,7 +315,7 @@ def affect_order_state(order_id):
         EMPTY FOR NOW. WE WILL EXPAND THIS LATER TO INCLUDE STATE LEAPS IF WE WANT
         '''
         try:
-            output = wms.change_order_state(order_id)
+            output = wms.om_handler.change_order_state(order_id)
         except Exception as e:
             return jsonify({"error": e.args}), 400
         return jsonify({"message": f"Successfully changed state to {output}"}), 200
@@ -328,7 +328,7 @@ def affect_order_state(order_id):
 def manage_order_bill(order_id):
     if request.method == 'GET':
         try:
-            output = wms.get_order_bill(order_id)
+            output = wms.om_handler.get_order_bill(order_id)
         except Exception as e:
             return jsonify({"error": e.args}), 400
         
@@ -336,7 +336,7 @@ def manage_order_bill(order_id):
     
     elif request.method == 'POST':
         try:
-            wms.pay_order_bill(order_id)
+            wms.om_handler.pay_order_bill(order_id)
         except Exception as e:
             return jsonify({"error": e.args}), 400
         return jsonify({"message": "Successfully paid bill"}), 200

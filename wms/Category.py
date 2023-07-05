@@ -90,7 +90,7 @@ class Category():
         of the category
         """
         out = {"id": self.get_id(), "name": self.name(), "menu_items": []}
-        for i in self.menu_items():
+        for i in self.get_menu_items():
             out["menu_items"].append(i.jsonify())
         return out
     

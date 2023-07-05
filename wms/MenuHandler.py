@@ -30,7 +30,7 @@ class MenuHandler():
     def add_deal(self, discount, menu_items):
 
         deal_items = [j for i in self.__menu.categories() 
-                      for j in i.menu_items() 
+                      for j in i.get_menu_items() 
                       if j.name() in menu_items]
         
         if len(menu_items) != len(deal_items):

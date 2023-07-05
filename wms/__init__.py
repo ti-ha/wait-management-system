@@ -16,5 +16,8 @@ from .Table import Table
 from .User import User
 from .WaitStaff import WaitStaff
 from .MenuHandler import MenuHandler
+from .OrderManagerHandler import OrderManagerHandler
+from .TableHandler import TableHandler
+from .UserHandler import UserHandler
 from .Application import Application
 

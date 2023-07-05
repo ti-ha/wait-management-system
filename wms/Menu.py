@@ -81,7 +81,7 @@ class Menu():
     def menu_items(self) -> list[MenuItem]:
         output = []
         for i in self.categories():
-            output += i.menu_items()
+            output += i.get_menu_items()
         
         return output
     
