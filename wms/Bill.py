@@ -1,6 +1,6 @@
 class Bill:
     def __init__(self, price):
-        """Constructor for the bill class
+        """ Constructor for the bill class
 
         Args:
             price (float): Starting price value of the bill
@@ -11,12 +11,12 @@ class Bill:
     # Getters for price and paid status
     @property
     def price(self) -> float:
-        """Returns bill price"""
+        """ Returns bill price """
         return self.__price
     
     @property
     def paid(self) -> bool:
-        """Returns if it is paid or not"""
+        """ Returns if it is paid or not """
         return self.__paid
 
     def pay(self):

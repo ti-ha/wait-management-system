@@ -15,10 +15,10 @@ class Customer(User):
     # Getters and Setters
     @property
     def table(self):
-        """Returns table the customer is at"""
+        """ Returns table the customer is at """
         return self.__table
     
     @table.setter   
     def table(self, table):
-        """Sets the table the customer will be at"""
+        """ Sets the table the customer will be at """
         self.__table = table
