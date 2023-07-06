@@ -13,8 +13,9 @@ class KitchenStaff(User):
         super().__init__(firstname, lastname)
         self.__orders = []
 
-    # Getter of kitchen staff order list
-    def get_orders(self) -> list[Order]:
+    @property
+    def orders(self) -> list[Order]:
+        """ Gets the kitchen staff order list """
         return self.__orders
 
     def assign_order(self, order: Order):
@@ -52,6 +53,6 @@ class KitchenStaff(User):
         if order not in self.__orders:
             raise ValueError("KitchenStaff: remove_order(): Order does not exist")
         orderNum = self.__orders.index(order)
-        self.get_orders()[orderNum].change_state()
+        self.orders()[orderNum].change_state()
         # Move order to wait staff
         self.__orders.remove(order) 
