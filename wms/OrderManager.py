@@ -6,18 +6,21 @@ from .Bill import Bill
 
 class OrderManager:
     def __init__(self):
-        """# Constructor for the Order Manager class
-        """
+        """ Constructor for the Order Manager class """
         self.__orders = []
 
         # maps table: [orders]
         self.__map = {}
         
     # Getter
-    def get_orders(self) -> list[Order]:
+    @property
+    def orders(self) -> list[Order]:
+        """ Returns list of orders """
         return self.__orders
     
-    def get_map(self) -> dict:
+    @property
+    def map(self) -> dict:
+        """ Returns dictionary linking tables to list of orders """
         return self.__map
     
     def get_order(self, order_ID) -> Order:
@@ -29,7 +32,7 @@ class OrderManager:
         Returns:
             Order: Item of type Order based off provided ID
         """
-        for order in self.get_orders():
+        for order in self.orders:
             if (order.id == order_ID):
                 return order
         return None
@@ -43,8 +46,8 @@ class OrderManager:
         Returns:
             int: _description_
         """
-        for i in self.get_map().keys():
-            if order_ID in self.get_map()[i]:
+        for i in self.map.keys():
+            if order_ID in self.map[i]:
                 return i
     
     def get_table_orders(self, table_id: int) -> list[Order]:
@@ -59,12 +62,12 @@ class OrderManager:
         Returns:
             list[Order]: List of orders of the table specified by the table ID
         """
-        if table_id not in self.get_map().keys():
+        if table_id not in self.map.keys():
             raise ValueError("OrderManager: get_table_orders(): table_id does not exist in map")
         
-        order_ids = self.get_map()[table_id]
+        order_ids = self.map[table_id]
         order_list = []
-        for i in self.get_orders():
+        for i in self.orders:
             if i.id in order_ids:
                 order_list.append(i)
 
@@ -102,7 +105,7 @@ class OrderManager:
         if order not in self.__orders:
             raise ValueError("OrderManager: remove_order(): Order does not exist")
 
-        if table.id in self.get_map().keys():
+        if table.id in self.map.keys():
             self.__map[table.id].remove(order.id)
             table.remove_order(order)
             self.__orders.remove(order)
@@ -194,7 +197,7 @@ class OrderManager:
             dict: Dictionary containing a list of all the current orders
         """
         output = {"orders": []}
-        for i in self.get_orders():
+        for i in self.orders:
             output["orders"].append(i.jsonify())
         
         return output
@@ -206,7 +209,7 @@ class OrderManager:
             dict: _description_
         """
         output = {"orders": []}
-        for i in self.get_orders():
+        for i in self.orders:
             table_id = self.get_table_from_order(i.id)
             output["orders"].append(i.jsonify(table_id))
         

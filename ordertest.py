@@ -43,7 +43,7 @@ def test3():
     orderMan = OrderManager()
     table1 = Table(4)
     orderMan.add_order(order3, table1)
-    assert(len(orderMan.get_orders()) == 1)
+    assert(len(orderMan.orders) == 1)
     order3_ID = order3.id
     assert(order3 == orderMan.get_order(order3_ID))
     orderMan.change_state(order3_ID)
@@ -87,9 +87,9 @@ def test5():
     orderman.change_to_state(orderB, "served")
     bill = orderman.calculate_table_bill(table1.id)
     assert(bill.price == 48.0)
-    assert(len(orderman.get_orders()) == 2)
+    assert(len(orderman.orders) == 2)
     orderman.remove_order(orderA, table1)
-    assert(len(orderman.get_orders()) == 1)
+    assert(len(orderman.orders) == 1)
 
 
 
