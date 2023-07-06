@@ -2,6 +2,7 @@ from __future__ import annotations
 from .MenuItem import MenuItem
 import itertools
 
+
 class Category():
 
     __id_iter = itertools.count()
@@ -16,21 +17,25 @@ class Category():
         """
         self.__id = next(Category.__id_iter)
         self.__name = name
-        self.__menu_items = [] if menu_items == None else menu_items
+        self.__menu_items = [] if menu_items is None else menu_items
 
-    # Getters
-    def get_id(self) -> itertools.count:
+    @property
+    def id(self) -> itertools.count:
+        """Returns id"""
         return self.__id
     
-    # Returns name of category
+    @property
     def name(self) -> str:
+        """Returns name"""
         return self.__name
 
     # Returns list of menu items
-    def get_menu_items(self) -> list[MenuItem]:
+    @property
+    def menu_items(self) -> list[MenuItem]:
+        """ Returns menu items """
         return self.__menu_items
     
-    def is_menu_item(self, menu_item) -> MenuItem:
+    def menu_item(self, menu_item) -> (MenuItem | None):
         """ Returns a specific menu item from category
 
         Args:
@@ -40,17 +45,24 @@ class Category():
             MenuItem: The specific menu item from the category. None if no menu 
             item exists
         """
-        for i in self.__menu_items:
-            if i.is_equal(menu_item):
-                return i
-        return None
+        # for i in self.__menu_items:
+        #     if i.is_equal(menu_item):
+        #         return i
+        # return None
+        return next((it for it in self.menu_items if it.is_equal(menu_item)), None)
     
-    def get_menu_item_by_name(self, name):
-        for i in self.__menu_items:
-            if i.name() == name:
-                return i
-        return None
-    
+    def menu_item_by_name(self, name) -> (MenuItem | None):
+        """ Returns menu item by name
+
+        Args:
+            name (str): name of item
+
+        Returns:
+            MenuItem if present, else None 
+        """
+        return next((it for it in self.menu_items if it.name() == name), None)
+
+        
     # Changes the name of the category
 
     def add_menu_item(self, menu_item):
@@ -62,10 +74,10 @@ class Category():
         Raises:
             ValueError: Raised if menu item is already in the category
         """
-        if self.is_menu_item(menu_item) != None:
+        if self.menu_item(menu_item) is not None:
             raise ValueError("Category: add_menu_item(): MenuItem already in category")
         
-        self.__menu_items.append(menu_item)
+        self.menu_items.append(menu_item)
 
     def remove_menu_item(self, name):
         """ Removes a menu_item from the category
@@ -76,11 +88,11 @@ class Category():
         Raises:
             ValueError: Raised if menu item does not exist in the category
         """
-        if self.is_menu_item(name) == None:
+        if self.menu_item(name) is None:
             raise ValueError("Category: category.remove_menu_item(): not an existing menu item")
         
-        self.__menu_items.remove(name)
-    
+        self.menu_items.remove(name)
+        
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the id, name and list of menu items 
         of the category
@@ -89,10 +101,16 @@ class Category():
             dict: Dictionary containing the id, name and list of menu items 
         of the category
         """
-        out = {"id": self.get_id(), "name": self.name(), "menu_items": []}
-        for i in self.get_menu_items():
-            out["menu_items"].append(i.jsonify())
-        return out
+
+        return {
+            "id": self.id, 
+            "name": self.name, 
+            "menu_items": [it.jsonify() for it in self.menu_items]
+        }
+        # out = {"id": self.id, "name": self.name, "menu_items": []}
+        # for i in self.menu_items:
+        #     out["menu_items"].append(i.jsonify())
+        # return out
     
 
 
