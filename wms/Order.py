@@ -129,7 +129,7 @@ class Order:
     # Applies a deal to a dictionary of menuitem: price
     def apply_deal(self, pricedict: dict, deal: Deal):
         for i in deal.menu_items:
-            item = i.name()
+            item = i.name
             if item in pricedict.keys():
                 pricedict[item] = pricedict[item] - (deal.discount*pricedict[item])
         return pricedict
@@ -143,7 +143,7 @@ class Order:
         # Create a NEW dictionary of {menuitem: price, ... , menuitem: price}. We do not want to modify the existing objects
         pricedict = {}
         for i in self.menu_items():
-            pricedict[i.name()] = i.price()
+            pricedict[i.name] = i.price
 
         # For each deal in the order, apply it to the price dictionary
         for i in self.deals():

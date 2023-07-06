@@ -59,7 +59,7 @@ class Category():
         Returns:
             MenuItem if present, else None 
         """
-        return next((it for it in self.menu_items if it.name() == name), None)
+        return next((it for it in self.menu_items if it.name == name), None)
 
         
     # Changes the name of the category
