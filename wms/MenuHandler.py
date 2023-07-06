@@ -15,7 +15,7 @@ class MenuHandler():
         return self.__menu.menu_item_lookup(id)
     
     def get_deals_by_id(self, id):
-        for i in self.__menu.deals():
+        for i in self.__menu.deals:
             if i.id == id:
                 return i
         return None
@@ -29,7 +29,7 @@ class MenuHandler():
 
     def add_deal(self, discount, menu_items):
 
-        deal_items = [j for i in self.__menu.categories() 
+        deal_items = [j for i in self.__menu.categories 
                       for j in i.get_menu_items() 
                       if j.name() in menu_items]
         
@@ -53,12 +53,12 @@ class MenuHandler():
         return self.__menu.get_category(category).jsonify()
     
     def jsonify_categories(self):
-        return [i.jsonify() for i in self.__menu.categories()]
+        return [i.jsonify() for i in self.__menu.categories]
     
     def jsonify_menu_item(self, category, name):
         return self.__menu.get_category(category).menu_item(name).jsonify()
     
     def jsonify_deals(self):
-        return [i.jsonify() for i in self.__menu.deals()]
+        return [i.jsonify() for i in self.__menu.deals]
 
 
