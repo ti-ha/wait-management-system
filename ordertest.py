@@ -80,12 +80,12 @@ def test5():
     orderman.add_order(orderA, table1)
     orderman.add_order(orderB, table1)
     try:
-        orderman.calculate_table_bill(table1.get_id())
+        orderman.calculate_table_bill(table1.id())
     except ValueError:
         pass
     orderman.change_to_state(orderA, "served")
     orderman.change_to_state(orderB, "served")
-    bill = orderman.calculate_table_bill(table1.get_id())
+    bill = orderman.calculate_table_bill(table1.id())
     assert(bill.price() == 48.0)
     assert(len(orderman.get_orders()) == 2)
     orderman.remove_order(orderA, table1)

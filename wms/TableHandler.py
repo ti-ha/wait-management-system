@@ -7,7 +7,7 @@ class TableHandler():
     def add_table(self, table_limit, orders):
         table = Table(table_limit, orders)
         self.__tables.append(table)
-        return table.get_id()
+        return table.id()
     
     def add_customer(self, table_id, customer: Customer):
         table = self.id_to_table(table_id)
@@ -18,7 +18,7 @@ class TableHandler():
         return True
 
     def jsonify(self):
-        return {"tables": [{"id": table.get_id(),
+        return {"tables": [{"id": table.id(),
                             "availability": table.get_open_seats(),
                             "table limit": table.get_table_limit(),
                             "is occupied": table.is_occupied()}
@@ -26,6 +26,6 @@ class TableHandler():
 
     def id_to_table(self, id) -> Table:
         for table in self.__tables:
-            if table.get_id() == id:
+            if table.id() == id:
                 return table
         return None

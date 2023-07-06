@@ -27,26 +27,40 @@ class Table:
         self.__bill = None
 
     # Getters for the class variables
-    def get_id(self) -> itertools.count:
+    @property
+    def id(self) -> itertools.count:
+        """ Returns table ID """
         return self.__id
 
-    def is_occupied(self) -> bool:
+    @property
+    def occupied(self) -> bool:
+        """ Returns if the table is occupied """
         return self.__occupied
     
-    def get_orders(self) -> list[Order]:
+    @property
+    def orders(self) -> list[Order]:
+        """ Returns list of orders for the table """
         return self.__orders
 
-    def get_customers(self) -> list[Customer]:
+    @property
+    def customers(self) -> list[Customer]:
+        """ Returns list of customers at the table """
         return self.__customers
     
-    def get_table_limit(self) -> int:
+    @property
+    def table_limit(self) -> int:
+        """ Returns the table person limit """
         return self.__table_limit
     
-    def get_bill(self) -> Bill:
+    @property
+    def bill(self) -> Bill:
+        """ Returns the table bill """
         return self.__bill
     
     # Setter for the bill 
-    def set_bill(self, bill: Bill):
+    @bill.setter
+    def bill(self, bill: Bill):
+        """ Sets the table bill """
         self.__bill = bill
 
     def get_open_seats(self) -> str:
