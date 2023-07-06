@@ -13,12 +13,9 @@ class WaitStaff(User):
         super().__init__(firstname, lastname)
         self.__requests = []
 
-    def get_requests(self) -> list[Order]:
-        """ Get list of requests
-
-        Returns:
-            list[Order]: List of orders assigned to the wait staff
-        """
+    @property
+    def requests(self) -> list[Order]:
+        """ Returns the wait staff's list of requests """
         return self.__requests
     
     def assign_requests(self, order):
