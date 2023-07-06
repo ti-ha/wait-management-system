@@ -83,10 +83,10 @@ class OrderManager:
         if order in self.__orders:
             raise ValueError("OrderManager: add_order(): Order already exists")
         self.__orders.append(order)
-        if table.id() in self.__map.keys():
-            self.__map[table.id()] += [order.id()]
+        if table.id in self.__map.keys():
+            self.__map[table.id] += [order.id()]
         else:
-            self.__map[table.id()] = [order.id()]
+            self.__map[table.id] = [order.id()]
         table.add_order(order)
 
     def remove_order(self, order: Order, table: Table):
@@ -102,8 +102,8 @@ class OrderManager:
         if order not in self.__orders:
             raise ValueError("OrderManager: remove_order(): Order does not exist")
 
-        if table.id() in self.get_map().keys():
-            self.__map[table.id()].remove(order.id())
+        if table.id in self.get_map().keys():
+            self.__map[table.id].remove(order.id())
             table.remove_order(order)
             self.__orders.remove(order)
         else:

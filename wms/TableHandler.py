@@ -7,7 +7,7 @@ class TableHandler():
     def add_table(self, table_limit, orders):
         table = Table(table_limit, orders)
         self.__tables.append(table)
-        return table.id()
+        return table.id
     
     def add_customer(self, table_id, customer: Customer):
         table = self.id_to_table(table_id)
@@ -26,6 +26,6 @@ class TableHandler():
 
     def id_to_table(self, id) -> Table:
         for table in self.__tables:
-            if table.id() == id:
+            if table.id == id:
                 return table
         return None

@@ -1,3 +1,4 @@
+from __future__ import annotations
 import itertools
 from enum import Enum
 from .Bill import Bill
@@ -161,7 +162,7 @@ class Order:
         if self.__bill == None:
             raise ValueError("Order: bill has not been calculated yet. (Try order.calculate_bill())")
         
-        if self.__bill.paid():
+        if self.__bill.paid:
             return "Bill already paid"
         
         else:
@@ -169,7 +170,7 @@ class Order:
             self.change_state()
     
     def bill_paid(self):
-        return self.__bill.paid()
+        return self.__bill.paid
     
     def jsonify(self, table_id=None):
         if self.__bill != None:

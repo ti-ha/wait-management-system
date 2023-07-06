@@ -66,7 +66,7 @@ def test4():
     # customer asks for the bill
     bill = order4.calculate_bill()
     assert(bill != None)
-    assert(bill.price() == 28.0)
+    assert(bill.price == 28.0)
     order4.mark_as_paid()
     assert(order4.bill_paid() == True)
     assert(order4.state() == "completed")
@@ -80,13 +80,13 @@ def test5():
     orderman.add_order(orderA, table1)
     orderman.add_order(orderB, table1)
     try:
-        orderman.calculate_table_bill(table1.id())
+        orderman.calculate_table_bill(table1.id)
     except ValueError:
         pass
     orderman.change_to_state(orderA, "served")
     orderman.change_to_state(orderB, "served")
-    bill = orderman.calculate_table_bill(table1.id())
-    assert(bill.price() == 48.0)
+    bill = orderman.calculate_table_bill(table1.id)
+    assert(bill.price == 48.0)
     assert(len(orderman.get_orders()) == 2)
     orderman.remove_order(orderA, table1)
     assert(len(orderman.get_orders()) == 1)

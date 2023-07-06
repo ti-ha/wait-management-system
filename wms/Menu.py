@@ -1,3 +1,4 @@
+from __future__ import annotations
 from .Category import Category
 from .MenuItem import MenuItem
 from .Deal import Deal

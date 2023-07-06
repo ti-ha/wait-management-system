@@ -53,6 +53,6 @@ class KitchenStaff(User):
         if order not in self.__orders:
             raise ValueError("KitchenStaff: remove_order(): Order does not exist")
         orderNum = self.__orders.index(order)
-        self.orders()[orderNum].change_state()
+        self.orders[orderNum].change_state()
         # Move order to wait staff
         self.__orders.remove(order) 

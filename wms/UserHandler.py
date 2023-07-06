@@ -14,7 +14,7 @@ class UserHandler():
             case _:               return None
         
         self.__users.append(new_user)
-        return new_user.id()
+        return new_user.id
     
     def jsonify(self):
         user_dict = {}

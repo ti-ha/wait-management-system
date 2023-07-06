@@ -44,7 +44,7 @@ class OrderManagerHandler():
             raise ValueError("Not a valid order_id")
         if order.bill() == None:
             order.calculate_bill()
-        output = {"price": order.bill().price(), "paid": order.bill().paid()}
+        output = {"price": order.bill().price, "paid": order.bill().paid}
         return output
 
     #setters
@@ -117,7 +117,7 @@ class OrderManagerHandler():
             raise e
         
         self.__table_handler.id_to_table(tID).bill = bill
-        return {"price": bill.price(), "is_paid": bill.paid()}
+        return {"price": bill.price, "is_paid": bill.paid}
     
     def pay_table_bill(self, table_id):
         tID = int(table_id)
@@ -125,12 +125,12 @@ class OrderManagerHandler():
         if table == None:
             raise ValueError("Not a valid table_id")
         
-        bill = table.bill()
+        bill = table.bill
         if bill == None:
             raise ValueError("Bill not created yet. Try calculating it with a GET")
         
         payable = True
-        for i in table.orders():
+        for i in table.orders:
             if i.state() not in ["served", "completed"]:
                 payable == False
                 raise ValueError("One or more orders hasn't been served yet")
