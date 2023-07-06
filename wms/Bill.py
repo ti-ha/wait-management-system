@@ -9,10 +9,14 @@ class Bill:
         self.__paid = False
 
     # Getters for price and paid status
-    def get_price(self) -> float:
+    @property
+    def price(self) -> float:
+        """Returns bill price"""
         return self.__price
     
-    def is_paid(self) -> bool:
+    @property
+    def paid(self) -> bool:
+        """Returns if it is paid or not"""
         return self.__paid
 
     def pay(self):

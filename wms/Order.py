@@ -161,7 +161,7 @@ class Order:
         if self.__bill == None:
             raise ValueError("Order: bill has not been calculated yet. (Try order.calculate_bill())")
         
-        if self.__bill.is_paid():
+        if self.__bill.paid():
             return "Bill already paid"
         
         else:
@@ -169,7 +169,7 @@ class Order:
             self.change_state()
     
     def bill_paid(self):
-        return self.__bill.is_paid()
+        return self.__bill.paid()
     
     def jsonify(self, table_id=None):
         if self.__bill != None:

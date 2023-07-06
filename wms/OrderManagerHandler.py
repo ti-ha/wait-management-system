@@ -44,7 +44,7 @@ class OrderManagerHandler():
             raise ValueError("Not a valid order_id")
         if order.bill() == None:
             order.calculate_bill()
-        output = {"price": order.bill().get_price(), "paid": order.bill().is_paid()}
+        output = {"price": order.bill().price(), "paid": order.bill().paid()}
         return output
 
     #setters
@@ -117,7 +117,7 @@ class OrderManagerHandler():
             raise e
         
         self.__table_handler.id_to_table(tID).set_bill(bill)
-        return {"price": bill.get_price(), "is_paid": bill.is_paid()}
+        return {"price": bill.price(), "is_paid": bill.paid()}
     
     def pay_table_bill(self, table_id):
         tID = int(table_id)
