@@ -21,18 +21,17 @@ class Category():
 
     @property
     def id(self) -> itertools.count:
-        """Returns id"""
+        """ Returns id """
         return self.__id
     
     @property
     def name(self) -> str:
-        """Returns name"""
+        """ Returns name """
         return self.__name
 
-    # Returns list of menu items
     @property
     def menu_items(self) -> list[MenuItem]:
-        """ Returns menu items """
+        """ Returns a list of menu items """
         return self.__menu_items
     
     def menu_item(self, menu_item) -> (MenuItem | None):

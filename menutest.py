@@ -146,12 +146,12 @@ def test13(menu):
     return False
 
 def test14():
-    if burgers.id() != 0 or snacks.id() != 1:
+    if burgers.id != 0 or snacks.id != 1:
         print("test14 FAIL")
         return False
     
     newcat = Category("newcategory")
-    if newcat.id() != 3:
+    if newcat.id != 3:
         print("test14 FAIL")
         return False
     
@@ -159,7 +159,7 @@ def test14():
     return True
 
 def test15():
-    if burgers.name() != "burgers":
+    if burgers.name != "burgers":
         print("test15 FAIL")
         return False
     
@@ -167,7 +167,7 @@ def test15():
     return True
 
 def test16():
-    if len(burgers.menu_items()) != 1 or len(snacks.menu_items()) != 2:
+    if len(burgers.menu_items) != 1 or len(snacks.menu_items) != 2:
         print("test16 FAIL")
         return False
     
