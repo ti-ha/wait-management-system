@@ -16,7 +16,7 @@ class MenuHandler():
     
     def get_deals_by_id(self, id):
         for i in self.__menu.deals():
-            if i.id() == id:
+            if i.id == id:
                 return i
         return None
     
@@ -38,7 +38,7 @@ class MenuHandler():
         
         deal = Deal(discount, deal_items)
         self.__menu.add_deal(deal)
-        return deal.id()
+        return deal.id
      
     def remove_category(self, category):
         self.__menu.remove_category(category)

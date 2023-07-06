@@ -128,10 +128,10 @@ class Order:
 
     # Applies a deal to a dictionary of menuitem: price
     def apply_deal(self, pricedict: dict, deal: Deal):
-        for i in deal.menu_items():
+        for i in deal.menu_items:
             item = i.name()
             if item in pricedict.keys():
-                pricedict[item] = pricedict[item] - (deal.discount()*pricedict[item])
+                pricedict[item] = pricedict[item] - (deal.discount*pricedict[item])
         return pricedict
 
     # Return final bill
