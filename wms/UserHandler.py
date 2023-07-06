@@ -14,13 +14,12 @@ class UserHandler():
             case _:               return None
         
         self.__users.append(new_user)
-        return new_user.id
     
     def jsonify(self):
         user_dict = {}
         for user in self.__users:
-            user_dict[f"User_{str(user.get_id())}"] = {"first_name": user.get_firstname(),
-                                                       "last name": user.get_lastname(),
+            user_dict[f"User_{str(user.id)}"] = {"first_name": user.firstname,
+                                                       "last name": user.lastname,
                                                        "type": user.__class__.__name__}
         return user_dict
     

@@ -23,7 +23,7 @@ class User:
         return self.__firstname
 
     @property
-    def get_lastname(self) -> str:
+    def lastname(self) -> str:
         """ Returns user's last name """
         return self.__lastname
     

@@ -7,121 +7,136 @@ app = Flask(__name__)
 CORS(app)
 wms = Application()
 
-# A lot of the logic in here needs to be refactored to a new class. Speedrunning for now to get API working for frontend
+
+def call(msg, func, *args):
+    """ Attempts to run a function func, returning a msg if it succeeds with no output.
+
+    Args:
+        msg (dict): Success message if no output
+        func (function): function to be called
+        *args (tuple): list of args to call to func
+
+    Returns:
+        json: the response to be sent to the frontend,
+        int: the response code
+    """
+    try:
+        output = func(*args)
+    except Exception as e:
+        # Uncomment this line for debugging
+        #raise e
+        return jsonify({"error": e.args}), 400
+    
+    if output is not None:
+        return jsonify(output), 200
+    
+    else:
+        return jsonify(msg), 200
 
 @app.route('/')
 def home():
-    return jsonify({"Hello world!"}), 200
+    return jsonify({"message": "Hello world!"}), 200
 
 @app.route('/menu', methods=['GET'])
 def get_menu():
-    return jsonify(wms.menu_handler.jsonify()), 200
+    return call(None, wms.menu_handler.jsonify)
 
-@app.route('/menu/categories', methods=['GET','POST'])
+@app.route('/menu/categories', methods=['GET'])
+def get_categories():
+    return call(None, wms.menu_handler.jsonify_categories)
+
+@app.route('/menu/categories', methods=['POST'])
 def create_category():
-    if request.method == "GET":
-        return jsonify(wms.menu_handler.jsonify_categories()), 200
-    elif request.method == "POST":
-        '''
-        JSON FORMAT:
-        {"name": "string"}
-        '''
-        content_type = request.headers.get('Content-Type')
-        if (content_type == 'application/json'):
-            obj = request.json
-            wms.menu_handler.add_category(obj["name"])
-            return jsonify({"message": f"Successfully added category {obj['name']}"}), 200
-        else:
-            return jsonify({"error": "Incorrect content-type"}), 400
-
-@app.route('/menu/categories/<category>', methods=['GET', 'POST', 'DELETE'])
-def specific_category(category):
-    if request.method == 'GET':
-        return jsonify(wms.menu_handler.jsonify_category(category)), 200
-    elif request.method == 'POST':
-        '''
-        ADDING A NEW MENU ITEM TO CATEGORY.
-        JSON FORMAT:
-        {"name": "string",
-         "price": float  ,
-         "image_url": "string"}
-        '''
-        content_type = request.headers.get('Content-Type')
-        if (content_type == 'application/json'):
-            obj = request.json
-            try:
-                name = obj["name"]
-                price = obj["price"]
-                imageURL = obj["image_url"]
-            except:
-                return jsonify({"error": "Incorrect fields"}), 400
-            
-            wms.menu_handler.add_menu_item(category, name, price, imageURL)
-            return jsonify({"message": f"Successfully added menuitem {name}"}), 200
-        
-    elif request.method == 'DELETE':
-        '''
-        REMOVING A SPECIFIC CATEGORY. DELETE METHOD FOR MENUITEM
-        IS IN THE SPECIFIC ROUTE FOR SPECIFIC MENU ITEM
-        '''
-        wms.menu_handler.remove_category(category)
-        return jsonify({"message": f"Successfully deleted category {category}"}), 200
-
+    '''
+    JSON FORMAT:
+    {"name": "string"}
+    '''
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        obj = request.json
     else:
-        return jsonify({"error": "Not a valid request"}), 400
-    
-@app.route('/menu/categories/<category>/<menu_item>', methods=['GET', 'DELETE'])
-def menu_item(category, menu_item):
-    if wms.menu_handler.get_menu_item(category, menu_item) == None:
-        return jsonify({"error": "Unrecognised menu_item"}), 400
-    
-    if request.method == 'GET':
-        return jsonify(wms.menu_handler.jsonify_menu_item(category, menu_item)), 200
-        
-    elif request.method == 'DELETE':
-        wms.menu_handler.remove_menu_item(category, menu_item)
-        return jsonify({"message": f"Successfully removed menuitem {menu_item} in category {category})"}), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+        return jsonify({"error": "Incorrect content-type"}), 400
 
-@app.route('/menu/deals', methods=['GET','POST'])
+    return call({"message": f"Successfully added category {obj['name']}"},
+                    wms.menu_handler.add_category, obj["name"])
+
+@app.route('/menu/categories/<category>', methods=['GET'])
+def get_category(category):
+    return call(None, wms.menu_handler.jsonify_category, category)
+
+@app.route('/menu/categories/<category>', methods=['POST'])
+def add_menu_item_to_category(category):
+    '''
+    ADDING A NEW MENU ITEM TO CATEGORY.
+    JSON FORMAT:
+    {"name": "string",
+        "price": float  ,
+        "image_url": "string"}
+    '''
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        obj = request.json
+        try:
+            name = obj["name"]
+            price = obj["price"]
+            imageURL = obj["image_url"]
+        except:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        return call({"message": f"Successfully added menuitem {name}"},
+                        wms.menu_handler.add_menu_item, category, name, price, imageURL)
+
+@app.route('/menu/categories/<category>', methods=['DELETE'])
+def delete_category(category):
+    '''
+    REMOVING A SPECIFIC CATEGORY. DELETE METHOD FOR MENUITEM
+    IS IN THE SPECIFIC ROUTE FOR SPECIFIC MENU ITEM
+    '''
+    return call({"message": f"Successfully deleted category {category}"},
+                wms.menu_handler.remove_category, category)
+    
+@app.route('/menu/categories/<category>/<menu_item>', methods=['GET'])
+def get_menu_item(category, menu_item):
+    return call(None, wms.menu_handler.jsonify_menu_item, category, menu_item)
+
+@app.route('/menu/categories/<category>/<menu_item>', methods=['DELETE'])
+def delete_menu_item(category, menu_item):
+    return call({"message": f"Successfully removed menuitem {menu_item} in category {category})"},
+                wms.menu_handler.remove_menu_item, category, menu_item)
+
+@app.route('/menu/deals', methods=['GET'])
+def get_deal():
+    return call(None, wms.menu_handler.jsonify_deals)
+
+@app.route('/menu/deals', methods=['POST'])
 def create_deal():
-    if request.method == 'GET':
-        return jsonify(wms.menu_handler.jsonify_deals()), 200
+    '''
+    JSON FORMAT:
+    {"discount": int,
+    "menu_items": [{"name": "string"},
+                    {"name": "string"}
+                    }]
+    }
+    
+    '''
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        obj = request.json
+        # Check if all menu items exist
+        try: 
+            menu_item_lookup = [i["name"] for i in obj["menu_items"]]
+        except:
+            return jsonify({"error": "Incorrect fields"})
         
-    elif request.method == 'POST':
-        '''
-        JSON FORMAT:
-        {"discount": int,
-        "menu_items": [{"name": "string"},
-                        {"name": "string"}
-                        }]
-        }
-        
-        '''
-        content_type = request.headers.get('Content-Type')
-        if (content_type == 'application/json'):
-            obj = request.json
-            # Check if all menu items exist
-            try: 
-                menu_item_lookup = [i["name"] for i in obj["menu_items"]]
-            except:
-                return jsonify({"error": "Incorrect fields"})
-            
-            proc = wms.menu_handler.add_deal(obj["discount"], menu_item_lookup)
-            if proc == None:
-                return jsonify({"error": "One or more menu items is not present in the menu"})
-            
-            return jsonify({"message": f"Successfully added deal with new id {str(proc)}"}), 200
-        
-        else:
-            return jsonify({"error": "Incorrect content-type"}), 400
+        return call({"message": f"Successfully added deal"},
+                        wms.menu_handler.add_deal, obj["discount"], menu_item_lookup)
+    
     else:
-        return jsonify({"error": "Unrecognised request"}), 400
+        return jsonify({"error": "Incorrect content-type"}), 400
 
 @app.route('/table', methods=['GET'])
 def get_table():
-    return jsonify(wms.table_handler.jsonify()), 200
+    return call(None, wms.table_handler.jsonify)
 
 @app.route('/table/add', methods=['POST'])
 def add_table():
@@ -139,12 +154,15 @@ def add_table():
         except:
             return jsonify({"error": "Incorrect fields"}), 400
         
-        table_id = wms.table_handler.add_table(table_limit, orders)
-        return jsonify({"message": f"Successfully added table {str(table_id)}"}), 200
+        return call({"message": "Successfully added table"},
+                    wms.table_handler.add_table, table_limit, orders)
+        
+    else:
+        return jsonify({"error": "Incorrect content-type"}), 400
 
 @app.route('/user', methods=['GET'])
 def get_user():
-    return jsonify(wms.user_handler.jsonify()), 200
+    return call(None, wms.user_handler.jsonify)
 
 @app.route('/user/add', methods=['POST'])
 def add_user():
@@ -164,10 +182,11 @@ def add_user():
         except:
             return jsonify({"error": "Incorrect fields"}), 400
         
-        user_id = wms.user_handler.add_user(first_name, last_name, user_type)
-        if user_id == None:
-            return jsonify({"error": "Unable to create user"}), 400
-        return jsonify({"message": f"Successfully added user {str(user_id)}"}), 200
+        return call({"message": f"Successfully added user {first_name} {last_name}"},
+                    wms.user_handler.add_user, first_name, last_name, user_type)
+        
+    else:
+        return jsonify({"error": "Incorrect content-type"}), 400
     
 @app.route('/table/add/customer', methods=['POST'])
 def add_table_customer():
@@ -185,26 +204,21 @@ def add_table_customer():
         except:
             return jsonify({"error": "Incorrect fields"}), 400
         
-        status = wms.table_handler.add_customer(table_id, wms.id_to_user(customer_id))
-        if not status:
-            return jsonify({"error": "Unable to move customer to table"}), 400
-        return jsonify({"message": "Successfully added customer to table"}), 200
+        return call({"message": "Successfully added customer to table"},
+                    wms.table_handler.add_customer, table_id, wms.user_handler.id_to_user(customer_id))
+        
+    else:
+        return jsonify({"error": "Incorrect content-type"}), 400
     
 #### ORDER MANAGER ENDPOINTS
     
 @app.route('/ordermanager', methods=['GET'])
 def get_order_manager():
-    if request.method == 'GET':
-        return jsonify(wms.om_handler.jsonify()), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+    return call(None, wms.om_handler.jsonify)
     
 @app.route('/ordermanager/orders', methods=['GET'])
 def get_orders():
-    if request.method == 'GET':
-        return jsonify(wms.om_handler.jsonify_orders()), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+    return call(None, wms.om_handler.jsonify_orders), 200
 
 @app.route('/ordermanager/orders/add/<table_id>' , methods=['POST'])
 def add_order(table_id):
@@ -213,135 +227,72 @@ def add_order(table_id):
     { "menu_items: [{"id": int}, ... , {"id": int}],
       "deals:      [{"id": int}, ... , {"id": int}] }
     '''
-    if request.method == 'POST':
-        content_type = request.headers.get('Content-Type')
-        if (content_type == 'application/json'):
-            obj = request.json
-            try:
-                menu_items_ids = [i["id"] for i in obj["menu_items"]]
-                deals_ids = [i["id"] for i in obj["deals"]]
-            except:
-                return jsonify({"error": "Incorrect fields"}), 400
-            
-            try:
-                wms.om_handler.add_order(table_id, menu_items_ids, deals_ids)
-            except ValueError:
-                return jsonify({"error":"Invalid args in json"}), 400
-            
-            return jsonify({"message": "Successfully added order"}), 200
-
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        obj = request.json
+        try:
+            menu_items_ids = [i["id"] for i in obj["menu_items"]]
+            deals_ids = [i["id"] for i in obj["deals"]]
+        except:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        return call({"message": "Successfully added order"},
+                     wms.om_handler.add_order, table_id, menu_items_ids, deals_ids)
+    
     else:
-        return jsonify({"error": "Unrecognised request"}), 400
+        return jsonify({"error": "Incorrect content-type"}), 400
     
 @app.route('/ordermanager/orders/remove/<table_id>/<order_id>', methods=['DELETE'])
 def remove_order(table_id, order_id):
-    if request.method == 'DELETE':
-        try:
-            wms.om_handler.remove_order(table_id, order_id)
-        except:
-            return jsonify({"error": "Bad request (See backend server for details)"}), 400
-        
-        return jsonify({"message": "Successfully deleted order"}), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+    return call({"message": "Successfully deleted order"},
+                 wms.om_handler.remove_order, table_id, order_id)
     
 @app.route('/ordermanager/tables/<table_id>', methods=['GET'])
 def get_table_orders(table_id):
-    if request.method == 'GET':
-        try:
-            output = wms.om_handler.get_table_orders(table_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        
-        return jsonify(output), 200
+    return call(None, wms.om_handler.get_table_orders, table_id)
 
-    else:
-        return jsonify({"error":"Unrecognised request"}), 400
 
-@app.route('/ordermanager/tables/<table_id>/bill', methods=['GET','POST'])
-def manage_table_bill(table_id):
+@app.route('/ordermanager/tables/<table_id>/bill', methods=['GET'])
+def get_table_bill(table_id):
     '''
     EMPTY POST REQUEST. NO DATA EXPECTED
     '''
-    if request.method == 'GET':
-        try:
-            output = wms.om_handler.calculate_and_return_bill(table_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
+    return call(None, wms.om_handler.calculate_and_return_bill, table_id)
 
-        return jsonify(output), 200
+@app.route('/ordermanager/tables/<table_id>/bill', methods=['POST'])
+def pay_table_bill(table_id):
+    return call({"message": "Successfully paid bill"},
+                    wms.om_handler.pay_table_bill, table_id)
+    
+@app.route("/ordermanager/orders/<order_id>", methods=['GET'])
+def get_order_by_id(order_id):
+    return call(None, wms.om_handler.get_order_by_id, order_id)
 
+@app.route("/ordermanager/orders/<order_id>", methods=['DELETE'])
+def delete_order_by_id(order_id):
+    return call({"message": "Successfully removed order from ordermanager"},
+                wms.om_handler.delete_order_by_id, order_id)
     
-    elif request.method == 'POST':
-        try:
-            wms.om_handler.pay_table_bill(table_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        
-        return jsonify({"message": "Successfully paid bill"}), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
-    
-@app.route("/ordermanager/orders/<order_id>", methods=['GET','DELETE'])
-def manage_order_by_id(order_id):
-    if request.method == 'GET':
-        try:
-            order = wms.om_handler.get_order_by_id(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify(order), 200
-    
-    elif request.method == 'DELETE':
-        try:
-            wms.om_handler.delete_order_by_id(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify({"message": "Successfully removed order from ordermanager"}), 200
+@app.route("/ordermanager/orders/<order_id>/state", methods=['GET'])
+def get_order_state(order_id):
+    return call(None, wms.om_handler.get_order_state, order_id)
 
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
-    
-@app.route("/ordermanager/orders/<order_id>/state", methods=['GET', 'POST'])
-def affect_order_state(order_id):
-    if request.method == 'GET':
-        try:
-            output = wms.om_handler.get_order_state(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify(output), 200
-    
-    elif request.method == 'POST':
-        '''
-        EMPTY FOR NOW. WE WILL EXPAND THIS LATER TO INCLUDE STATE LEAPS IF WE WANT
-        '''
-        try:
-            output = wms.om_handler.change_order_state(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify({"message": f"Successfully changed state to {output}"}), 200
+@app.route("/ordermanager/orders/<order_id>/state", methods=['POST'])
+def advance_order_state(order_id):
+    '''
+    EMPTY FOR NOW. WE WILL EXPAND THIS LATER TO INCLUDE STATE LEAPS IF WE WANT
+    '''
+    return call({"message": f"Successfully changed state"},
+                wms.om_handler.change_order_state, order_id)
 
-        
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+@app.route("/ordermanager/orders/<order_id>/bill", methods=['GET'])
+def get_order_bill(order_id):
+    return call(None, wms.om_handler.get_order_bill, order_id)
 
-@app.route("/ordermanager/orders/<order_id>/bill", methods=['GET', 'POST'])
-def manage_order_bill(order_id):
-    if request.method == 'GET':
-        try:
-            output = wms.om_handler.get_order_bill(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        
-        return jsonify(output), 200
-    
-    elif request.method == 'POST':
-        try:
-            wms.om_handler.pay_order_bill(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify({"message": "Successfully paid bill"}), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+@app.route("/ordermanager/orders/<order_id>/bill", methods=['POST'])
+def pay_order_bill(order_id):
+    return call({"message": "Successfully paid bill"},
+                wms.om_handler.pay_order_bill, order_id)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

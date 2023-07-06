@@ -30,15 +30,15 @@ class MenuHandler():
     def add_deal(self, discount, menu_items):
 
         deal_items = [j for i in self.__menu.categories 
-                      for j in i.get_menu_items() 
-                      if j.name() in menu_items]
+                      for j in i.menu_items 
+                      if j.name in menu_items]
         
         if len(menu_items) != len(deal_items):
-            return None
+            raise ValueError("One or more items is not present in the menu")
         
         deal = Deal(discount, deal_items)
         self.__menu.add_deal(deal)
-        return deal.id
+        return None
      
     def remove_category(self, category):
         self.__menu.remove_category(category)
@@ -50,6 +50,9 @@ class MenuHandler():
         return self.__menu.jsonify()
     
     def jsonify_category(self, category):
+        if self.__menu.get_category(category) == None:
+            raise ValueError("That category doesn't exist")
+
         return self.__menu.get_category(category).jsonify()
     
     def jsonify_categories(self):

@@ -38,7 +38,7 @@ class Menu():
             None
         """
         for i in self.__categories:
-            if i.name() == name:
+            if i.name == name:
                 return i
         return None
 
@@ -144,7 +144,7 @@ class Menu():
             menu item cannot be found.
         """
         for i in self.menu_items():
-            if i.id() == id:
+            if i.id == id:
                 return i
         return None
     
