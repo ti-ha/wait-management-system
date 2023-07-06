@@ -34,7 +34,7 @@ class OrderManagerHandler():
         order = self.__order_manager.get_order(oID)
         if order == None:
             raise ValueError("Not a valid order_id")
-        output = {"state": order.state()}
+        output = {"state": order.state}
         return output
     
     def get_order_bill(self, order_id):
@@ -42,9 +42,9 @@ class OrderManagerHandler():
         order = self.__order_manager.get_order(oID)
         if order == None:
             raise ValueError("Not a valid order_id")
-        if order.bill() == None:
+        if order.bill == None:
             order.calculate_bill()
-        output = {"price": order.bill().price, "paid": order.bill().paid}
+        output = {"price": order.bill.price, "paid": order.bill.paid}
         return output
 
     #setters
@@ -78,7 +78,7 @@ class OrderManagerHandler():
         if order == None:
             raise ValueError("Not a valid order_id")
         self.__order_manager.change_state(oID)
-        return order.state()
+        return order.state
 
     #deleters
     def remove_order(self, table_id, order_id):
@@ -131,7 +131,7 @@ class OrderManagerHandler():
         
         payable = True
         for i in table.orders:
-            if i.state() not in ["served", "completed"]:
+            if i.state not in ["served", "completed"]:
                 payable == False
                 raise ValueError("One or more orders hasn't been served yet")
         bill.pay()
@@ -141,7 +141,7 @@ class OrderManagerHandler():
         order = self.__order_manager.get_order(oID)
         if order == None:
             raise ValueError("Not a valid order_id")
-        if order.bill() == None:
+        if order.bill == None:
             raise ValueError("Order does not have a bill. Try calculating it first")
         try:
             order.mark_as_paid()

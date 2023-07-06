@@ -30,7 +30,7 @@ class OrderManager:
             Order: Item of type Order based off provided ID
         """
         for order in self.get_orders():
-            if (order.id() == order_ID):
+            if (order.id == order_ID):
                 return order
         return None
     
@@ -65,7 +65,7 @@ class OrderManager:
         order_ids = self.get_map()[table_id]
         order_list = []
         for i in self.get_orders():
-            if i.id() in order_ids:
+            if i.id in order_ids:
                 order_list.append(i)
 
         return order_list
@@ -84,9 +84,9 @@ class OrderManager:
             raise ValueError("OrderManager: add_order(): Order already exists")
         self.__orders.append(order)
         if table.id in self.__map.keys():
-            self.__map[table.id] += [order.id()]
+            self.__map[table.id] += [order.id]
         else:
-            self.__map[table.id] = [order.id()]
+            self.__map[table.id] = [order.id]
         table.add_order(order)
 
     def remove_order(self, order: Order, table: Table):
@@ -103,7 +103,7 @@ class OrderManager:
             raise ValueError("OrderManager: remove_order(): Order does not exist")
 
         if table.id in self.get_map().keys():
-            self.__map[table.id].remove(order.id())
+            self.__map[table.id].remove(order.id)
             table.remove_order(order)
             self.__orders.remove(order)
         else:
@@ -148,7 +148,7 @@ class OrderManager:
         else:
             raise TypeError("OrderManager: change_to_state(): Not a valid Order obj or order_id")
         if string.upper() in States.list():
-            while order.state() != string:
+            while order.state != string:
                 order.change_state()
             return True
         
@@ -175,7 +175,7 @@ class OrderManager:
         orderlist = self.get_table_orders(table_id)
         bills = []
         for i in orderlist:
-            bills.append(i.bill())
+            bills.append(i.bill)
         
         if None in bills:
             raise ValueError("OrderManager: calculate_table_bill(): One or more orders have not been served yet")
@@ -207,7 +207,7 @@ class OrderManager:
         """
         output = {"orders": []}
         for i in self.get_orders():
-            table_id = self.get_table_from_order(i.id())
+            table_id = self.get_table_from_order(i.id)
             output["orders"].append(i.jsonify(table_id))
         
         return output
