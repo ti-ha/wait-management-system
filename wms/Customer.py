@@ -13,8 +13,12 @@ class Customer(User):
         self.__table = None
     
     # Getters and Setters
-    def get_table(self):
+    @property
+    def table(self):
+        """Returns table the customer is at"""
         return self.__table
     
-    def set_table(self, table):
+    @table.setter   
+    def table(self, table):
+        """Sets the table the customer will be at"""
         self.__table = table

@@ -80,7 +80,7 @@ class Table:
             raise ValueError("Table: add_customers(): Table is full")
         
         self.__customers.append(customer)
-        customer.set_table(self)
+        customer.table = self
         if len(self.__customers) >= self.__table_limit:
             self.__occupied = True
 
