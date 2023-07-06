@@ -17,11 +17,17 @@ class User:
         self.__lastname = lastname
 
     # Getters
-    def get_firstname(self) -> str:
+    @property
+    def firstname(self) -> str:
+        """ Returns user's first name """
         return self.__firstname
 
+    @property
     def get_lastname(self) -> str:
+        """ Returns user's last name """
         return self.__lastname
     
-    def get_id(self) -> itertools.count:
+    @property
+    def id(self) -> itertools.count:
+        """ Returns user's ID """
         return self.__id
