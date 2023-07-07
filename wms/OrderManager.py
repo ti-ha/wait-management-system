@@ -203,10 +203,12 @@ class OrderManager:
         return output
     
     def jsonify(self) -> dict:
-        """ TODO:
+        """ Creates a dictionary with a list containing all of the orders of 
+        each individual table
 
         Returns:
-            dict: _description_
+            dict: Dictionary containing a list of all of the orders of 
+        each individual table
         """
         output = {"orders": []}
         for i in self.orders:

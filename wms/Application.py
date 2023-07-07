@@ -1,8 +1,10 @@
 from wms import *
 
-# A decorator class for managing the app
 class Application():
     def __init__(self):
+        """ Constructor for the Application class. A decorator class for 
+        managing the app
+        """
         self.menu_handler = MenuHandler(Menu())
         self.table_handler = TableHandler()
         self.om_handler = OrderManagerHandler(OrderManager(), self.table_handler, self.menu_handler)
