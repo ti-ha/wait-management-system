@@ -1,6 +1,5 @@
 from __future__ import annotations
-from .User import User
-from .Order import Order
+from wms import User, Order
 
 class WaitStaff(User):
     def __init__(self, firstname, lastname):

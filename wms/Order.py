@@ -6,6 +6,7 @@ from .Deal import Deal
 from .MenuItem import MenuItem
 
 class States(Enum):
+    DELETED = -1
     ORDERED = 0
     COOKING = 1
     READY = 2
@@ -29,7 +30,7 @@ class States(Enum):
     @staticmethod
     def list():
         """ Returns names of all the states """
-        return States._member_names_
+        return [i.lower() for i in States._member_names_]
 
 class State:
 
@@ -47,16 +48,21 @@ class State:
         Returns:
             str: Current state as a string
         """
-        if self.__state == States(0):
-            return "ordered"
-        elif self.__state == States(1):
-            return "cooking"
-        elif self.__state == States(2):
-            return "ready"
-        elif self.__state == States(3):
-            return "served"
-        elif self.__state == States(4):
-            return "completed"
+        match self.__state:
+            case States.DELETED:
+                return "deleted"
+            case States.ORDERED:
+                return "ordered"
+            case States.COOKING:
+                return "cooking"
+            case States.READY:
+                return "ready"
+            case States.SERVED:
+                return "served"
+            case States.COMPLETED:
+                return "completed"
+            case _:
+                raise ValueError("State outside bounds")
 
 class Order:
 
@@ -75,16 +81,9 @@ class Order:
         self.__id = next(Order.__id_iter)
         self.__bill = None
         self.__state = State()
+        self.__deals = [deals] if isinstance(deals, Deal) else deals
+        self.__menu_items = [menu_items] if isinstance(menu_items, MenuItem) else menu_items
 
-        if isinstance(deals, Deal):
-            self.__deals = [deals]
-        else:
-            self.__deals = deals
-
-        if isinstance(menu_items, MenuItem):
-            self.__menu_items = [menu_items]
-        else:
-            self.__menu_items = menu_items
 
         self.__menu_items = [] if menu_items is None else menu_items
         self.__deals = [] if deals is None else deals

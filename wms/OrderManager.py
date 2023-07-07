@@ -1,8 +1,5 @@
 from __future__ import annotations
-from .Order import Order, States
-from .User import User
-from .Table import Table
-from .Bill import Bill
+from wms import Order, Table, Bill, States
 
 class OrderManager:
     def __init__(self):
@@ -150,7 +147,8 @@ class OrderManager:
             pass
         else:
             raise TypeError("OrderManager: change_to_state(): Not a valid Order obj or order_id")
-        if string.upper() in States.list():
+        
+        if string in States.list():
             while order.state != string:
                 order.change_state()
             return True
@@ -175,18 +173,12 @@ class OrderManager:
         else:
             raise TypeError("OrderManager: calculate_table_bill(): Not a valid id")
         
-        orderlist = self.get_table_orders(table_id)
-        bills = []
-        for i in orderlist:
-            bills.append(i.bill)
+        bills = [i.bill for i in self.get_table_orders(table_id)]
         
         if None in bills:
             raise ValueError("OrderManager: calculate_table_bill(): One or more orders have not been served yet")
         
-        subtotal = 0
-        for i in bills:
-            if i.is_paid() == False:
-                subtotal += i.get_price()
+        subtotal = sum([i.price for i in bills if i.paid == False])
         
         return Bill(subtotal)
     
@@ -196,11 +188,9 @@ class OrderManager:
         Returns:
             dict: Dictionary containing a list of all the current orders
         """
-        output = {"orders": []}
-        for i in self.orders:
-            output["orders"].append(i.jsonify())
-        
-        return output
+        return {
+            "orders": [i.jsonify() for i in self.orders]
+            }
     
     def jsonify(self) -> dict:
         """ Creates a dictionary with a list containing all of the orders of 
@@ -210,12 +200,9 @@ class OrderManager:
             dict: Dictionary containing a list of all of the orders of 
         each individual table
         """
-        output = {"orders": []}
-        for i in self.orders:
-            table_id = self.get_table_from_order(i.id)
-            output["orders"].append(i.jsonify(table_id))
-        
-        return output
+        return {
+            "orders": [i.jsonify(self.get_table_from_order(i.id)) for i in self.orders]
+            }
 
 
 

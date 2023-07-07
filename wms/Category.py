@@ -1,5 +1,5 @@
 from __future__ import annotations
-from .MenuItem import MenuItem
+from wms import MenuItem
 import itertools
 
 
@@ -20,7 +20,7 @@ class Category():
         self.__menu_items = [] if menu_items is None else menu_items
 
     @property
-    def id(self) -> itertools.count:
+    def id(self) -> int:
         """ Returns id """
         return self.__id
     
@@ -61,10 +61,7 @@ class Category():
         """
         return next((it for it in self.menu_items if it.name == name), None)
 
-        
-    # Changes the name of the category
-
-    def add_menu_item(self, menu_item):
+    def add_menu_item(self, menu_item) -> None:
         """ Adds a menu_item to the category
 
         Args:
@@ -78,7 +75,7 @@ class Category():
         
         self.menu_items.append(menu_item)
 
-    def remove_menu_item(self, name):
+    def remove_menu_item(self, name) -> None:
         """ Removes a menu_item from the category
 
         Args:
@@ -106,10 +103,7 @@ class Category():
             "name": self.name, 
             "menu_items": [it.jsonify() for it in self.menu_items]
         }
-        # out = {"id": self.id, "name": self.name, "menu_items": []}
-        # for i in self.menu_items:
-        #     out["menu_items"].append(i.jsonify())
-        # return out
+
     
 
 

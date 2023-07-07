@@ -29,7 +29,7 @@ class MenuHandler():
             MenuItem: MenuItem to be searched for. Is None if menu item does not 
             exist
         """
-        return self.__menu.get_category(category).get_menu_item_by_name(name)
+        return self.__menu.get_category(category).menu_item_by_name(name)
     
     def get_menu_item_by_id(self, id) -> MenuItem:
         """ Returns menu item by id
@@ -58,7 +58,7 @@ class MenuHandler():
                 return i
         return None
     
-    def add_category(self, category):
+    def add_category(self, category) -> None:
         """ Adds a category to the menu
 
         Args:
@@ -66,7 +66,7 @@ class MenuHandler():
         """
         self.__menu.add_category(Category(category))
 
-    def add_menu_item(self, category, name, price, imageurl):
+    def add_menu_item(self, category, name, price, imageurl) -> None:
         """ Adds a menu item to the menu
 
         Args:
@@ -104,7 +104,7 @@ class MenuHandler():
         self.__menu.add_deal(deal)
         return None
      
-    def remove_category(self, category):
+    def remove_category(self, category) -> None:
         """ Removes a category from the menu
 
         Args:
@@ -112,7 +112,7 @@ class MenuHandler():
         """
         self.__menu.remove_category(category)
     
-    def remove_menu_item(self, category, name):
+    def remove_menu_item(self, category, name) -> None:
         """ Removes a menu item from the menu
 
         Args:
@@ -155,10 +155,10 @@ class MenuHandler():
         return [i.jsonify() for i in self.__menu.categories]
     
     def jsonify_menu_item(self, category, name) -> dict:
-        """ Creates a dictionary for all the menu items of a menu
+        """ Creates a dictionary for a specific menu_item in a menu
 
         Returns:
-            Dict: A dictionary for all the menu items of a menu
+            Dict: A dictionary for a specific menu_item in a menu
         """
         return self.__menu.get_category(category).menu_item(name).jsonify()
     

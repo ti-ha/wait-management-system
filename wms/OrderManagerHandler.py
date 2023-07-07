@@ -27,10 +27,9 @@ class OrderManagerHandler():
         except ValueError:
             raise ValueError("table_id does not exist in map")
         
-        output = {"orders": []}
-        for i in orders:
-            output["orders"].append(i.jsonify())
-        return output
+        return {
+            "orders": [i.jsonify() for i in orders]
+            }
     
     def get_order_by_id(self, order_id) -> dict:
         """ Gets an order by its ID value
@@ -67,8 +66,10 @@ class OrderManagerHandler():
         order = self.__order_manager.get_order(oID)
         if order == None:
             raise ValueError("Not a valid order_id")
-        output = {"state": order.state}
-        return output
+        
+        return {
+            "state": order.state
+            }
     
     def get_order_bill(self, order_id) -> dict:
         """ Gets the current bill of an order 
@@ -89,8 +90,11 @@ class OrderManagerHandler():
             raise ValueError("Not a valid order_id")
         if order.bill == None:
             order.calculate_bill()
-        output = {"price": order.bill.price, "paid": order.bill.paid}
-        return output
+
+        return {
+            "price": order.bill.price, 
+            "paid": order.bill.paid
+            }
 
     def add_order(self, table_id, menu_items_ids, deals_ids):
         """ Adds an order to the list of orders
@@ -128,6 +132,7 @@ class OrderManagerHandler():
                 raise ValueError("OrderManagerHandler: add_order(): Deal does not exist")
             else:
                 deals.append(deal)
+
         order = Order(menu_items, deals)
         self.__order_manager.add_order(order, table)
 
@@ -187,12 +192,12 @@ class OrderManagerHandler():
         order = self.__order_manager.get_order(oID)
         if order == None:
             raise ValueError("Not a valid order_id")
-        tID = -1
-        for i in self.__order_manager.map:
-            if oID in self.__order_manager.map[i]:
-                tID = i
         
-        if tID == -1:
+        tID = -1
+
+        tID = next((i for i in self.__order_manager.map if oID in self.__order_manager.map[i]), None)
+        
+        if tID == None:
             raise ValueError("Order is not in a table. How did you manage that?")
         
         self.__order_manager.remove_order(order, self.__table_handler.id_to_table(tID))
@@ -240,11 +245,11 @@ class OrderManagerHandler():
         if bill == None:
             raise ValueError("Bill not created yet. Try calculating it with a GET")
         
-        payable = True
-        for i in table.orders:
-            if i.state not in ["served", "completed"]:
-                payable == False
-                raise ValueError("One or more orders hasn't been served yet")
+        payable = len([False for i in table.orders if i.state not in ["served", "completed"]]) == 0
+
+        if not payable:
+            raise ValueError("One or more orders hasn't been served yet")
+        
         bill.pay()
 
     def pay_order_bill(self, order_id):
@@ -264,6 +269,7 @@ class OrderManagerHandler():
             raise ValueError("Not a valid order_id")
         if order.bill == None:
             raise ValueError("Order does not have a bill. Try calculating it first")
+        
         try:
             order.mark_as_paid()
         except Exception as e:

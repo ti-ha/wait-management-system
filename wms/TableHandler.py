@@ -4,6 +4,10 @@ class TableHandler():
     def __init__(self) -> None:
         """ Constructor for the TableHandler Class """
         self.__tables = []
+
+    @property
+    def tables(self) -> list[Table]:
+        return self.__tables
     
     def add_table(self, table_limit, orders):
         """ Adds a table to the restaurant
@@ -44,7 +48,7 @@ class TableHandler():
                             "availability": table.get_open_seats(),
                             "table limit": table.table_limit,
                             "is occupied": table.occupied}
-                            for table in self.__tables]}
+                            for table in self.tables]}
 
     def id_to_table(self, id) -> Table:
         """ Converts a given id to a table object
@@ -55,7 +59,4 @@ class TableHandler():
         Returns:
             Table: Table object that matches the provided ID value
         """
-        for table in self.__tables:
-            if table.id == id:
-                return table
-        return None
+        return next((table for table in self.tables if table.id == id), None)

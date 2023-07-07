@@ -1,7 +1,5 @@
 from __future__ import annotations
-from .Category import Category
-from .MenuItem import MenuItem
-from .Deal import Deal
+from wms import Category, MenuItem, Deal
 
 class Menu():
 
@@ -27,7 +25,7 @@ class Menu():
         """ Returns a list of deals """
         return self.__deals
     
-    def get_category(self, name):
+    def get_category(self, name) -> Category:
         """ Returns a category with a matching name attribute
 
         Args:
@@ -42,7 +40,7 @@ class Menu():
                 return i
         return None
 
-    def add_category(self, category):
+    def add_category(self, category) -> None:
         """ Adds a new category to the menu
 
         Args:
@@ -60,7 +58,7 @@ class Menu():
 
         self.__categories.append(category)
 
-    def remove_category(self, name):
+    def remove_category(self, name) -> None:
         """ Removes a category, if that category exists, from the menu.
 
         Args:
@@ -82,7 +80,7 @@ class Menu():
         
         raise ValueError("Menu: menu.remove_category(): not in categories")
     
-    def add_deal(self, deal):
+    def add_deal(self, deal) -> None:
         """ Adds a new deal to the menu
 
         Args:
@@ -100,7 +98,7 @@ class Menu():
         
         self.__deals.append(deal)
     
-    def remove_deal(self, deal):
+    def remove_deal(self, deal) -> None:
         """ Removes a deal from the menu.
 
         Args:
@@ -155,12 +153,9 @@ class Menu():
         Returns:
             dict: Dictionary containing the categories and deals of the menu
         """
-        output = {'categories': [], 'deals': []}
-        for i in self.categories:
-            output['categories'].append(i.jsonify())
-        for j in self.deals:
-            output['deals'].append(j.jsonify())
-        
-        return output
+        return {
+            'categories': [i.jsonify() for i in self.categories], 
+            'deals': [i.jsonify() for i in self.deals]
+            }
 
         

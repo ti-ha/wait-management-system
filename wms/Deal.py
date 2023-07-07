@@ -137,8 +137,8 @@ class Deal():
         Returns:
             dict: Dictionary containing the id and discount value of the deal
         """
-        output = {"id": self.id, "discount": self.discount, "menu_items": []}
-        for i in self.menu_items:
-            output["menu_items"].append(i.jsonify())
-
-        return output
+        return {
+            "id": self.id, 
+            "discount": self.discount, 
+            "menu_items": [i.jsonify() for i in self.menu_items]
+            }

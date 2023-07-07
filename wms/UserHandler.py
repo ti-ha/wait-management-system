@@ -5,6 +5,9 @@ class UserHandler():
         """ Constructor for the UserHandler Class """
         self.__users = []
     
+    @property
+    def users(self) -> list[User]:
+        return self.__users
     
     def add_user(self, firstname, lastname, user_type):
         """ Adds a user to the system
@@ -35,11 +38,12 @@ class UserHandler():
             Dic: A dictionary of all the users and their first name, last name
         and class type. 
         """
+        
         user_dict = {}
-        for user in self.__users:
+        for user in self.users:
             user_dict[f"User_{str(user.id)}"] = {"first_name": user.firstname,
-                                                       "last name": user.lastname,
-                                                       "type": user.__class__.__name__}
+                                                 "last name": user.lastname,
+                                                 "type": user.__class__.__name__}
         return user_dict
     
     def id_to_user(self, id) -> User:
@@ -51,4 +55,4 @@ class UserHandler():
         Returns:
             User: User to be found by their ID value
         """
-        return next([user for user in self.__users if user.id == id], None)
+        return next((user for user in self.__users if user.id == id), None)

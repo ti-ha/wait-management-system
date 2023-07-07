@@ -19,7 +19,7 @@ class Bill:
         """ Returns if it is paid or not """
         return self.__paid
 
-    def pay(self):
+    def pay(self) -> None:
         """ When the bill is paid, set bool to true
         """
         self.__paid = True

@@ -1,4 +1,4 @@
-from .ServiceRequest import ServiceRequest
+from wms import ServiceRequest
 
 class ServiceRequestManager:
     def __init__(self):

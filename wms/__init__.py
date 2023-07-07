@@ -6,7 +6,7 @@ from .KitchenStaff import KitchenStaff
 from .Manager import Manager
 from .Menu import Menu
 from .MenuItem import MenuItem
-from .Order import Order
+from .Order import Order, States
 from .OrderManager import OrderManager
 from .RestaurantManager import RestaurantManager
 from .ServiceRequest import ServiceRequest

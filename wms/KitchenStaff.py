@@ -1,6 +1,6 @@
 from __future__ import annotations
-from .Order import Order
 from .User import User
+from wms import Order
 
 class KitchenStaff(User):
     def __init__(self, firstname, lastname):
