@@ -24,7 +24,7 @@ def call(msg, func, *args):
         output = func(*args)
     except Exception as e:
         # Uncomment this line for debugging
-        #raise e
+        raise e
         return jsonify({"error": e.args}), 400
     
     if output is not None:
@@ -315,8 +315,17 @@ def advance_order_state(order_id):
 
     EMPTY FOR NOW. WE WILL EXPAND THIS LATER TO INCLUDE STATE LEAPS IF WE WANT
     """
-    return call({"message": f"Successfully changed state"},
+    return call({"message": "Successfully changed state"},
                 wms.om_handler.change_order_state, order_id)
+
+@app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['GET'])
+def get_menu_item_state(order_id, menu_item_id):
+    return call(None, wms.om_handler.get_menu_item_state, order_id, menu_item_id)
+
+@app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['POST'])
+def change_menu_item_state(order_id, menu_item_id):
+    return call({"message": "Successfully changed state"},
+                wms.om_handler.change_menu_item_state, order_id, menu_item_id)
 
 @app.route("/ordermanager/orders/<order_id>/bill", methods=['GET'])
 def get_order_bill(order_id):
