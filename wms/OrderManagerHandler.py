@@ -71,6 +71,17 @@ class OrderManagerHandler():
             "state": order.state
             }
     
+    def get_menu_item_state(self, order_id, menu_item_id) -> dict:
+        oID = int(order_id)
+        mID = int(menu_item_id)
+        order = self.__order_manager.get_order(oID)
+        if order == None:
+            raise ValueError("Not a valid order_id")
+        
+        return {
+            "state": order.get_menu_item_state_by_id(mID).state
+        }
+    
     def get_order_bill(self, order_id) -> dict:
         """ Gets the current bill of an order 
 
@@ -154,6 +165,23 @@ class OrderManagerHandler():
             raise ValueError("Not a valid order_id")
         self.__order_manager.change_state(oID)
         return order.state
+    
+    def change_menu_item_state(self, order_id, menu_item_id):
+        """ Changes the state of a menu_item within an order
+
+        Args:
+            order_id (int): the order id of the menu_item to be changed
+            menu_item_id (int): the order-specific menu_item id to be changed
+
+        Raises:
+            ValueError: Order id provided does not exist
+        """
+        oID = int(order_id)
+        mID = int(menu_item_id)
+        order = self.__order_manager.get_order(oID)
+        if order == None:
+            raise ValueError("Not a valid order_id")
+        order.get_menu_item_state_by_id(mID).transition_state()
 
     def remove_order(self, table_id, order_id):
         """ Remove an order from the list of orders

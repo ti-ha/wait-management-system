@@ -127,6 +127,26 @@ class OrderManager:
             raise TypeError("OrderManager: change_state(): Not a valid Order obj or order_id")
         order.change_state()
 
+    def change_menu_item_state(self, order: int | Order, id: int):
+        """ Changes the menu_item state of a menu_item within a specified order
+
+        Args:
+            order (int | Order): the order housing the menu_item to be changed
+            id (int): the order-specific id of the menu_item to be changed
+
+        Raises:
+            TypeError: The order passed in (or order_id) is invalid
+        """
+        if isinstance(order, int):
+            order = self.get_order(order)
+        elif isinstance(order, Order):
+            pass
+        else:
+            raise TypeError("OrderManager: change_state(): Not a valid Order obj or order_id")
+        
+        order.change_menu_item_state_by_id(id)
+
+
     def change_to_state(self, order: int | Order, string: str) -> bool:
         """ Move item along to a specified state
 
