@@ -306,7 +306,8 @@ class Order:
             information
 
         Returns:
-            String: Only returns if the bill is already paid
+            String: Only returns if the bill is already paid. Otherwise returns
+            nothing
         """
         if self.state != "served":
             raise ValueError(f"Order: mark_as_paid(): Order {self.id()} has not been served yet")
