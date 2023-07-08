@@ -7,6 +7,7 @@ class UserHandler():
     
     @property
     def users(self) -> list[User]:
+        """ Returns list of users"""
         return self.__users
     
     def add_user(self, firstname, lastname, user_type):

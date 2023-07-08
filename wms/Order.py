@@ -26,7 +26,7 @@ class States(Enum):
         if v > 4:
             raise ValueError("Enumeration ended")
         return States(v)
-    
+
     @staticmethod
     def list():
         """ Returns names of all the states """
@@ -74,9 +74,9 @@ class Order:
         """ Constructor for the Order class
 
         Args:
-            menu_items (List[MenuItem], optional): Menu items to be added to the 
+            menu_items (List[MenuItem], optional): Menu items to be added to the
             order. Defaults to None.
-            deals (List[Deal], optional): Deals to be added to the order. 
+            deals (List[Deal], optional): Deals to be added to the order.
             Defaults to None.
         """
         self.__id = next(Order.__id_iter)
@@ -93,9 +93,9 @@ class Order:
                                   "state": State(),
                                   "order_specific_id": next(self.__menu_items_ids)}]
         else:
-            self.__menu_items = [{"menu_item": m, 
-                                  "state": State(), 
-                                  "order_specific_id": next(self.__menu_items_ids)} 
+            self.__menu_items = [{"menu_item": m,
+                                  "state": State(),
+                                  "order_specific_id": next(self.__menu_items_ids)}
                                   for m in menu_items]
         #self.__menu_items = [menu_items] if isinstance(menu_items, MenuItem) else menu_items
 
@@ -108,31 +108,31 @@ class Order:
     def id(self) -> int:
         """ Returns order ID """
         return self.__id
-    
+
     @property
     def bill(self) -> Bill:
         """ Returns order bill """
         return self.__bill
-    
+
     @property
     def deals(self) -> list[Deal]:
         """ Returns list of deals in the order """
         return self.__deals
-    
+
     @property
     def menu_items(self) -> list[MenuItem]:
         """ Returns list of menu items in the order """
         return [i["menu_item"] for i in self.__menu_items]
-    
+
     @property
     def menu_item_states(self) -> list[dict]:
         return self.__menu_items
-    
+
     @property
     def state(self) -> str:
         """ Returns current state of the order """
         return self.__state.state
-    
+
     def get_menu_item_state_obj(self, menu_item: MenuItem) -> State:
         """Gets the state of a menu_item within the order
 
@@ -147,9 +147,9 @@ class Order:
         """
         if menu_item == None:
             raise ValueError("Order: get_menu_item_state(): menu_item does not exist in order")
-        
+
         return next((i["state"] for i in self.menu_item_states if i["menu_item"] == menu_item))
-    
+
     def get_menu_item_state_by_id(self, id):
         """Gets the state of a menu_item within the order, searching by order-native id
 
@@ -161,7 +161,7 @@ class Order:
         """
         menu_item = next((i["menu_item"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
         return self.get_menu_item_state_obj(menu_item)
-    
+
     def change_menu_item_state(self, menu_item: MenuItem):
         """Transitions the state of a menu item based upon the menu_item itself
 
@@ -171,11 +171,11 @@ class Order:
         Raises:
             ValueError: Raised if the menu_item does not exist in the order
         """
-        if menu_item == None:
+        if menu_item is None:
             raise ValueError("Order: change_menu_item_state(): menu_item does not exist in order")
-        
+
         self.get_menu_item_state_obj(menu_item).transition_state()
-    
+
     def change_menu_item_state_by_id(self, id):
         """Transitions the state of a menu item to the next state, looking up by id
 
@@ -188,7 +188,7 @@ class Order:
     def change_state(self):
         """ Transitions state to the next one """
         self.__state.transition_state()
-    
+
     def add_deal(self, deal):
         """ Adding a deal item to the order
 
@@ -201,10 +201,10 @@ class Order:
         """
         if not isinstance(deal, Deal):
             raise TypeError("Order: add_deal(): Object is not of type Deal")
-        
+
         if deal in self.__deals:
             raise ValueError("Order: add_deal(): Deal already exists")
-        
+
         self.deals.append(deal)
 
     def remove_deal(self, deal):
@@ -219,12 +219,12 @@ class Order:
         """
         if not isinstance(deal, Deal):
             raise TypeError("Order: remove_deal(): Object is not of type Deal")
-        
+
         if deal not in self.__deals:
             raise ValueError("Order: remove_deal(): Deal does not exist")
-        
+
         self.deals.remove(deal)
-    
+
     def add_menu_item(self, menu_item):
         """ Adding a menu item to the order
 
@@ -237,7 +237,7 @@ class Order:
         """
         if not isinstance(menu_item, MenuItem):
             raise TypeError("Order: add_menu_item(): Object is not of type MenuItem")
-        
+
         if menu_item in self.__menu_items:
             raise ValueError("Order: add_menu_item(): MenuItem already exists")
         self.__menu_items.append(menu_item)
@@ -254,7 +254,7 @@ class Order:
         """
         if not isinstance(menu_item, MenuItem):
             raise TypeError("Order: remove_menu_item(): Object is not of type MenuItem")
-        
+
         if menu_item not in self.__menu_items:
             raise ValueError("Order: remove_menu_item(): MenuItem does not exist")
         self.__menu_items.remove(menu_item)
@@ -279,8 +279,8 @@ class Order:
         """ Return current bill of the order
 
         Returns:
-            Bill: Returns the current bill. Create a NEW dictionary of 
-            {menuitem: price, ... , menuitem: price}. 
+            Bill: Returns the current bill. Create a NEW dictionary of
+            {menuitem: price, ... , menuitem: price}.
             We do not want to modify the existing objects
         """
         pricedict = {}
@@ -296,12 +296,12 @@ class Order:
         self.__bill = Bill(finalcost)
 
         return Bill(finalcost)
-    
+
     def mark_as_paid(self):
         """ Mark order bill as paid once all conditions are satisfied
 
         Raises:
-            ValueError: Raised when order state is not at served yet or if the 
+            ValueError: Raised when order state is not at served yet or if the
             bill has not been calculated yet. Check error description for more
             information
 
@@ -310,17 +310,16 @@ class Order:
         """
         if self.state != "served":
             raise ValueError(f"Order: mark_as_paid(): Order {self.id()} has not been served yet")
-        
+
         if self.__bill is None:
             raise ValueError("Order: bill has not been calculated yet. (Try order.calculate_bill())")
-        
+
         if self.__bill.paid:
             return "Bill already paid"
-        
-        else:
-            self.__bill.pay()
-            self.change_state()
-    
+
+        self.__bill.pay()
+        self.change_state()
+
     def bill_paid(self) -> bool:
         """ Returns status of bill
 
@@ -328,7 +327,7 @@ class Order:
             bool: Returns whether the bill is paid or not
         """
         return self.__bill.paid
-    
+
     def jsonify_menu_item_states(self) -> dict:
         """ Generates a dictionary for each menu_item in the order that also contains its state
 
@@ -337,44 +336,36 @@ class Order:
         """
         output = []
         for i in self.menu_item_states:
-            dict = i["menu_item"].jsonify()
-            dict["state"] = i["state"].state
-            dict["order_specific_id"] = i["order_specific_id"]
-            output.append(dict)
+            states = i["menu_item"].jsonify()
+            states["state"] = i["state"].state
+            states["order_specific_id"] = i["order_specific_id"]
+            output.append(states)
 
         return output
 
-    
+
     def jsonify(self, table_id=None) -> dict:
-        """ Creates a dictionary containing the id, bill, state, list of menu 
+        """ Creates a dictionary containing the id, bill, state, list of menu
         items and deals of the order
 
         Returns:
-            dict: Dictionary containing the id, bill, state, list of menu items 
+            dict: Dictionary containing the id, bill, state, list of menu items
             and deals of the order
         """
-        if self.__bill is not None:
-            bill = self.__bill.jsonify()
-        else:
-            bill = None
-        output = {"id": self.__id, 
-                  "bill": bill,
-                  "state": self.state,
-                  "menu_items": self.jsonify_menu_item_states(),
-                  "deals": [i.jsonify() for i in self.deals]}
+        bill = self.__bill.jsonify() if self.__bill is not None else None
+        # if self.__bill is not None:
+        #     bill = self.__bill.jsonify()
+        # else:
+        #     bill = None
+        output = {
+            "id": self.__id,
+            "bill": bill,
+            "state": self.state,
+            "menu_items": self.jsonify_menu_item_states(),
+            "deals": [i.jsonify() for i in self.deals]
+        }
 
         if table_id is not None:
             output["table_id"] = table_id
-        
+
         return output
-        
-        
-
-        
-
-
-        
-
-
-        
-

@@ -32,7 +32,7 @@ class TableHandler():
         table = self.id_to_table(table_id)
         try:
             table.add_customers(customer)
-        except:
+        except ValueError:
             return False
         return True
 

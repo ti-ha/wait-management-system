@@ -49,7 +49,7 @@ class WaitStaff(User):
         
         if order not in self.__requests:
             raise ValueError("WaitStaff: remove_requests(): Order does not exist")
-        orderNum = self.__requests.index(order)
-        self.__requests[orderNum].change_state()
+        order_num = self.__requests.index(order)
+        self.__requests[order_num].change_state()
         # Move order to complete
         self.__requests.remove(order) 

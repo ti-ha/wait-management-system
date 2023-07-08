@@ -19,7 +19,7 @@ class Table:
         """
         self.__id = next(Table.__id_iter)
         # Initialize empty list
-        self.__orders = [] if orders == None else orders
+        self.__orders = [] if orders is None else orders
         self.__customers = []
         self.__occupied = False
         self.__table_limit = table_limit

@@ -156,6 +156,6 @@ class Menu():
         return {
             'categories': [i.jsonify() for i in self.categories], 
             'deals': [i.jsonify() for i in self.deals]
-            }
+        }
 
         
