@@ -88,7 +88,7 @@ class MenuHandler():
 
         Raises:
             ValueError: Raised if length of the menu items argument does not 
-            match the length of the deal_items
+            match the length of the menu items to make a deal with
 
         Returns:
             None: Returns none if successful

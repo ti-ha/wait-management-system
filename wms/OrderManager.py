@@ -34,14 +34,14 @@ class OrderManager:
                 return order
         return None
     
-    def get_table_from_order(self, order_ID) -> int:
-        """ TODO
+    def get_table_from_order(self, order_ID) -> Table:
+        """ Given an order ID, finds the table that the order belongs to
 
         Args:
-            order_ID (_type_): _description_
+            order_ID (Integer): ID number of order to use to find the table
 
         Returns:
-            int: _description_
+            Table: Table object that has the order specified by the order ID
         """
         for i in self.map.keys():
             if order_ID in self.map[i]:
