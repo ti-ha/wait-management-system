@@ -171,7 +171,7 @@ class Order:
             raise ValueError("Order: add_menu_item(): MenuItem already exists")
         self.__menu_items.append(menu_item)
 
-    def remove_menu_item(self, menuItem):
+    def remove_menu_item(self, menu_item):
         """ Removing a menu item from the order
 
         Args:
@@ -181,12 +181,12 @@ class Order:
             TypeError: Raised when menu_item argument is not of type MenuItem
             ValueError: Raised when menu_item does not exist in the order
         """
-        if not isinstance(menuItem, MenuItem):
+        if not isinstance(menu_item, MenuItem):
             raise TypeError("Order: remove_menu_item(): Object is not of type MenuItem")
         
-        if menuItem not in self.__menu_items:
+        if menu_item not in self.__menu_items:
             raise ValueError("Order: remove_menu_item(): MenuItem does not exist")
-        self.__menu_items.remove(menuItem)
+        self.__menu_items.remove(menu_item)
 
     def apply_deal(self, pricedict: dict, deal: Deal) -> dict:
         """ Applies a deal to a dictionary of menuitem: price
@@ -221,7 +221,7 @@ class Order:
             pricedict = self.apply_deal(pricedict, i)
 
         # Add the prices in pricedict together
-        finalcost = sum([pricedict[i] for i in pricedict.keys()])
+        finalcost = sum([pricedict[i] for i in pricedict])
         self.__bill = Bill(finalcost)
 
         return Bill(finalcost)
@@ -237,10 +237,10 @@ class Order:
         Returns:
             String: Only returns if the bill is already paid
         """
-        if not self.state == "served":
+        if self.state != "served":
             raise ValueError(f"Order: mark_as_paid(): Order {self.id()} has not been served yet")
         
-        if self.__bill == None:
+        if self.__bill is None:
             raise ValueError("Order: bill has not been calculated yet. (Try order.calculate_bill())")
         
         if self.__bill.paid:
@@ -266,7 +266,7 @@ class Order:
             dict: Dictionary containing the id, bill, state, list of menu items 
             and deals of the order
         """
-        if self.__bill != None:
+        if self.__bill is not None:
             bill = self.__bill.jsonify()
         else:
             bill = None
@@ -280,7 +280,7 @@ class Order:
         for i in self.deals:
             output["deals"].append(i.jsonify())
 
-        if table_id != None:
+        if table_id is not None:
             output["table_id"] = table_id
         
         return output

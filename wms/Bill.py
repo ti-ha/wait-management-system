@@ -32,5 +32,4 @@ class Bill:
             dict: Dictionary containing the price and paid status of the 
         bill
         """
-        output = {"price": self.__price, "paid": self.__paid}
-        return output
+        return {"price": self.__price, "paid": self.__paid}
