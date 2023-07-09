@@ -72,7 +72,7 @@ def specific_category(category):
     
 @app.route('/menu/categories/<category>/<menu_item>', methods=['GET', 'DELETE'])
 def menu_item(category, menu_item):
-    if wms.menu_item(category, menu_item) == None:
+    if wms.get_menu_item(category, menu_item) == None:
         return jsonify({"error": "Unrecognised menu_item"}), 400
     
     if request.method == 'GET':
