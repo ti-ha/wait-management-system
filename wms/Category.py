@@ -29,9 +29,9 @@ class Category():
     
     # Returns a specific menu item from category
     # Returns None if no menu item exists
-    def is_menu_item(self, menu_item):
+    def is_menu_item(self, name):
         for i in self.__menu_items:
-            if i.is_equal(menu_item):
+            if i.name() == name:
                 return i
         return None
     
@@ -50,7 +50,7 @@ class Category():
         if self.is_menu_item(name) == None:
             raise ValueError("Category: category.remove_menu_item(): not an existing menu item")
         
-        self.__menu_items.remove(name)
+        self.__menu_items.remove(self.is_menu_item(name))
     
     def jsonify(self):
         out = {"id": self.id(), "name": self.name(), "menu_items": []}

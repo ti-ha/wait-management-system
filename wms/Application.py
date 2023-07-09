@@ -36,7 +36,7 @@ class Application():
         self.__menu.get_category(category).add_menu_item(item)
 
     def get_menu_item(self, category, name):
-        return self.__menu.get_category(category).menu_item(name)
+        return self.__menu.get_category(category).is_menu_item(name)
     
     def get_menu_item_by_id(self, id):
         return self.__menu.menu_item_lookup(id)
@@ -45,7 +45,7 @@ class Application():
         self.__menu.get_category(category).remove_menu_item(name)
     
     def menu_item_json(self, category, name):
-        return self.__menu.get_category(category).menu_item(name).jsonify()
+        return self.__menu.get_category(category).is_menu_item(name).jsonify()
     
     def get_deals_json(self):
         return [i.jsonify() for i in self.__menu.deals()]
