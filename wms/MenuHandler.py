@@ -160,7 +160,7 @@ class MenuHandler():
         Returns:
             Dict: A dictionary for a specific menu_item in a menu
         """
-        return self.__menu.get_category(category).menu_item(name).jsonify()
+        return self.__menu.get_category(category).menu_item_by_name(name).jsonify()
     
     def jsonify_deals(self) -> dict:
         """ Creates a dictionary for all the deals of a menu

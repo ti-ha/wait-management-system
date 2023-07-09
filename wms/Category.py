@@ -84,10 +84,10 @@ class Category():
         Raises:
             ValueError: Raised if menu item does not exist in the category
         """
-        if self.menu_item(name) is None:
+        if self.menu_item_by_name(name) is None:
             raise ValueError("Category: category.remove_menu_item(): not an existing menu item")
         
-        self.menu_items.remove(name)
+        self.menu_items.remove(self.menu_item_by_name(name))
         
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the id, name and list of menu items 
