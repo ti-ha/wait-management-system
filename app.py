@@ -24,7 +24,7 @@ def call(msg, func, *args):
         output = func(*args)
     except Exception as e:
         # Uncomment this line for debugging
-        raise e
+        #raise e
         return jsonify({"error": e.args}), 400
 
     if output is not None:
