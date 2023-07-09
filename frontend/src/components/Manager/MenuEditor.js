@@ -152,10 +152,9 @@ export default function MenuEditor() {
     }
 
     const handleDeleteItem = async (item, categoryName) => {
-        console.log(categoryName, item.name)
         const itemName = item.name;
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/${categoryName}/${itemName}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${categoryName}/${itemName}`, {
                 method: 'DELETE',
             });
     
