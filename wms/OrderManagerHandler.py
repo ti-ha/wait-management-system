@@ -146,15 +146,11 @@ class OrderManagerHandler():
 
         Raises:
             ValueError: Raised if order_id does not match any of the orders
-
-        Returns:
-            State: New state of the order
         """
         order = self.__order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
         self.__order_manager.change_state(order_id)
-        return order.state
 
     def change_menu_item_state(self, order_id: int, menu_item_id: int):
         """ Changes the state of a menu_item within an order
@@ -284,11 +280,8 @@ class OrderManagerHandler():
             raise ValueError("Not a valid order_id")
         if order.bill is None:
             raise ValueError("Order does not have a bill. Try calculating it first")
-
-        try:
-            order.mark_as_paid()
-        except ValueError as exc:
-            raise ValueError from exc
+        
+        order.mark_as_paid()
 
     #jsons
     def jsonify(self) -> dict:
