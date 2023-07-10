@@ -3,12 +3,13 @@ import { Modal, Fade, Box, TextField, Button } from "@mui/material";
 
 export default function EditItemModal({ open, onClose, onSave, oldItem }) {
     const [itemName, setItemName] = useState(oldItem.name);
-    const [itemCost, setItemCost] = useState(oldItem.price);
+    const [itemPrice, setItemPrice] = useState(oldItem.price);
+    const [itemPriceError, setItemPriceError] = useState("");
     const [itemImageUrl, setItemImageUrl] = useState(oldItem.imageURL);
 
     useEffect(() => {
         setItemName(oldItem.name);
-        setItemCost(oldItem.price);
+        setItemPrice(oldItem.price);
         setItemImageUrl(oldItem.imageURL);
     }, [oldItem]);
 
@@ -16,8 +17,15 @@ export default function EditItemModal({ open, onClose, onSave, oldItem }) {
         setItemName(event.target.value);
     };
 
-    const handleItemCostChange = (event) => {
-        setItemCost(event.target.value);
+    const handleItemPriceChange = (event) => {
+        const newPrice = event.target.value;
+        setItemPrice(newPrice);
+
+        if (!/^\d*\.?\d{0,2}$/.test(newPrice)) { 
+            setItemPriceError("Please enter a number with up to 2 decimal places");
+        } else {
+            setItemPriceError("");
+        }
     };
 
     const handleItemImageUrlChange = (event) => {
@@ -25,9 +33,13 @@ export default function EditItemModal({ open, onClose, onSave, oldItem }) {
     };
 
     const handleSaveItem = () => {
-        onSave({name: itemName, cost: itemCost, imageUrl: itemImageUrl});
+        if (itemPriceError) {
+            return;
+        }
+
+        onSave({name: itemName, price: itemPrice, imageUrl: itemImageUrl});
         setItemName("");
-        setItemCost("");
+        setItemPrice("");
         setItemImageUrl("");
     };
 
@@ -60,12 +72,14 @@ export default function EditItemModal({ open, onClose, onSave, oldItem }) {
                         fullWidth
                     />
                     <TextField 
-                        label="Item Cost" 
+                        label="Item Price" 
                         variant="outlined" 
-                        value={itemCost} 
-                        onChange={handleItemCostChange} 
+                        value={itemPrice} 
+                        onChange={handleItemPriceChange} 
                         fullWidth
                         style={{marginTop: '20px'}}
+                        error={Boolean(itemPriceError)}
+                        helperText={itemPriceError}
                     />
                     <TextField 
                         label="Image URL" 

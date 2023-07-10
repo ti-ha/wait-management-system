@@ -3,7 +3,8 @@ import { Modal, Fade, Box, TextField, Button, Select, InputLabel, MenuItem, Form
 
 export default function AddItemModal({ open, onClose, onAdd, categories }) {
     const [itemName, setItemName] = useState("");
-    const [itemCost, setItemCost] = useState("");
+    const [itemPrice, setItemPrice] = useState("");
+    const [itemPriceError, setItemPriceError] = useState("");
     const [itemImageURL, setItemImageURL] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
 
@@ -11,8 +12,15 @@ export default function AddItemModal({ open, onClose, onAdd, categories }) {
         setItemName(event.target.value);
     };
     
-    const handleItemCostChange = (event) => {
-        setItemCost(event.target.value);
+    const handleItemPriceChange = (event) => {
+        const newPrice = event.target.value;
+        setItemPrice(newPrice);
+
+        if (!/^\d*\.?\d{0,2}$/.test(newPrice)) { 
+            setItemPriceError("Please enter a number with up to 2 decimal places");
+        } else {
+            setItemPriceError("");
+        }
     };
 
     const handleItemImageURL = (event) => {
@@ -24,9 +32,13 @@ export default function AddItemModal({ open, onClose, onAdd, categories }) {
     };
 
     const handleAddItem = () => {
-        onAdd(itemName, itemCost, selectedCategory, itemImageURL);
+        if(itemPriceError) {
+            return;
+        }
+
+        onAdd(itemName, itemPrice, selectedCategory, itemImageURL);
         setItemName("");
-        setItemCost("");
+        setItemPrice("");
         setSelectedCategory("");
     };
 
@@ -59,12 +71,14 @@ export default function AddItemModal({ open, onClose, onAdd, categories }) {
                         fullWidth
                     />
                     <TextField 
-                        label="Cost" 
+                        label="Price" 
                         variant="outlined" 
-                        value={itemCost} 
-                        onChange={handleItemCostChange} 
+                        value={itemPrice} 
+                        onChange={handleItemPriceChange} 
                         fullWidth
                         style={{marginTop: '10px'}}
+                        error={Boolean(itemPriceError)}
+                        helperText={itemPriceError}
                     />
                     <TextField 
                         label="Image URL" 

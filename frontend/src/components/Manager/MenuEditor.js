@@ -83,15 +83,15 @@ export default function MenuEditor() {
         setShowAddCategoryModal(false);
     };
 
-    const handleAddItem = async (itemName, itemCost, itemCategory, itemImageURL) => {
-        console.log(itemName, itemCost, itemImageURL);
+    const handleAddItem = async (itemName, itemPrice, itemCategory, itemImageURL) => {
+        console.log(itemName, itemPrice, itemImageURL);
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${itemCategory}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name: itemName, price: parseFloat(itemCost), image_url: itemImageURL }),
+                body: JSON.stringify({ name: itemName, price: parseFloat(itemPrice), image_url: itemImageURL }),
             });
     
             if (!response.ok) { 
@@ -104,7 +104,7 @@ export default function MenuEditor() {
             console.log(data.message);
     
             // Fetch items again to update the page state
-            fetchItems(itemCategory);
+            fetchItems(currentCategory);
         } catch (error) {
             console.error("Error adding item:", error);
         }
