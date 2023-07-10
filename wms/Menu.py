@@ -74,7 +74,7 @@ class Menu():
         if not isinstance(name, str):
             raise TypeError("Menu: menu.remove_category(): not a string")
         for i in self.__categories:
-            if i.name() == name:
+            if i.name == name:
                 self.__categories.remove(i)
                 return i
         
