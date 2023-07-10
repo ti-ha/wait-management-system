@@ -1,5 +1,4 @@
 from .User import User
-from wms import Table
 
 class Customer(User):
     def __init__(self, firstname="Guest", lastname="Customer"):
@@ -14,7 +13,7 @@ class Customer(User):
         self.__table = None
     
     @property
-    def table(self) -> Table:
+    def table(self):
         """ Returns table the customer is at """
         return self.__table
     

@@ -1,7 +1,8 @@
 from __future__ import annotations
 import itertools
 from .Order import Order
-from wms import Customer, Bill
+from .Customer import Customer
+from .Bill import Bill
 
 class Table:
 
