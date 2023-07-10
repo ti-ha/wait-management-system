@@ -103,8 +103,4 @@ class Category():
             "name": self.name, 
             "menu_items": [it.jsonify() for it in self.menu_items]
         }
-
     
-
-
-        
