@@ -105,7 +105,7 @@ class Order:
 
     # Getters
     @property
-    def id(self) -> int:
+    def id(self) -> itertools.count:
         """ Returns order ID """
         return self.__id
 
@@ -292,7 +292,7 @@ class Order:
             pricedict = self.apply_deal(pricedict, i)
 
         # Add the prices in pricedict together
-        finalcost = sum([pricedict[i] for i in pricedict])
+        finalcost = sum([float(pricedict[i]) for i in pricedict])
         self.__bill = Bill(finalcost)
 
         return Bill(finalcost)
@@ -310,7 +310,7 @@ class Order:
             nothing
         """
         if self.state != "served":
-            raise ValueError(f"Order: mark_as_paid(): Order {self.id()} has not been served yet")
+            raise ValueError(f"Order: mark_as_paid(): Order {self.id} has not been served yet")
 
         if self.__bill is None:
             raise ValueError("Order: bill has not been calculated yet. (Try order.calculate_bill())")
