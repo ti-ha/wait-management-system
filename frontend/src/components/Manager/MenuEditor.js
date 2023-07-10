@@ -194,11 +194,18 @@ export default function MenuEditor() {
                         </Button>
                     </Link>
                 </div>
-                <Link to="/">
-                    <Button variant="contained">
-                        Landing Page
-                    </Button>
-                </Link>
+                <div>
+                    <Link to="/staff">
+                        <Button variant="contained">
+                            Staff View
+                        </Button>
+                    </Link>
+                    <Link to="/">
+                        <Button variant="contained">
+                            Landing Page
+                        </Button>
+                    </Link>
+                </div>
             </header>
 
             
