@@ -41,12 +41,18 @@ def home():
 @app.route('/menu', methods=['GET'])
 def get_menu():
     """ Gets the restaurant menu """
-    return call(None, wms.menu_handler.jsonify)
+    return call(
+        None, 
+        wms.menu_handler.jsonify
+    )
 
 @app.route('/menu/categories', methods=['GET'])
 def get_categories():
     """ Gets the menu categories """
-    return call(None, wms.menu_handler.jsonify_categories)
+    return call(
+        None, 
+        wms.menu_handler.jsonify_categories
+    )
 
 @app.route('/menu/categories', methods=['POST'])
 def create_category():
@@ -72,7 +78,11 @@ def create_category():
 @app.route('/menu/categories/<category>', methods=['GET'])
 def get_category(category):
     """ Gets a specific menu category """
-    return call(None, wms.menu_handler.jsonify_category, category)
+    return call(
+        None, 
+        wms.menu_handler.jsonify_category, 
+        category
+    )
 
 @app.route('/menu/categories/<category>', methods=['POST'])
 def add_menu_item_to_category(category):
@@ -132,7 +142,10 @@ def delete_menu_item(category, menu_item):
 @app.route('/menu/deals', methods=['GET'])
 def get_deal():
     """ Gets a menu deal """
-    return call(None, wms.menu_handler.jsonify_deals)
+    return call(
+        None, 
+        wms.menu_handler.jsonify_deals
+    )
 
 @app.route('/menu/deals', methods=['POST'])
 def create_deal():
@@ -165,7 +178,10 @@ def create_deal():
 @app.route('/table', methods=['GET'])
 def get_table():
     """ Gets all of the restaurant tables """
-    return call(None, wms.table_handler.jsonify)
+    return call(
+        None, 
+        wms.table_handler.jsonify
+    )
 
 @app.route('/table/add', methods=['POST'])
 def add_table():
@@ -197,7 +213,10 @@ def add_table():
 @app.route('/user', methods=['GET'])
 def get_user():
     """ Gets all of the restaurant users """
-    return call(None, wms.user_handler.jsonify)
+    return call(
+        None, 
+        wms.user_handler.jsonify
+    )
 
 @app.route('/user/add', methods=['POST'])
 def add_user():
@@ -260,12 +279,18 @@ def add_table_customer():
 @app.route('/ordermanager', methods=['GET'])
 def get_order_manager():
     """ Gets the order manager """
-    return call(None, wms.om_handler.jsonify)
+    return call(
+        None, 
+        wms.om_handler.jsonify
+    )
 
 @app.route('/ordermanager/orders', methods=['GET'])
 def get_orders():
     """ Gets the list of orders present in the order manager """
-    return call(None, wms.om_handler.jsonify_orders), 200
+    return call(
+        None, 
+        wms.om_handler.jsonify_orders
+    )
 
 @app.route('/ordermanager/orders/add/<table_id>' , methods=['POST'])
 def add_order(table_id):
@@ -338,9 +363,11 @@ def pay_table_bill(table_id):
 @app.route("/ordermanager/orders/<order_id>", methods=['GET'])
 def get_order_by_id(order_id):
     """ Gets an order by its ID value """
-    return call(None, 
-                wms.om_handler.get_order_by_id, 
-                int(order_id))
+    return call(
+        None, 
+        wms.om_handler.get_order_by_id, 
+        int(order_id)
+    )
 
 @app.route("/ordermanager/orders/<order_id>", methods=['DELETE'])
 def delete_order_by_id(order_id):
