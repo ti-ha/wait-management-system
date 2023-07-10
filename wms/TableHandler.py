@@ -1,4 +1,5 @@
-from wms import Table, Customer
+from .Table import Table
+from .Customer import Customer
 
 class TableHandler():
     def __init__(self) -> None:

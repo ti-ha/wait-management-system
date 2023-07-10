@@ -288,7 +288,7 @@ def add_order(table_id):
         return call(
             {"message": "Successfully added order"},
             wms.om_handler.add_order,
-            table_id,
+            int(table_id),
             menu_items_ids,
             deals_ids
         )
@@ -300,14 +300,18 @@ def remove_order(table_id, order_id):
     return call(
         {"message": "Successfully deleted order"},
         wms.om_handler.remove_order,
-        table_id,
-        order_id
+        int(table_id),
+        int(order_id)
     )
 
 @app.route('/ordermanager/tables/<table_id>', methods=['GET'])
 def get_table_orders(table_id):
     """ Gets all the orders of a specific table """
-    return call(None, wms.om_handler.get_table_orders, table_id)
+    return call(
+        None, 
+        wms.om_handler.get_table_orders, 
+        int(table_id)
+    )
 
 
 @app.route('/ordermanager/tables/<table_id>/bill', methods=['GET'])
@@ -316,7 +320,11 @@ def get_table_bill(table_id):
 
     EMPTY POST REQUEST. NO DATA EXPECTED
     """
-    return call(None, wms.om_handler.calculate_and_return_bill, table_id)
+    return call(
+        None, 
+        wms.om_handler.calculate_and_return_bill, 
+        int(table_id)
+    )
 
 @app.route('/ordermanager/tables/<table_id>/bill', methods=['POST'])
 def pay_table_bill(table_id):
@@ -324,13 +332,15 @@ def pay_table_bill(table_id):
     return call(
         {"message": "Successfully paid bill"},
         wms.om_handler.pay_table_bill,
-        table_id
+        int(table_id)
     )
 
 @app.route("/ordermanager/orders/<order_id>", methods=['GET'])
 def get_order_by_id(order_id):
     """ Gets an order by its ID value """
-    return call(None, wms.om_handler.get_order_by_id, order_id)
+    return call(None, 
+                wms.om_handler.get_order_by_id, 
+                int(order_id))
 
 @app.route("/ordermanager/orders/<order_id>", methods=['DELETE'])
 def delete_order_by_id(order_id):
@@ -338,13 +348,17 @@ def delete_order_by_id(order_id):
     return call(
         {"message": "Successfully removed order from ordermanager"},
         wms.om_handler.delete_order_by_id,
-        order_id
+        int(order_id)
     )
 
 @app.route("/ordermanager/orders/<order_id>/state", methods=['GET'])
 def get_order_state(order_id):
     """ Gets the current state of an order """
-    return call(None, wms.om_handler.get_order_state, order_id)
+    return call(
+        None, 
+        wms.om_handler.get_order_state,
+        int(order_id)
+    )
 
 @app.route("/ordermanager/orders/<order_id>/state", methods=['POST'])
 def advance_order_state(order_id):
@@ -355,22 +369,35 @@ def advance_order_state(order_id):
     return call(
         {"message": "Successfully changed state"},
         wms.om_handler.change_order_state,
-        order_id
+        int(order_id)
     )
 
 @app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['GET'])
 def get_menu_item_state(order_id, menu_item_id):
-    return call(None, wms.om_handler.get_menu_item_state, order_id, menu_item_id)
+    return call(
+        None, 
+        wms.om_handler.get_menu_item_state, 
+        int(order_id), 
+        int(menu_item_id)
+    )
 
 @app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['POST'])
 def change_menu_item_state(order_id, menu_item_id):
-    return call({"message": "Successfully changed state"},
-                wms.om_handler.change_menu_item_state, order_id, menu_item_id)
+    return call(
+        {"message": "Successfully changed state"},
+        wms.om_handler.change_menu_item_state, 
+        int(order_id), 
+        int(menu_item_id)
+    )
 
 @app.route("/ordermanager/orders/<order_id>/bill", methods=['GET'])
 def get_order_bill(order_id):
     """ Gets the bill for an order """
-    return call(None, wms.om_handler.get_order_bill, order_id)
+    return call(
+        None, 
+        wms.om_handler.get_order_bill, 
+        int(order_id)
+    )
 
 @app.route("/ordermanager/orders/<order_id>/bill", methods=['POST'])
 def pay_order_bill(order_id):
@@ -378,7 +405,7 @@ def pay_order_bill(order_id):
     return call(
         {"message": "Successfully paid bill"},
         wms.om_handler.pay_order_bill,
-        order_id
+        int(order_id)
     )
 
 if __name__ == '__main__':
