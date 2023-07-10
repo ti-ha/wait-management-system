@@ -123,7 +123,7 @@ def get_menu_item(category, menu_item):
 def delete_menu_item(category, menu_item):
     """ Removes a specific menu item from a specific category """
     return call(
-        {"message": f"Successfully removed menuitem {menu_item} in category {category})"},
+        {"message": f"Successfully removed menuitem {menu_item} in category {category}"},
         wms.menu_handler.remove_menu_item,
         category,
         menu_item
@@ -140,7 +140,7 @@ def create_deal():
 
     JSON FORMAT:
     {
-        "discount": int,
+        "discount": float,
         "menu_items": [{"name": "string"},{"name": "string"},...]
     }
 
@@ -265,7 +265,7 @@ def get_order_manager():
 @app.route('/ordermanager/orders', methods=['GET'])
 def get_orders():
     """ Gets the list of orders present in the order manager """
-    return call(None, wms.om_handler.jsonify_orders), 200
+    return call(None, wms.om_handler.jsonify_orders)
 
 @app.route('/ordermanager/orders/add/<table_id>' , methods=['POST'])
 def add_order(table_id):
@@ -313,13 +313,9 @@ def get_table_orders(table_id):
         int(table_id)
     )
 
-
 @app.route('/ordermanager/tables/<table_id>/bill', methods=['GET'])
 def get_table_bill(table_id):
-    """ Gets the bill for a table
-
-    EMPTY POST REQUEST. NO DATA EXPECTED
-    """
+    """ Gets the bill for a table """
     return call(
         None, 
         wms.om_handler.calculate_and_return_bill, 
@@ -328,7 +324,9 @@ def get_table_bill(table_id):
 
 @app.route('/ordermanager/tables/<table_id>/bill', methods=['POST'])
 def pay_table_bill(table_id):
-    """ Endpoint to simulate bill payment for a table """
+    """ Endpoint to simulate bill payment for a table 
+        EMPTY POST REQUEST. NO DATA EXPECTED
+    """
     return call(
         {"message": "Successfully paid bill"},
         wms.om_handler.pay_table_bill,
