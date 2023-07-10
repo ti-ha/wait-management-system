@@ -26,16 +26,9 @@ class TableHandler():
         Args:
             table_id (Integer): ID of the table that customer is being added to
             customer (Customer): Customer to be added to the table
-
-        Returns:
-            Boolean: Returns true if function was successful, false otherwise
         """
         table = self.id_to_table(table_id)
-        try:
-            table.add_customers(customer)
-        except ValueError:
-            return False
-        return True
+        table.add_customers(customer)
 
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the id, availability string, table
