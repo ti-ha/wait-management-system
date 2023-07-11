@@ -1,22 +1,32 @@
 from __future__ import annotations
 from .User import User
 from wms import Order
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class KitchenStaff(User):
-    def __init__(self, firstname, lastname):
+    def __init__(self, firstname, lastname, password):
         """ Constructor of the KitchenStaff class that inherits the User Class
 
         Args:
             firstname (string): First Name of the User
             lastname (string): Last Name of the User
+            password (string): Password of the user
         """
-        super().__init__(firstname, lastname)
+        super().__init__(firstname, lastname, password)
+        self.__password = generate_password_hash(password)
         self.__orders = []
 
     @property
     def orders(self) -> list[Order]:
         """ Gets the kitchen staff order list """
         return self.__orders
+    
+    @property
+    def password_hash(self):
+        return self.__password
+    
+    def check_password(self, password):
+        return check_password_hash(self.__password, password)
 
     def assign_order(self, order: Order):
         """ Add to list of orders

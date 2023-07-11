@@ -1,11 +1,15 @@
+from functools import wraps
 from flask import Flask, jsonify, request, current_app
 from flask_cors import CORS, cross_origin
 from wms import *
-import json
+import json, jwt
 
 app = Flask(__name__)
 CORS(app)
 wms = Application()
+
+SECRET_KEY = "RomanticCheese"
+app.config['SECRET_KEY'] = SECRET_KEY
 
 
 def call(msg, func, *args):
@@ -32,6 +36,37 @@ def call(msg, func, *args):
 
     else:
         return jsonify(msg), 200
+    
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if "Authorization" in request.headers:
+            token = request.headers["Authorization"]
+        
+        if not token:
+            return jsonify({
+                "message": "Authentication Token missing",
+                "error": "Unauthorized"
+            }), 401
+        
+        try:
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = wms.user_handler.id_to_user(data["user_id"])
+            if current_user is None:
+                return jsonify({
+                    "message": "Invalid Authentication token",
+                    "error": "Unauthorized"
+                }), 401
+        except Exception as e:
+            return jsonify({
+                "message": "Something went wrong",
+                "error": str(e)
+            }), 500
+        
+        return f(current_user, *args, **kwargs)
+    
+    return decorated
 
 @app.route('/')
 def home():
@@ -55,7 +90,8 @@ def get_categories():
     )
 
 @app.route('/menu/categories', methods=['POST'])
-def create_category():
+@token_required
+def create_category(current_user):
     """ Creates a new menu category
 
     JSON FORMAT:
@@ -68,6 +104,9 @@ def create_category():
         obj = request.json
     else:
         return jsonify({"error": "Incorrect content-type"}), 400
+    
+    if current_user.__class__ is not Manager:
+        return jsonify({"error": "Must be Manager to make this request"})
 
     return call(
         {"message": f"Successfully added category {obj['name']}"},
@@ -85,7 +124,8 @@ def get_category(category):
     )
 
 @app.route('/menu/categories/<category>', methods=['POST'])
-def add_menu_item_to_category(category):
+@token_required
+def add_menu_item_to_category(current_user, category):
     """ Adds a new menu item to a specific category
 
     JSON FORMAT:
@@ -104,6 +144,9 @@ def add_menu_item_to_category(category):
             image_url = obj["image_url"]
         except TypeError:
             return jsonify({"error": "Incorrect fields"}), 400
+        
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
 
         return call(
             {"message": f"Successfully added menuitem {name}"},
@@ -116,8 +159,13 @@ def add_menu_item_to_category(category):
     return None
 
 @app.route('/menu/categories/<category>', methods=['DELETE'])
-def delete_category(category):
+@token_required
+def delete_category(current_user, category):
     """ Removes a specific category """
+
+    if current_user.__class__ is not Manager:
+        return jsonify({"error": "Must be Manager to make this request"}), 401
+
     return call(
         {"message": f"Successfully deleted category {category}"},
         wms.menu_handler.remove_category,
@@ -130,8 +178,12 @@ def get_menu_item(category, menu_item):
     return call(None, wms.menu_handler.jsonify_menu_item, category, menu_item)
 
 @app.route('/menu/categories/<category>/<menu_item>', methods=['DELETE'])
-def delete_menu_item(category, menu_item):
+@token_required
+def delete_menu_item(current_user, category, menu_item):
     """ Removes a specific menu item from a specific category """
+    if current_user.__class__ is not Manager:
+        return jsonify({"error": "Must be Manager to make this request"}), 401
+
     return call(
         {"message": f"Successfully removed menuitem {menu_item} in category {category}"},
         wms.menu_handler.remove_menu_item,
@@ -148,7 +200,8 @@ def get_deal():
     )
 
 @app.route('/menu/deals', methods=['POST'])
-def create_deal():
+@token_required
+def create_deal(current_user):
     """ Creates a new menu deal
 
     JSON FORMAT:
@@ -166,6 +219,9 @@ def create_deal():
             menu_item_lookup = [i["name"] for i in obj["menu_items"]]
         except TypeError:
             return jsonify({"error": "Incorrect fields"})
+        
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
 
         return call(
             {"message": "Successfully added deal"},
@@ -176,15 +232,20 @@ def create_deal():
     return jsonify({"error": "Incorrect content-type"}), 400
 
 @app.route('/table', methods=['GET'])
-def get_table():
+@token_required
+def get_table(current_user):
     """ Gets all of the restaurant tables """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+
     return call(
         None, 
         wms.table_handler.jsonify
     )
 
 @app.route('/table/add', methods=['POST'])
-def add_table():
+@token_required
+def add_table(current_user):
     """ Creates a new table
 
     JSON FORMAT:
@@ -201,6 +262,9 @@ def add_table():
             orders = obj["orders"]
         except TypeError:
             return jsonify({"error": "Incorrect fields"}), 400
+        
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
 
         return call(
             {"message": "Successfully added table"},
@@ -210,12 +274,24 @@ def add_table():
         )
     return jsonify({"error": "Incorrect content-type"}), 400
 
-@app.route('/user', methods=['GET'])
-def get_user():
+@app.route('/users', methods=['GET'])
+@token_required
+def get_user(current_user):
     """ Gets all of the restaurant users """
+    if current_user.__class__ is not Manager:
+        return jsonify({"error": "Must be Manager to make this request"}), 401
+    
     return call(
         None, 
         wms.user_handler.jsonify
+    )
+
+@app.route('/me', methods=['GET'])
+@token_required
+def get_current_user(current_user):
+    return call(
+        None,
+        current_user.jsonify
     )
 
 @app.route('/user/add', methods=['POST'])
@@ -227,6 +303,8 @@ def add_user():
         "first_name": string,
         "last_name": string,
         "user_type": string
+        if staffmember:
+            "password": string 
     }
     """
     content_type = request.headers.get('Content-Type')
@@ -236,6 +314,10 @@ def add_user():
             first_name = obj["first_name"]
             last_name = obj["last_name"]
             user_type = obj["user_type"]
+            if user_type in ["Wait Staff", "Manager", "Kitchen Staff"]:
+                password = obj["password"]
+            else:
+                password = None
         except TypeError:
             return jsonify({"error": "Incorrect fields"}), 400
 
@@ -244,10 +326,42 @@ def add_user():
             wms.user_handler.add_user,
             first_name,
             last_name,
-            user_type
+            user_type,
+            password
         )
     return jsonify({"error": "Incorrect content-type"}), 400
 
+@app.route('/user/login', methods=['POST'])
+def login():
+    """logs in a user given firstname, lastname and password. returns an auth token
+    
+    JSON FORMAT:
+    {
+        "first_name": string
+        "last_name": string
+        "password": string
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            first_name = obj["first_name"]
+            last_name = obj["last_name"]
+            password = obj["password"]
+        except TypeError:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        user = wms.user_handler.login(first_name, last_name, password)
+        if user:
+            return jsonify({"message": "Success",
+                            "auth_token": jwt.encode(
+                                            {"user_id": user.id},
+                                            app.config['SECRET_KEY'],
+                                            algorithm="HS256"
+                            )}), 200
+        return jsonify({"error": "Incorrect credentials"}), 400
+    
 @app.route('/table/add/customer', methods=['POST'])
 def add_table_customer():
     """ Adds a customer to a table
@@ -277,16 +391,24 @@ def add_table_customer():
 #### ORDER MANAGER ENDPOINTS
 
 @app.route('/ordermanager', methods=['GET'])
-def get_order_manager():
+@token_required
+def get_order_manager(current_user):
     """ Gets the order manager """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+    
     return call(
         None, 
         wms.om_handler.jsonify
     )
 
 @app.route('/ordermanager/orders', methods=['GET'])
-def get_orders():
+@token_required
+def get_orders(current_user):
     """ Gets the list of orders present in the order manager """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+    
     return call(
         None, 
         wms.om_handler.jsonify_orders
@@ -320,8 +442,12 @@ def add_order(table_id):
     return jsonify({"error": "Incorrect content-type"}), 400
 
 @app.route('/ordermanager/orders/remove/<table_id>/<order_id>', methods=['DELETE'])
-def remove_order(table_id, order_id):
+@token_required
+def remove_order(current_user, table_id, order_id):
     """ Removes an order from the order manager """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+    
     return call(
         {"message": "Successfully deleted order"},
         wms.om_handler.remove_order,
@@ -368,8 +494,13 @@ def get_order_by_id(order_id):
     )
 
 @app.route("/ordermanager/orders/<order_id>", methods=['DELETE'])
-def delete_order_by_id(order_id):
+@token_required
+def delete_order_by_id(current_user, order_id):
     """ Deletes an order by its ID value """
+
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+
     return call(
         {"message": "Successfully removed order from ordermanager"},
         wms.om_handler.delete_order_by_id,
@@ -377,8 +508,12 @@ def delete_order_by_id(order_id):
     )
 
 @app.route("/ordermanager/orders/<order_id>/state", methods=['GET'])
-def get_order_state(order_id):
+@token_required
+def get_order_state(current_user, order_id):
     """ Gets the current state of an order """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+    
     return call(
         None, 
         wms.om_handler.get_order_state,
@@ -386,11 +521,15 @@ def get_order_state(order_id):
     )
 
 @app.route("/ordermanager/orders/<order_id>/state", methods=['POST'])
-def advance_order_state(order_id):
+@token_required
+def advance_order_state(current_user, order_id):
     """ Advances the state of a particular order
 
     EMPTY FOR NOW. WE WILL EXPAND THIS LATER TO INCLUDE STATE LEAPS IF WE WANT
     """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+
     return call(
         {"message": "Successfully changed state"},
         wms.om_handler.change_order_state,
@@ -398,7 +537,11 @@ def advance_order_state(order_id):
     )
 
 @app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['GET'])
-def get_menu_item_state(order_id, menu_item_id):
+@token_required
+def get_menu_item_state(current_user, order_id, menu_item_id):
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+    
     return call(
         None, 
         wms.om_handler.get_menu_item_state, 
@@ -407,7 +550,12 @@ def get_menu_item_state(order_id, menu_item_id):
     )
 
 @app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['POST'])
-def change_menu_item_state(order_id, menu_item_id):
+@token_required
+def change_menu_item_state(current_user, order_id, menu_item_id):
+
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+    
     return call(
         {"message": "Successfully changed state"},
         wms.om_handler.change_menu_item_state, 

@@ -1,21 +1,31 @@
 from __future__ import annotations
 from wms import User, Order
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class WaitStaff(User):
-    def __init__(self, firstname, lastname):
+    def __init__(self, firstname, lastname, password):
         """ Constructor of the WaitStaff class that inherits the User Class
 
         Args:
             firstname (string): First Name of the User
             lastname (string): Last Name of the User
+            password (string): Password of the user
         """
-        super().__init__(firstname, lastname)
+        super().__init__(firstname, lastname, password)
+        self.__password = generate_password_hash(password)
         self.__requests = []
 
     @property
     def requests(self) -> list[Order]:
         """ Returns the wait staff's list of requests """
         return self.__requests
+    
+    @property
+    def password_hash(self):
+        return self.__password
+    
+    def check_password(self, password):
+        return check_password_hash(self.__password, password)
     
     def assign_requests(self, order):
         """ Add an order to the list of requests

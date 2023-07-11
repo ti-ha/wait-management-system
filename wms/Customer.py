@@ -9,7 +9,7 @@ class Customer(User):
             lastname (str, optional): Last Name of the User. Defaults to 
             "Customer".
         """
-        super().__init__(firstname, lastname)
+        super().__init__(firstname, lastname, None)
         self.__table = None
     
     @property

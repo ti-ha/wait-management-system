@@ -10,7 +10,7 @@ class UserHandler():
         """ Returns list of users"""
         return self.__users
     
-    def add_user(self, firstname, lastname, user_type):
+    def add_user(self, firstname, lastname, user_type, password):
         """ Adds a user to the system
 
         Args:
@@ -24,12 +24,28 @@ class UserHandler():
         """
         match user_type:
             case "Customer":      new_user = Customer(firstname, lastname)
-            case "Kitchen Staff": new_user = KitchenStaff(firstname, lastname)
-            case "Wait Staff":    new_user = WaitStaff(firstname, lastname)
-            case "Manager":       new_user = Manager(firstname, lastname)
+            case "Kitchen Staff": new_user = KitchenStaff(firstname, lastname, password)
+            case "Wait Staff":    new_user = WaitStaff(firstname, lastname, password)
+            case "Manager":       new_user = Manager(firstname, lastname, password)
             case _:               return None
         
         self.__users.append(new_user)
+
+    def login(self, firstname, lastname, password):
+        usermatch = next((i for i in self.users 
+                     if i.firstname == firstname and i.lastname == lastname), None)
+        
+        if usermatch is not None:
+            success = usermatch.check_password(password)
+        else:
+            return None
+        
+        if success:
+            return usermatch
+        
+        else:
+            return None
+        
     
     def jsonify(self) -> dict:
         """ Creates a dictionary of all the users and their first name, last 
@@ -43,9 +59,11 @@ class UserHandler():
         user_dict = {}
         for user in self.users:
             user_dict[f"User_{str(user.id)}"] = {"first_name": user.firstname,
-                                                 "last name": user.lastname,
-                                                 "type": user.__class__.__name__}
+                                                 "last_name": user.lastname,
+                                                 "type": user.__class__.__name__,
+                                                 "password": user.password_hash}
         return user_dict
+    
     
     def id_to_user(self, id) -> User:
         """ Finds a particular user by their ID value
