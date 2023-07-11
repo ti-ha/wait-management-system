@@ -11,13 +11,14 @@ class Category():
         """ Constructor (no menu items by default)
 
         Args:
-            name (string): Name of the category
+            name (String): Name of the category
             menu_items (List[MenuItem], optional): List of menu items to be 
             predefined with the new category. Defaults to None.
         """
         self.__id = next(Category.__id_iter)
         self.__name = name
         self.__menu_items = [] if menu_items is None else menu_items
+        self.__visible = True
 
     @property
     def id(self) -> int:
@@ -28,12 +29,41 @@ class Category():
     def name(self) -> str:
         """ Returns name """
         return self.__name
+    
+    @name.setter
+    def name(self, name):
+        """ Sets the category name """
+        if not isinstance(name, str):
+            raise TypeError("Category: category.set_name(name): argument is not string")
+        self.__name = name
 
     @property
     def menu_items(self) -> list[MenuItem]:
         """ Returns a list of menu items """
         return self.__menu_items
     
+    @property
+    def visible(self) -> bool: 
+        """ Returns category visiblity """
+        return self.__visible
+
+    @visible.setter
+    def visible(self, visible):
+        """ Sets the category visiblity as well as its menu items """
+        self.__visible = visible
+        for item in self.menu_items:
+            item.visible = visible
+
+    def update(self, name, visible):
+        """ Updates the name and/or visibility of the category
+
+        Args:
+            name (String): Name of the category
+            visible (String): Visibility of the category
+        """
+        if name is not None: self.name = name 
+        if visible is not None: self.visible = (visible == "True")
+
     def menu_item(self, menu_item) -> (MenuItem | None):
         """ Returns a specific menu item from category
 
@@ -65,7 +95,7 @@ class Category():
         """ Adds a menu_item to the category
 
         Args:
-            menu_item (MenuItem): Menu item to be added to the category
+            menu_item (Menu_Item): Menu item to be added to the category
 
         Raises:
             ValueError: Raised if menu item is already in the category
@@ -101,6 +131,7 @@ class Category():
         return {
             "id": self.id, 
             "name": self.name, 
-            "menu_items": [it.jsonify() for it in self.menu_items]
+            "menu_items": [it.jsonify() for it in self.menu_items],
+            "visible": self.visible
         }
     

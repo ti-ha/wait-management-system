@@ -10,7 +10,7 @@ class MenuHandler():
         """ Gets a given category from the menu
 
         Args:
-            category (Category): Category to be searched from the menu
+            category (String): Category to be searched from the menu
 
         Returns:
             Category: Category to be acquired. Is None if category does not 
@@ -22,7 +22,7 @@ class MenuHandler():
         """ Returns menu item by name
 
         Args:
-            category (Category): Category to look through 
+            category (String): Category to look through 
             name (String): Name of the menu item
 
         Returns:
@@ -35,7 +35,7 @@ class MenuHandler():
         """ Returns menu item by id
 
         Args:
-            category (Category): Category to look through 
+            category (String): Category to look through 
             id (Integer): ID of the menu item
 
         Returns:
@@ -62,7 +62,7 @@ class MenuHandler():
         """ Adds a category to the menu
 
         Args:
-            category (Category): Category to be added to the menu
+            category (String): Category to be added to the menu
         """
         self.__menu.add_category(Category(category))
 
@@ -70,11 +70,13 @@ class MenuHandler():
         """ Adds a menu item to the menu
 
         Args:
-            category (Category): Category the menu item belongs to
+            category (String): Category the menu item belongs to
             name (String): Name of the menu item
             price (Float): Price of the menu item
             imageurl (String): Image URL of the menu item
         """
+        if self.__menu.get_category(category).menu_item_by_name(name) is not None:
+            raise ValueError("Menu item with this name already exists")
         item = MenuItem(name, price, imageurl)
         self.__menu.get_category(category).add_menu_item(item)
 
@@ -108,7 +110,7 @@ class MenuHandler():
         """ Removes a category from the menu
 
         Args:
-            category (Category): Category to be removed
+            category (String): Category to be removed
         """
         self.__menu.remove_category(category)
     
@@ -116,10 +118,50 @@ class MenuHandler():
         """ Removes a menu item from the menu
 
         Args:
-            category (Category): Category that menu item belongs to
+            category (String): Category that menu item belongs to
             name (String): Name of the menu item
         """
         self.__menu.get_category(category).remove_menu_item(name)
+
+    def update_category(self, category, name, visible):
+        """ Updates category name and/or visibility
+
+        Args:
+            category (String): Old category name
+            name (String): New category name
+            visible (String): New visibility of the category in the menu
+
+        Raises:
+            ValueError: Raised if category name does not exist in the menu
+        """
+        if self.__menu.get_category(name) is not None:
+            raise ValueError(f"Category with the name {name} already exists")
+        curr_category = self.__menu.get_category(category)
+        if curr_category is None:
+            raise ValueError(f"Category {category} does not exist")
+        curr_category.update(name, visible)
+
+    def update_menu_item(self, category, old_name, 
+                         new_name, price, image_url, visible):
+        """ Updates menu item name, price, image_url and/or visibility
+
+        Args:
+            category (String): Category name the menu item is under
+            old_name (String): Old name of the menu item
+            new_name (String): New name of the menu item
+            price (String): New price of the menu item
+            image_url (String): New image url of the menu item
+            visible (String): New visibiltiy of the menu item in the menu
+
+        Raises:
+            ValueError: Raised if menu item does not exist in the given category
+        """
+        if self.__menu.get_category(category).menu_item_by_name(new_name) is not None:
+            raise ValueError(f"Menu item with the name {new_name} already exists")
+        menu_item = self.__menu.get_category(category).menu_item_by_name(old_name)
+        if menu_item is None:
+            raise ValueError(f"Menu Item with the name {old_name} doesn't exist in the {category} category")
+        menu_item.update(new_name, price, image_url, visible)
 
     def jsonify(self) -> dict:
         """ Creates a dictionary of the menu 
@@ -133,7 +175,7 @@ class MenuHandler():
         """ Creates a dictionary of a category of a menu
 
         Args:
-            category (Category): Category to create a dictionary out of
+            category (String): Category to create a dictionary out of
 
         Raises:
             ValueError: Raised if the category does not exist in the menu

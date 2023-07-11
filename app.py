@@ -123,6 +123,38 @@ def get_category(category):
         category
     )
 
+@app.route('/menu/categories/<category>', methods=['PATCH'])
+@token_required
+def update_category(current_user, category):
+    """ Updates a menu category with a new name or visibility status
+    Note that to set the category visible use the exact string "True", anything
+    else will set the visible boolean to False
+
+    JSON FORMAT:
+    {
+        "new_name": "string",
+        "visible": "string"
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        
+        new_name = obj["new_name"] if "new_name" in obj else None
+        visible = obj["visible"] if "visible" in obj else None
+
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully updated category"},
+            wms.menu_handler.update_category,
+            category,
+            new_name,
+            visible
+        )
+
+
 @app.route('/menu/categories/<category>', methods=['POST'])
 @token_required
 def add_menu_item_to_category(current_user, category):
@@ -190,6 +222,44 @@ def delete_menu_item(current_user, category, menu_item):
         category,
         menu_item
     )
+
+@app.route('/menu/categories/<category>/<menu_item>', methods=['PATCH'])
+@token_required
+def update_menu_item(current_user, category, menu_item):
+    """ Updates a menu category with a new name or visibility status
+    Note that to set the category visible use the exact string "True", anything
+    else will set the visible boolean to False
+
+    JSON FORMAT:
+    {
+        "new_name": "string",
+        "price": "string",
+        "image_url": "string",
+        "visible": "string"
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        
+        new_name = obj["new_name"] if "new_name" in obj else None
+        price = obj["price"] if "price" in obj else None
+        image_url = obj["image_url"] if "image_url" in obj else None
+        visible = obj["visible"] if "visible" in obj else None
+
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully updated menu item"},
+            wms.menu_handler.update_menu_item,
+            category,
+            menu_item,
+            new_name,
+            price,
+            image_url,
+            visible
+        )
 
 @app.route('/menu/deals', methods=['GET'])
 def get_deal():
