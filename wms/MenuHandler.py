@@ -136,9 +136,11 @@ class MenuHandler():
         """
         if self.__menu.get_category(name) is not None:
             raise ValueError(f"Category with the name {name} already exists")
+        
         curr_category = self.__menu.get_category(category)
         if curr_category is None:
             raise ValueError(f"Category {category} does not exist")
+        
         curr_category.update(name, visible)
 
     def update_menu_item(self, category, old_name, 
@@ -158,9 +160,11 @@ class MenuHandler():
         """
         if self.__menu.get_category(category).menu_item_by_name(new_name) is not None:
             raise ValueError(f"Menu item with the name {new_name} already exists")
+        
         menu_item = self.__menu.get_category(category).menu_item_by_name(old_name)
         if menu_item is None:
             raise ValueError(f"Menu Item with the name {old_name} doesn't exist in the {category} category")
+        
         menu_item.update(new_name, price, image_url, visible)
 
     def jsonify(self) -> dict:
