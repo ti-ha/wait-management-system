@@ -47,5 +47,6 @@ class User:
     def jsonify(self):
         return {"id": self.id,
                 "first_name": self.firstname,
-                "last_name": self.lastname}
+                "last_name": self.lastname,
+                "usertype": self.__class__.__name__}
 
