@@ -230,13 +230,16 @@ class OrderManagerHandler():
             Dict: A dictionary of the bill's price and whether or not it has
             been paid
         """
-        try:
-            bill = self.__order_manager.calculate_table_bill(table_id)
-        except Exception as exc:
-            raise exc
+        if self.__table_handler.id_to_table(table_id).bill == None:
+            try:
+                bill = self.__order_manager.calculate_table_bill(table_id)
+            except Exception as exc:
+                raise exc
+        else:
+            return self.__table_handler.id_to_table(table_id).bill.jsonify()
 
         self.__table_handler.id_to_table(table_id).bill = bill
-        return {"price": bill.price, "is_paid": bill.paid}
+        return {"price": bill.price, "paid": bill.paid}
 
     def pay_table_bill(self, table_id: int):
         """ A function to simulate the payment of the table bill
@@ -261,7 +264,9 @@ class OrderManagerHandler():
 
         if not payable:
             raise ValueError("One or more orders hasn't been served yet")
-
+        
+        [i.bill.pay() for i in table.orders]
+        
         bill.pay()
 
     def pay_order_bill(self, order_id: int):

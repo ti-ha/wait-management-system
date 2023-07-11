@@ -283,6 +283,9 @@ class Order:
             {menuitem: price, ... , menuitem: price}.
             We do not want to modify the existing objects
         """
+        if self.bill != None:
+            return self.bill
+        
         pricedict = {}
         for i in self.menu_items:
             pricedict[i.name] = i.price
@@ -295,7 +298,7 @@ class Order:
         finalcost = sum([float(pricedict[i]) for i in pricedict])
         self.__bill = Bill(finalcost)
 
-        return Bill(finalcost)
+        return self.__bill
 
     def mark_as_paid(self):
         """ Mark order bill as paid once all conditions are satisfied

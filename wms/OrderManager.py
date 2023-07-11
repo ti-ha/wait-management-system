@@ -193,7 +193,7 @@ class OrderManager:
         else:
             raise TypeError("OrderManager: calculate_table_bill(): Not a valid id")
         
-        bills = [i.bill for i in self.get_table_orders(table_id)]
+        bills = [i.calculate_bill() for i in self.get_table_orders(table_id)]
         
         if None in bills:
             raise ValueError("OrderManager: calculate_table_bill(): One or more orders have not been served yet")
