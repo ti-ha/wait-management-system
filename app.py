@@ -2,7 +2,7 @@ from functools import wraps
 from flask import Flask, jsonify, request, current_app
 from flask_cors import CORS, cross_origin
 from wms import *
-import json, jwt
+import json, jwt, datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -368,7 +368,8 @@ def login():
         if user:
             return jsonify({"message": "Success",
                             "auth_token": jwt.encode(
-                                            {"user_id": user.id},
+                                            {"user_id": user.id,
+                                             "expiry": str(datetime.datetime.utcnow().date())},
                                             app.config['SECRET_KEY'],
                                             algorithm="HS256"
                             )}), 200
