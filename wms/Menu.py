@@ -163,7 +163,7 @@ class Menu():
         """
         # The harshness of the similarity. 1.0 is max value and will only return 
         # exact matches. 0 returns everything. 0.5 is a pretty good midpoint
-        STRENGTH_COEFFICIENT = 0.5
+        STRENGTH_COEFFICIENT = 0.40
         # Good luck deciphering all this
         # Generate levenschtein distances for each menu item in all categories against the query argument
         levenschtein = [[sm(None, j.name, query).ratio() 
@@ -179,26 +179,21 @@ class Menu():
         sorted_by_levenschtein = [
             sorted(
             list(zip((i for i in levenschtein[k]), 
-                     (j.jsonify() for j in normal[k]))))
+                     (j.jsonify() for j in normal[k]))), reverse=True)
                       for k, _ in enumerate(normal)
         ]
-
         # Remove values with low ratios
         cropped_output = [[i 
                            for i in sublist if i[0] > STRENGTH_COEFFICIENT]
                            for sublist in sorted_by_levenschtein]
-        
+
         # Add the categories back in and remove the levenschtein value from the output
-        with_categories = {category.name: [i for i in cropped_output[k]] 
+        with_categories = {category.name: [i[1] for i in cropped_output[k]] 
                            for k, category in enumerate(self.categories)}
         
         # Clean up the data, removing the similarity coefficient and return. Automatically omits empty categories
-        return {
-            i: [with_categories[i][k][1]] 
-            for i in with_categories.keys() 
-            for k, _ in enumerate(with_categories[i])
-        }
-
+        return {key: with_categories[key] 
+                for key in with_categories.keys() if with_categories[key]}
     
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the categories and deals of the 
