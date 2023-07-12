@@ -10,7 +10,7 @@ class MenuHandler():
         """ Gets a given category from the menu
 
         Args:
-            category (Category): Category to be searched from the menu
+            category (String): Category to be searched from the menu
 
         Returns:
             Category: Category to be acquired. Is None if category does not 
@@ -22,7 +22,7 @@ class MenuHandler():
         """ Returns menu item by name
 
         Args:
-            category (Category): Category to look through 
+            category (String): Category to look through 
             name (String): Name of the menu item
 
         Returns:
@@ -83,7 +83,7 @@ class MenuHandler():
 
         Args:
             discount (Float): Percentage discount to be applied
-            menu_items (List[MenuItem]): List of menu items to be discounted by
+            menu_items (List[string]): List of menu items to be discounted by
             the deal
 
         Raises:

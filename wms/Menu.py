@@ -12,8 +12,8 @@ class Menu():
             deals (List[Deal], optional): Different menu deals. 
             Defaults to None.
         """
-        self.__categories = [] if categories == None else categories
-        self.__deals = [] if deals == None else deals
+        self.__categories = [] if categories is None else categories
+        self.__deals = [] if deals is None else deals
  
     @property
     def categories(self) -> list[Category]:
@@ -25,7 +25,7 @@ class Menu():
         """ Returns a list of deals """
         return self.__deals
     
-    def get_category(self, name) -> Category:
+    def get_category(self, name) -> (Category | None):
         """ Returns a category with a matching name attribute
 
         Args:
@@ -35,12 +35,13 @@ class Menu():
             Category: Category to be acquired. If no category is found returns
             None
         """
-        for i in self.__categories:
-            if i.name == name:
-                return i
-        return None
+        # for i in self.categories:
+        #     if i.name == name:
+        #         return i
+        # return None
+        return next((it for it in self.categories if it.name == name), None)
 
-    def add_category(self, category) -> None:
+    def add_category(self, category: Category) -> None:
         """ Adds a new category to the menu
 
         Args:
@@ -50,12 +51,12 @@ class Menu():
             TypeError: Raised if category argument is not of type category
             ValueError: Raised if category already exists in the menu
         """
-        if not isinstance(category, Category):
-            raise TypeError("Menu: add_category(): Object is not of type Category")
+        # if not isinstance(category, Category):
+        #     raise TypeError("Menu: add_category(): Object is not of type Category")
         
-        if category in self.__categories:
+        if self.get_category(category.name) is not None:
             raise ValueError("Menu: add_category(): Category already exists")
-
+       
         self.__categories.append(category)
 
     def remove_category(self, name) -> None:
@@ -73,7 +74,7 @@ class Menu():
         """
         if not isinstance(name, str):
             raise TypeError("Menu: menu.remove_category(): not a string")
-        for i in self.__categories:
+        for i in self.categories:
             if i.name == name:
                 self.__categories.remove(i)
                 return i
