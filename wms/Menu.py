@@ -191,7 +191,7 @@ class Menu():
         with_categories = {category.name: [i[1] for i in cropped_output[k]] 
                            for k, category in enumerate(self.categories)}
         
-        # Clean up the data, removing the similarity coefficient and return. Automatically omits empty categories
+        # Clean up the data and return. Automatically omits empty categories
         return {key: with_categories[key] 
                 for key in with_categories.keys() if with_categories[key]}
     
