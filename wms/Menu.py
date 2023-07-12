@@ -147,13 +147,57 @@ class Menu():
                 return i
         return None
     
-    def search_items(self, query: str, length):
-        # basic algorithm:
-        # Create a dictionary of {'category': [menu item, menu item], ...}
-        # Create a matching dictionary of {'category': [levenschtein dist, ldist] ... }
-        dict = [[sm(None, j.name, query).ratio() for j in i.menu_items] for i in self.categories]
-        normal = [[j.jsonify() for j in i.menu_items] for i in self.categories]
-        return dict, normal
+    def search_items(self, query: str) -> dict:
+        """ Searches the menu for menu_items that match a provided query
+
+        Args:
+            query (str): The name, or a close replicate, of the menu_item you're searching for
+
+        Returns:
+            dict: A dictionary similar to self.categories except with irrelevant menu_items omitted
+
+        Note: 
+            This function is only so needlessly complex because of how the menu items are stored,
+            and also the desire to preserve category. We therefore conduct a number of reads of the 
+            menu without forgetting where they are in the menu, adding complexity and reducing efficiency.
+        """
+        # The harshness of the similarity. 1.0 is max value and will only return 
+        # exact matches. 0 returns everything. 0.5 is a pretty good midpoint
+        STRENGTH_COEFFICIENT = 0.5
+        # Good luck deciphering all this
+        # Generate levenschtein distances for each menu item in all categories against the query argument
+        levenschtein = [[sm(None, j.name, query).ratio() 
+                         for j in i.menu_items] 
+                         for i in self.categories]
+
+        # Get the normal dictionary of menu_items in self.categories
+        normal = [[j 
+                   for j in i.menu_items] 
+                   for i in self.categories]
+        
+        # Sort the normal list by the levenschtein one, zipping them together and removing bad matches
+        sorted_by_levenschtein = [
+            sorted(
+            list(zip((i for i in levenschtein[k]), 
+                     (j.jsonify() for j in normal[k]))))
+                      for k, _ in enumerate(normal)
+        ]
+
+        # Remove values with low ratios
+        cropped_output = [[i 
+                           for i in sublist if i[0] > STRENGTH_COEFFICIENT]
+                           for sublist in sorted_by_levenschtein]
+        
+        # Add the categories back in and remove the levenschtein value from the output
+        with_categories = {category.name: [i for i in cropped_output[k]] 
+                           for k, category in enumerate(self.categories)}
+        
+        # Clean up the data, removing the similarity coefficient and return. Automatically omits empty categories
+        return {
+            i: [with_categories[i][k][1]] 
+            for i in with_categories.keys() 
+            for k, _ in enumerate(with_categories[i])
+        }
 
     
     def jsonify(self) -> dict:
