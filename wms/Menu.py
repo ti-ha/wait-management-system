@@ -1,4 +1,5 @@
 from __future__ import annotations
+from difflib import SequenceMatcher as sm
 from wms import Category, MenuItem, Deal
 
 class Menu():
@@ -146,6 +147,54 @@ class Menu():
             if i.id == id:
                 return i
         return None
+    
+    def search_items(self, query: str) -> dict:
+        """ Searches the menu for menu_items that match a provided query
+
+        Args:
+            query (str): The name, or a close replicate, of the menu_item you're searching for
+
+        Returns:
+            dict: A dictionary similar to self.categories except with irrelevant menu_items omitted
+
+        Note: 
+            This function is only so needlessly complex because of how the menu items are stored,
+            and also the desire to preserve category. We therefore conduct a number of reads of the 
+            menu without forgetting where they are in the menu, adding complexity and reducing efficiency.
+        """
+        # The harshness of the similarity. 1.0 is max value and will only return 
+        # exact matches. 0 returns everything. 0.5 is a pretty good midpoint
+        STRENGTH_COEFFICIENT = 0.40
+        # Good luck deciphering all this
+        # Generate levenschtein distances for each menu item in all categories against the query argument
+        levenschtein = [[sm(None, j.name, query).ratio() 
+                         for j in i.menu_items] 
+                         for i in self.categories]
+
+        # Get the normal dictionary of menu_items in self.categories
+        normal = [[j 
+                   for j in i.menu_items] 
+                   for i in self.categories]
+        
+        # Sort the normal list by the levenschtein one, zipping them together and removing bad matches
+        sorted_by_levenschtein = [
+            sorted(
+            list(zip((i for i in levenschtein[k]), 
+                     (j.jsonify() for j in normal[k]))), reverse=True)
+                      for k, _ in enumerate(normal)
+        ]
+        # Remove values with low ratios
+        cropped_output = [[i 
+                           for i in sublist if i[0] > STRENGTH_COEFFICIENT]
+                           for sublist in sorted_by_levenschtein]
+
+        # Add the categories back in and remove the levenschtein value from the output
+        with_categories = {category.name: [i[1] for i in cropped_output[k]] 
+                           for k, category in enumerate(self.categories)}
+        
+        # Clean up the data and return. Automatically omits empty categories
+        return {key: with_categories[key] 
+                for key in with_categories.keys() if with_categories[key]}
     
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the categories and deals of the 

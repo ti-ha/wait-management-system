@@ -28,7 +28,7 @@ def call(msg, func, *args):
         output = func(*args)
     except Exception as e:
         # Uncomment this line for debugging
-        #raise e
+        raise e
         return jsonify({"error": e.args}), 400
 
     if output is not None:
@@ -230,6 +230,17 @@ def create_deal(current_user):
             menu_item_lookup
         )
     return jsonify({"error": "Incorrect content-type"}), 400
+
+@app.route('/menu/search', methods=['GET'])
+def search_menu():
+    query = request.args.get('query')
+
+    return call(
+        None, 
+        wms.menu_handler.search,
+        query
+    )
+    
 
 @app.route('/table', methods=['GET'])
 @token_required
