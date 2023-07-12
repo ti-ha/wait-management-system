@@ -231,6 +231,18 @@ def create_deal(current_user):
         )
     return jsonify({"error": "Incorrect content-type"}), 400
 
+@app.route('/menu/search', methods=['GET'])
+def search_menu():
+    query = request.args.get('query')
+    length = int(request.args.get('length'))
+    return call(
+        None, 
+        wms.menu_handler.search,
+        query, 
+        length
+    )
+
+
 @app.route('/table', methods=['GET'])
 @token_required
 def get_table(current_user):

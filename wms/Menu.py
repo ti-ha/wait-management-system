@@ -1,4 +1,5 @@
 from __future__ import annotations
+from difflib import SequenceMatcher as sm
 from wms import Category, MenuItem, Deal
 
 class Menu():
@@ -35,7 +36,7 @@ class Menu():
             Category: Category to be acquired. If no category is found returns
             None
         """
-        for i in self.__categories:
+        for i in self.categories:
             if i.name == name:
                 return i
         return None
@@ -73,7 +74,7 @@ class Menu():
         """
         if not isinstance(name, str):
             raise TypeError("Menu: menu.remove_category(): not a string")
-        for i in self.__categories:
+        for i in self.categories:
             if i.name == name:
                 self.__categories.remove(i)
                 return i
@@ -145,6 +146,15 @@ class Menu():
             if i.id == id:
                 return i
         return None
+    
+    def search_items(self, query: str, length):
+        # basic algorithm:
+        # Create a dictionary of {'category': [menu item, menu item], ...}
+        # Create a matching dictionary of {'category': [levenschtein dist, ldist] ... }
+        dict = [[sm(None, j.name, query).ratio() for j in i.menu_items] for i in self.categories]
+        normal = [[j.jsonify() for j in i.menu_items] for i in self.categories]
+        return dict, normal
+
     
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the categories and deals of the 

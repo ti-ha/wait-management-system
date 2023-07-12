@@ -121,6 +121,9 @@ class MenuHandler():
         """
         self.__menu.get_category(category).remove_menu_item(name)
 
+    def search(self, query, length):
+        return self.__menu.search_items(query, length)
+
     def jsonify(self) -> dict:
         """ Creates a dictionary of the menu 
 
