@@ -119,7 +119,7 @@ class Category():
         """
         return next((it for it in self.menu_items if it.name == name), None)
 
-    def add_menu_item(self, menu_item) -> None:
+    def add_menu_item(self, menu_item: MenuItem) -> None:
         """ Adds a menu_item to the category
 
         Args:
@@ -128,7 +128,7 @@ class Category():
         Raises:
             ValueError: Raised if menu item is already in the category
         """
-        if self.menu_item(menu_item) is not None:
+        if self.menu_item_by_name(menu_item.name) is not None:
             raise ValueError("Category: add_menu_item(): MenuItem already in category")
         
         self.menu_items.append(menu_item)

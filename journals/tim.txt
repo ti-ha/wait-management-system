@@ -44,3 +44,13 @@ So, to compromise and still keep progress moving, we're going to pay off the tec
 but we're not going to add any new functionality into the backend specifically. This gives time for the database
 team to catch up. The frontend will work on implementing a few outstanding API calls and then UX. Database team will
 aim to have database persistence implemented by the end of the week.
+
+We had another meeting on Sunday just to catch up, but we're making steady progress through the Jira board so no news is good news.
+
+Week 7:
+We had a meeting on Wednesday to catch up. Backend team is mostly completed with all of the board items,
+so just waiting on the frontend to reflect data passed from the backend. Testing is done for the menu objects.
+This week, by Wednesday, I was responsible for coding the core authentication functionality and the search 
+functionality. I learned a lot while coding them both as I have never had to code them before. Still to do before
+Saturday meeting at 6pm is the reordering functionality of the menu, then backend team is free to get an early start 
+to Sprint 3.

@@ -2,7 +2,7 @@ from functools import wraps
 from flask import Flask, jsonify, request, current_app
 from flask_cors import CORS, cross_origin
 from wms import *
-import json, jwt
+import json, jwt, datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -28,7 +28,7 @@ def call(msg, func, *args):
         output = func(*args)
     except Exception as e:
         # Uncomment this line for debugging
-        #raise e
+        raise e
         return jsonify({"error": e.args}), 400
 
     if output is not None:
@@ -357,12 +357,20 @@ def create_deal(current_user):
         )
     return jsonify({"error": "Incorrect content-type"}), 400
 
+@app.route('/menu/search', methods=['GET'])
+def search_menu():
+    query = request.args.get('query')
+
+    return call(
+        None, 
+        wms.menu_handler.search,
+        query
+    )
+    
+
 @app.route('/table', methods=['GET'])
-@token_required
-def get_table(current_user):
+def get_table():
     """ Gets all of the restaurant tables """
-    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
-        return jsonify({"error": "Must be a staff member to make this request"}), 401
 
     return call(
         None, 
@@ -482,7 +490,8 @@ def login():
         if user:
             return jsonify({"message": "Success",
                             "auth_token": jwt.encode(
-                                            {"user_id": user.id},
+                                            {"user_id": user.id,
+                                             "expiry": str(datetime.datetime.utcnow().date())},
                                             app.config['SECRET_KEY'],
                                             algorithm="HS256"
                             )}), 200

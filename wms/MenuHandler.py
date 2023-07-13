@@ -88,7 +88,7 @@ class MenuHandler():
 
         Args:
             discount (Float): Percentage discount to be applied
-            menu_items (List[MenuItem]): List of menu items to be discounted by
+            menu_items (List[string]): List of menu items to be discounted by
             the deal
 
         Raises:
@@ -194,6 +194,9 @@ class MenuHandler():
             raise ValueError(f"Category {category} does not exist")
         
         self.__menu.get_category(category).update_menu_items(new_order)
+        
+    def search(self, query):
+        return self.__menu.search_items(query)
 
     def jsonify(self) -> dict:
         """ Creates a dictionary of the menu 
