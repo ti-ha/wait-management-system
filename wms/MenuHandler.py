@@ -177,6 +177,11 @@ class MenuHandler():
             new_order (List[String]): List of category IDs that dictate the 
             new category order
         """                
+        try:
+            [int(i) for i in new_order]
+        except ValueError:
+            raise ValueError("New_order argument has an invalid item")
+        
         self.__menu.update_categories(new_order)
 
     def reorder_menu_items(self, category, new_order):
@@ -192,6 +197,11 @@ class MenuHandler():
         """                
         if self.__menu.get_category(category) is None:
             raise ValueError(f"Category {category} does not exist")
+        
+        try:
+            [int(i) for i in new_order]
+        except ValueError:
+            raise ValueError("New_order argument has an invalid item")
         
         self.__menu.get_category(category).update_menu_items(new_order)
         

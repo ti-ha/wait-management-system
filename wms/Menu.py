@@ -164,7 +164,9 @@ class Menu():
 
         Raises:
             TypeError: Raised if new_order argument is not a list of strings
-            ValueError: Raised if IDs in new_order are not unique
+            ValueError: Raised if IDs in new_order are not unique or new_order
+            does not have the right number of ID strings or it contains an ID
+            that does not correspond to a valid category ID
         """
         if not isinstance(new_order, list):
             raise TypeError("Menu: update_categories(): Object should be a list of strings")
@@ -179,8 +181,11 @@ class Menu():
         new_categories = []
 
         for id in new_order:
-            id_index = curr_category_ids.index(int(id))
-            new_categories.append(self.__categories[id_index])
+            try:
+                id_index = curr_category_ids.index(int(id))
+                new_categories.append(self.__categories[id_index])
+            except ValueError:
+                raise ValueError(f"Menu: update_categories(): ID {id} is not a valid category ID")
 
         self.__categories = new_categories
         
