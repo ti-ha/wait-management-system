@@ -20,6 +20,13 @@ class Menu():
         """ Returns a list of categories """
         return self.__categories
     
+    @categories.setter
+    def categories(self, categories):
+        """ Sets the categories of the menu """
+        if not isinstance(categories, list[Category]):
+            return ValueError("Menu: menu.set_categories(categories): argument is not a list of categories")
+        self.__categories = categories
+    
     @property
     def deals(self) -> list[Deal]:
         """ Returns a list of deals """
@@ -145,6 +152,32 @@ class Menu():
             if i.id == id:
                 return i
         return None
+    
+    def update_categories(self, new_order):
+        """ Updates the order of the categories given a list of category IDs
+
+        Args:
+            new_order (List[String]): List of category IDs that represent the 
+            new order of categories in the menu
+
+        Raises:
+            TypeError: Raised if new_order argument is not a list of strings
+            ValueError: Raised if IDs in new_order are not unique
+        """
+        if not isinstance(new_order, list):
+            raise TypeError("Menu: update_categories(): Object should be a list of strings")
+        
+        if len(new_order) > len(set(new_order)):
+            raise ValueError("Menu: update_categories(): IDs in list are not unique")
+        
+        curr_category_ids = [i.id for i in self.__categories]
+        new_categories = []
+
+        for id in new_order:
+            id_index = curr_category_ids.index(int(id))
+            new_categories.append(self.__categories[id_index])
+
+        self.__categories = new_categories
     
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the categories and deals of the 

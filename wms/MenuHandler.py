@@ -167,6 +167,15 @@ class MenuHandler():
         
         menu_item.update(new_name, price, image_url, visible)
 
+    def reorder_category(self, new_order):
+        """ Updates the order of categories in the menu
+
+        Args:
+            new_order (List[String]): List of category IDs that dictate the 
+            new category order
+        """                
+        self.__menu.update_categories(new_order)
+
     def jsonify(self) -> dict:
         """ Creates a dictionary of the menu 
 
