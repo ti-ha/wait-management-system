@@ -8,9 +8,13 @@ export default function Kitchen() {
 
     const [orders, setOrders] = useState([]);
 
+    const auth_token = localStorage.getItem('token'); 
+
     const fetchOrders = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager`);
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager`, {
+                headers: { 'Authorization': `${auth_token}` }
+            });
             if (!response.ok) { 
                 const responseBody = await response.json();
                 console.error('Server response:', responseBody); 
@@ -38,6 +42,7 @@ export default function Kitchen() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
                 }
             });
 

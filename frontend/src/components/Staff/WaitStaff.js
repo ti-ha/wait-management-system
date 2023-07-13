@@ -11,7 +11,10 @@ export default function WaitStaff() {
 
     const fetchOrders = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager`);
+            const auth_token = localStorage.getItem('token'); 
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager`, {
+                headers: { 'Authorization': `${auth_token}` }
+            });
             if (!response.ok) { 
                 const responseBody = await response.json();
                 console.error('Server response:', responseBody); 
@@ -34,10 +37,12 @@ export default function WaitStaff() {
 
     const updateOrderState = async (orderId) => {
         try {
+            const auth_token = localStorage.getItem('token');
             const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/orders/${orderId}/state`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
                 }
             });
 

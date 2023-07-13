@@ -35,4 +35,5 @@
 
 .linkContainer:hover {
     background-color: gray;
+    cursor: pointer;
 }
