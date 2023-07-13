@@ -21,6 +21,13 @@ class Menu():
         """ Returns a list of categories """
         return self.__categories
     
+    @categories.setter
+    def categories(self, categories):
+        """ Sets the categories of the menu """
+        if not isinstance(categories, list[Category]):
+            return ValueError("Menu: menu.set_categories(categories): argument is not a list of categories")
+        self.__categories = categories
+    
     @property
     def deals(self) -> list[Deal]:
         """ Returns a list of deals """
@@ -148,6 +155,40 @@ class Menu():
                 return i
         return None
     
+    def update_categories(self, new_order):
+        """ Updates the order of the categories given a list of category IDs
+
+        Args:
+            new_order (List[String]): List of category IDs that represent the 
+            new order of categories in the menu
+
+        Raises:
+            TypeError: Raised if new_order argument is not a list of strings
+            ValueError: Raised if IDs in new_order are not unique or new_order
+            does not have the right number of ID strings or it contains an ID
+            that does not correspond to a valid category ID
+        """
+        if not isinstance(new_order, list):
+            raise TypeError("Menu: update_categories(): Object should be a list of strings")
+        
+        if len(new_order) != len(self.__categories):
+            raise ValueError("Menu: update_categories(): Wrong number of list IDs provided")
+
+        if len(new_order) > len(set(new_order)):
+            raise ValueError("Menu: update_categories(): IDs in list are not unique")
+        
+        curr_category_ids = [i.id for i in self.__categories]
+        new_categories = []
+
+        for id in new_order:
+            try:
+                id_index = curr_category_ids.index(int(id))
+                new_categories.append(self.__categories[id_index])
+            except ValueError:
+                raise ValueError(f"Menu: update_categories(): ID {id} is not a valid category ID")
+
+        self.__categories = new_categories
+        
     def search_items(self, query: str) -> dict:
         """ Searches the menu for menu_items that match a provided query
 

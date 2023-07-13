@@ -35,7 +35,7 @@ class MenuHandler():
         """ Returns menu item by id
 
         Args:
-            category (Category): Category to look through 
+            category (String): Category to look through 
             id (Integer): ID of the menu item
 
         Returns:
@@ -62,7 +62,7 @@ class MenuHandler():
         """ Adds a category to the menu
 
         Args:
-            category (Category): Category to be added to the menu
+            category (String): Category to be added to the menu
         """
         self.__menu.add_category(Category(category))
 
@@ -70,11 +70,16 @@ class MenuHandler():
         """ Adds a menu item to the menu
 
         Args:
-            category (Category): Category the menu item belongs to
+            category (String): Category the menu item belongs to
             name (String): Name of the menu item
             price (Float): Price of the menu item
             imageurl (String): Image URL of the menu item
         """
+        if self.__menu.get_category(category) is None:
+            raise ValueError(f"Category with name {category} does not exist")
+        
+        if self.__menu.get_category(category).menu_item_by_name(name) is not None:
+            raise ValueError("Menu item with this name already exists")
         item = MenuItem(name, price, imageurl)
         self.__menu.get_category(category).add_menu_item(item)
 
@@ -108,7 +113,7 @@ class MenuHandler():
         """ Removes a category from the menu
 
         Args:
-            category (Category): Category to be removed
+            category (String): Category to be removed
         """
         self.__menu.remove_category(category)
     
@@ -116,11 +121,90 @@ class MenuHandler():
         """ Removes a menu item from the menu
 
         Args:
-            category (Category): Category that menu item belongs to
+            category (String): Category that menu item belongs to
             name (String): Name of the menu item
         """
         self.__menu.get_category(category).remove_menu_item(name)
 
+    def update_category(self, category, name, visible):
+        """ Updates category name and/or visibility
+
+        Args:
+            category (String): Old category name
+            name (String): New category name
+            visible (String): New visibility of the category in the menu
+
+        Raises:
+            ValueError: Raised if category name does not exist in the menu
+        """
+        curr_category = self.__menu.get_category(category)
+        if curr_category is None:
+            raise ValueError(f"Category {category} does not exist")
+        
+        if self.__menu.get_category(name) is not None:
+            raise ValueError(f"Category with the name {name} already exists")
+        
+        curr_category.update(name, visible)
+
+    def update_menu_item(self, category, old_name, 
+                         new_name, price, image_url, visible):
+        """ Updates menu item name, price, image_url and/or visibility
+
+        Args:
+            category (String): Category name the menu item is under
+            old_name (String): Old name of the menu item
+            new_name (String): New name of the menu item
+            price (String): New price of the menu item
+            image_url (String): New image url of the menu item
+            visible (String): New visibiltiy of the menu item in the menu
+
+        Raises:
+            ValueError: Raised if menu item does not exist in the given category
+        """
+        menu_item = self.__menu.get_category(category).menu_item_by_name(old_name)
+        if menu_item is None:
+            raise ValueError(f"Menu Item with the name {old_name} doesn't exist in the {category} category")
+        
+        if self.__menu.get_category(category).menu_item_by_name(new_name) is not None:
+            raise ValueError(f"Menu item with the name {new_name} already exists")
+        
+        menu_item.update(new_name, price, image_url, visible)
+
+    def reorder_category(self, new_order):
+        """ Updates the order of categories in the menu
+
+        Args:
+            new_order (List[String]): List of category IDs that dictate the 
+            new category order
+        """                
+        try:
+            [int(i) for i in new_order]
+        except ValueError:
+            raise ValueError("New_order argument has an invalid item")
+        
+        self.__menu.update_categories(new_order)
+
+    def reorder_menu_items(self, category, new_order):
+        """ Updates the order of menu items in a category
+
+        Args:
+            category (String): Category to have menu items reordered
+            new_order (List[String]): List of menu item IDs that dictate the 
+            new menu item
+
+        Raises:
+            ValueError: Raised if category does not exist in the menu
+        """                
+        if self.__menu.get_category(category) is None:
+            raise ValueError(f"Category {category} does not exist")
+        
+        try:
+            [int(i) for i in new_order]
+        except ValueError:
+            raise ValueError("New_order argument has an invalid item")
+        
+        self.__menu.get_category(category).update_menu_items(new_order)
+        
     def search(self, query):
         return self.__menu.search_items(query)
 
@@ -136,7 +220,7 @@ class MenuHandler():
         """ Creates a dictionary of a category of a menu
 
         Args:
-            category (Category): Category to create a dictionary out of
+            category (String): Category to create a dictionary out of
 
         Raises:
             ValueError: Raised if the category does not exist in the menu

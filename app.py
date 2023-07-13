@@ -123,6 +123,65 @@ def get_category(category):
         category
     )
 
+@app.route('/menu/categories/<category>', methods=['PATCH'])
+@token_required
+def update_category(current_user, category):
+    """ Updates a menu category with a new name or visibility status
+    Note that to set the category visible use the exact string "True", anything
+    else will set the visible boolean to False
+
+    JSON FORMAT:
+    {
+        "new_name": "string",
+        "visible": "string"
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        
+        new_name = obj["new_name"] if "new_name" in obj else None
+        visible = obj["visible"] if "visible" in obj else None
+
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully updated category"},
+            wms.menu_handler.update_category,
+            category,
+            new_name,
+            visible
+        )
+
+@app.route('/menu/categories/order', methods=['POST'])
+@token_required
+def reorder_categories(current_user):
+    """ Rearranges the categorie in the menu
+
+    JSON FORMAT:
+    {
+        "new_order": List[String]
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            new_order = obj["new_order"]
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully reordered categories"},
+            wms.menu_handler.reorder_category,
+            new_order
+        )
+    return None
+
 @app.route('/menu/categories/<category>', methods=['POST'])
 @token_required
 def add_menu_item_to_category(current_user, category):
@@ -142,7 +201,7 @@ def add_menu_item_to_category(current_user, category):
             name = obj["name"]
             price = obj["price"]
             image_url = obj["image_url"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
         if current_user.__class__ is not Manager:
@@ -172,6 +231,35 @@ def delete_category(current_user, category):
         category
     )
 
+@app.route('/menu/categories/<category>/order', methods=['POST'])
+@token_required
+def reorder_menu_items(current_user, category):
+    """ Rearranges the categorie in the menu
+
+    JSON FORMAT:
+    {
+        "new_order": List[String]
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            new_order = obj["new_order"]
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully reordered menu items"},
+            wms.menu_handler.reorder_menu_items,
+            category,
+            new_order
+        )
+    return None
+
 @app.route('/menu/categories/<category>/<menu_item>', methods=['GET'])
 def get_menu_item(category, menu_item):
     """ Gets a specific menu item from a specific category """
@@ -190,6 +278,44 @@ def delete_menu_item(current_user, category, menu_item):
         category,
         menu_item
     )
+
+@app.route('/menu/categories/<category>/<menu_item>', methods=['PATCH'])
+@token_required
+def update_menu_item(current_user, category, menu_item):
+    """ Updates a menu category with a new name or visibility status
+    Note that to set the category visible use the exact string "True", anything
+    else will set the visible boolean to False
+
+    JSON FORMAT:
+    {
+        "new_name": "string",
+        "price": "string",
+        "image_url": "string",
+        "visible": "string"
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        
+        new_name = obj["new_name"] if "new_name" in obj else None
+        price = obj["price"] if "price" in obj else None
+        image_url = obj["image_url"] if "image_url" in obj else None
+        visible = obj["visible"] if "visible" in obj else None
+
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully updated menu item"},
+            wms.menu_handler.update_menu_item,
+            category,
+            menu_item,
+            new_name,
+            price,
+            image_url,
+            visible
+        )
 
 @app.route('/menu/deals', methods=['GET'])
 def get_deal():
@@ -217,7 +343,7 @@ def create_deal(current_user):
         # Check if all menu items exist
         try:
             menu_item_lookup = [i["name"] for i in obj["menu_items"]]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"})
         
         if current_user.__class__ is not Manager:
@@ -268,7 +394,7 @@ def add_table(current_user):
         try:
             table_limit = obj["table_limit"]
             orders = obj["orders"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
         if current_user.__class__ is not Manager:
@@ -326,7 +452,7 @@ def add_user():
                 password = obj["password"]
             else:
                 password = None
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
 
         return call(
@@ -357,7 +483,7 @@ def login():
             first_name = obj["first_name"]
             last_name = obj["last_name"]
             password = obj["password"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
         user = wms.user_handler.login(first_name, last_name, password)
@@ -387,7 +513,7 @@ def add_table_customer():
         try:
             table_id = obj["table_id"]
             customer_id = obj["customer_id"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         return call(
             {"message": "Successfully added customer to table"},
@@ -439,7 +565,7 @@ def add_order(table_id):
         try:
             menu_items_ids = [i["id"] for i in obj["menu_items"]]
             deals_ids = [i["id"] for i in obj["deals"]]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         return call(
             {"message": "Successfully added order"},
