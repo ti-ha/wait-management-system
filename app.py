@@ -154,6 +154,33 @@ def update_category(current_user, category):
             visible
         )
 
+@app.route('/menu/categories/order', methods=['POST'])
+@token_required
+def reorder_categories(current_user):
+    """ Rearranges the categorie in the menu
+
+    JSON FORMAT:
+    {
+        "new_order": List[String]
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            new_order = obj["new_order"]
+        except TypeError:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully reordered categories"},
+            wms.menu_handler.reorder_category,
+            new_order
+        )
+    return None
 
 @app.route('/menu/categories/<category>', methods=['POST'])
 @token_required
@@ -203,6 +230,35 @@ def delete_category(current_user, category):
         wms.menu_handler.remove_category,
         category
     )
+
+@app.route('/menu/categories/<category>/order', methods=['POST'])
+@token_required
+def reorder_menu_items(current_user, category):
+    """ Rearranges the categorie in the menu
+
+    JSON FORMAT:
+    {
+        "new_order": List[String]
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            new_order = obj["new_order"]
+        except TypeError:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully reordered menu items"},
+            wms.menu_handler.reorder_menu_items,
+            category,
+            new_order
+        )
+    return None
 
 @app.route('/menu/categories/<category>/<menu_item>', methods=['GET'])
 def get_menu_item(category, menu_item):
