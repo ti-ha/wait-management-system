@@ -169,7 +169,7 @@ def reorder_categories(current_user):
         obj = request.json
         try:
             new_order = obj["new_order"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
         if current_user.__class__ is not Manager:
@@ -201,7 +201,7 @@ def add_menu_item_to_category(current_user, category):
             name = obj["name"]
             price = obj["price"]
             image_url = obj["image_url"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
         if current_user.__class__ is not Manager:
@@ -246,7 +246,7 @@ def reorder_menu_items(current_user, category):
         obj = request.json
         try:
             new_order = obj["new_order"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
         if current_user.__class__ is not Manager:
@@ -343,7 +343,7 @@ def create_deal(current_user):
         # Check if all menu items exist
         try:
             menu_item_lookup = [i["name"] for i in obj["menu_items"]]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"})
         
         if current_user.__class__ is not Manager:
@@ -394,7 +394,7 @@ def add_table(current_user):
         try:
             table_limit = obj["table_limit"]
             orders = obj["orders"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
         if current_user.__class__ is not Manager:
@@ -452,7 +452,7 @@ def add_user():
                 password = obj["password"]
             else:
                 password = None
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
 
         return call(
@@ -483,7 +483,7 @@ def login():
             first_name = obj["first_name"]
             last_name = obj["last_name"]
             password = obj["password"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
         user = wms.user_handler.login(first_name, last_name, password)
@@ -513,7 +513,7 @@ def add_table_customer():
         try:
             table_id = obj["table_id"]
             customer_id = obj["customer_id"]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         return call(
             {"message": "Successfully added customer to table"},
@@ -565,7 +565,7 @@ def add_order(table_id):
         try:
             menu_items_ids = [i["id"] for i in obj["menu_items"]]
             deals_ids = [i["id"] for i in obj["deals"]]
-        except TypeError:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         return call(
             {"message": "Successfully added order"},
