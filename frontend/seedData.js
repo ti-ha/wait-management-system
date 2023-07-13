@@ -3,6 +3,84 @@ import { config } from 'dotenv';
 
 config();
 
+// Create mock users
+// Define your users
+const users = [
+    {
+        first_name: "WaitStaff",
+        last_name: "One",
+        user_type: "Wait Staff",
+        password: "waitstaff"
+    },
+    {
+        first_name: "KitchenStaff",
+        last_name: "One",
+        user_type: "Kitchen Staff",
+        password: "kitchenstaff"
+    },
+    {
+        first_name: "Manager",
+        last_name: "One",
+        user_type: "Manager",
+        password: "manager"
+    }
+]
+
+// Create users using the API endpoint
+users.forEach(async (user) => {
+    try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/user/add`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        });
+
+        if (!response.ok) { 
+            const responseBody = await response.json();
+            console.error('Server response:', responseBody); 
+            throw new Error(`HTTP Error with status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log(`Successfully added user ${user.first_name} ${user.last_name}`, data);
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+});
+
+let authToken;
+try {
+    const manager = users.find(user => user.user_type === "Manager");
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/user/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(manager)
+    });
+
+    if (!response.ok) { 
+        const responseBody = await response.json();
+        console.error('Server response:', responseBody); 
+        throw new Error(`HTTP Error with status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    authToken = data.auth_token;
+    console.log(`Logged in as Manager: ${data.message}`);
+} catch (error) {
+    console.error("Error logging in as Manager:", error);
+}
+
+
+
+
+
+
+
+
 const imageLinks = {
     "Meatloaf": "https://www.spendwithpennies.com/wp-content/uploads/2022/12/1200-The-Best-Meatloaf-Recipe-SpendWithPennies.jpg",
     "Arancini Balls": "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/arancini_balls-db2b1df.jpg?quality=90&webp=true&resize=440,400",
@@ -53,7 +131,10 @@ const menuItems = [
 let categoryPromises = categories.map((category) => {
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `${authToken}`
+        },
         body: JSON.stringify({ name: category })
     }
 
@@ -69,7 +150,10 @@ Promise.all(categoryPromises).then(() => {
             console.log(`Creating item: ${item.name} in category: ${category}`);
             const requestOptions = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json'},
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `${authToken}`
+                },
                 body: JSON.stringify(item)
             };
         
@@ -89,7 +173,8 @@ tables.forEach(async () => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/table/add`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `${authToken}`
             },
             body: JSON.stringify({ table_limit: 3, orders: [] })
         });
