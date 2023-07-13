@@ -64,6 +64,31 @@ class Category():
         if name is not None: self.name = name 
         if visible is not None: self.visible = (visible == "True")
 
+    def update_menu_items(self, new_order):
+        """ Updates the order of the menu items given a list of menu item IDs
+
+        Args:
+            new_order (List[String]): List of menu item IDs that represent the 
+            new order of menu items in the category
+
+        Raises:
+            TypeError: Raised if new_order argument is not a list of strings
+        """
+        if not isinstance(new_order, list):
+            raise TypeError("Category: update_menu_items(): Object should be a list of strings")
+        
+        if len(new_order) > len(set(new_order)):
+            raise ValueError("Categgory: update_menu_items(): IDs in list are not unique")
+        
+        curr_menu_item_ids = [i.id for i in self.__menu_items]
+        new_menu_items = []
+
+        for id in new_order:
+            id_index = curr_menu_item_ids.index(int(id))
+            new_menu_items.append(self.__menu_items[id_index])
+
+        self.__menu_items = new_menu_items
+
     def menu_item(self, menu_item) -> (MenuItem | None):
         """ Returns a specific menu item from category
 

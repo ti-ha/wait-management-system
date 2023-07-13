@@ -176,6 +176,22 @@ class MenuHandler():
         """                
         self.__menu.update_categories(new_order)
 
+    def reorder_menu_items(self, category, new_order):
+        """ Updates the order of menu items in a category
+
+        Args:
+            category (String): Category to have menu items reordered
+            new_order (List[String]): List of menu item IDs that dictate the 
+            new menu item
+
+        Raises:
+            ValueError: Raised if category does not exist in the menu
+        """                
+        if self.__menu.get_category(category) is None:
+            raise ValueError(f"Category {category} does not exist")
+        
+        self.__menu.get_category(category).update_menu_items(new_order)
+
     def jsonify(self) -> dict:
         """ Creates a dictionary of the menu 
 
