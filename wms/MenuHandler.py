@@ -137,12 +137,12 @@ class MenuHandler():
         Raises:
             ValueError: Raised if category name does not exist in the menu
         """
-        if self.__menu.get_category(name) is not None:
-            raise ValueError(f"Category with the name {name} already exists")
-        
         curr_category = self.__menu.get_category(category)
         if curr_category is None:
             raise ValueError(f"Category {category} does not exist")
+        
+        if self.__menu.get_category(name) is not None:
+            raise ValueError(f"Category with the name {name} already exists")
         
         curr_category.update(name, visible)
 
@@ -161,12 +161,12 @@ class MenuHandler():
         Raises:
             ValueError: Raised if menu item does not exist in the given category
         """
-        if self.__menu.get_category(category).menu_item_by_name(new_name) is not None:
-            raise ValueError(f"Menu item with the name {new_name} already exists")
-        
         menu_item = self.__menu.get_category(category).menu_item_by_name(old_name)
         if menu_item is None:
             raise ValueError(f"Menu Item with the name {old_name} doesn't exist in the {category} category")
+        
+        if self.__menu.get_category(category).menu_item_by_name(new_name) is not None:
+            raise ValueError(f"Menu item with the name {new_name} already exists")
         
         menu_item.update(new_name, price, image_url, visible)
 
