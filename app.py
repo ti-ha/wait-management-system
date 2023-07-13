@@ -243,11 +243,8 @@ def search_menu():
     
 
 @app.route('/table', methods=['GET'])
-@token_required
-def get_table(current_user):
+def get_table():
     """ Gets all of the restaurant tables """
-    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
-        return jsonify({"error": "Must be a staff member to make this request"}), 401
 
     return call(
         None, 
