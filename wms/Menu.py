@@ -167,6 +167,9 @@ class Menu():
         if not isinstance(new_order, list):
             raise TypeError("Menu: update_categories(): Object should be a list of strings")
         
+        if len(new_order) != len(self.__categories):
+            raise ValueError("Menu: update_categories(): Wrong number of list IDs provided")
+
         if len(new_order) > len(set(new_order)):
             raise ValueError("Menu: update_categories(): IDs in list are not unique")
         

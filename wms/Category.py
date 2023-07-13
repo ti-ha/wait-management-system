@@ -77,6 +77,9 @@ class Category():
         if not isinstance(new_order, list):
             raise TypeError("Category: update_menu_items(): Object should be a list of strings")
         
+        if len(set(new_order)) != len(self.__menu_items):
+            raise ValueError("Category: update_menu_items(): Wrong number of list IDs provided")
+        
         if len(new_order) > len(set(new_order)):
             raise ValueError("Categgory: update_menu_items(): IDs in list are not unique")
         

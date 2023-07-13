@@ -75,6 +75,9 @@ class MenuHandler():
             price (Float): Price of the menu item
             imageurl (String): Image URL of the menu item
         """
+        if self.__menu.get_category(category) is None:
+            raise ValueError(f"Category with name {category} does not exist")
+        
         if self.__menu.get_category(category).menu_item_by_name(name) is not None:
             raise ValueError("Menu item with this name already exists")
         item = MenuItem(name, price, imageurl)
