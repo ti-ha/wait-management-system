@@ -3,8 +3,13 @@ import { Link } from 'react-router-dom';
 import './Kitchen.css';
 import { Button } from '@mui/material';
 import { Check } from '@mui/icons-material';
+import { useIsStaffMember } from '../Hooks/useIsAuthorised.js';
+import AccessDenied from '../Common/AccessDenied.js';
 
 export default function Kitchen() {
+
+    // Ensure the user is authorised to access this page
+    const { isAuthorised, isLoading } = useIsStaffMember();
 
     const [orders, setOrders] = useState([]);
 
@@ -58,6 +63,14 @@ export default function Kitchen() {
         } catch (error) {
             console.error("Error updating order state:", error);
         }
+    }
+
+    if (isLoading) {
+        return null;
+    }
+
+    if (!isAuthorised) {
+        return <AccessDenied />
     }
 
 

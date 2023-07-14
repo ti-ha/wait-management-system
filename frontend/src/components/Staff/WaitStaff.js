@@ -3,9 +3,14 @@ import { Link } from 'react-router-dom';
 import './WaitStaff.css';
 import { Button } from '@mui/material';
 import { Check } from '@mui/icons-material';
+import { useIsStaffMember } from '../Hooks/useIsAuthorised.js';
+import AccessDenied from '../Common/AccessDenied.js';
 
 
 export default function WaitStaff() {
+
+    // Ensure the user is authorised to access this page
+    const { isAuthorised, isLoading } = useIsStaffMember();
 
     const [orders, setOrders] = useState([]);
 
@@ -60,7 +65,13 @@ export default function WaitStaff() {
         }
     }
 
+    if (isLoading) {
+        return null;
+    }
 
+    if (!isAuthorised) {
+        return <AccessDenied />
+    }
     return (
         <div className="waitStaffContainer">
             <header className="waitStaffHeader">
