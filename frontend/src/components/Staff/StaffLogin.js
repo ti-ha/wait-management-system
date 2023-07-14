@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Button, Container, Col } from 'react-bootstrap'
+import { Form, Container, Col } from 'react-bootstrap'
+import { Link } from 'react-router-dom';
+import { Button } from '@mui/material';
+import './StaffLogin.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
@@ -68,26 +71,45 @@ export default function StaffLogin() {
     
     
     return (
-        <Container>
-            <h1>Login</h1>
-            <Form onSubmit={handleLogin}>
-                <Form.Group className="mb-3">
-                    <Form.Label>First Name</Form.Label>
-                    <Form.Control style={{width: "80vw", maxWidth: "500px"}} type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Last Name</Form.Label>
-                    <Form.Control type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
-                </Form.Group>
-                <Form.Group className="mb-3">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                    Login
-                </Button>
-                {error && <p className="text-danger">{error}</p>}
-            </Form>
-        </Container>
+        <>
+            <header className="staff-login-header">
+                <div className='header-buttons'>
+                    <Link to="/">
+                        <Button variant="contained">
+                            Landing Page
+                        </Button>
+                    </Link>
+                </div>
+            </header>
+            <Container>
+                <h1>Staff Login</h1>
+                <Form onSubmit={handleLogin}>
+                    <Form.Group className="mb-3">
+                        <Form.Label>First Name</Form.Label>
+                        <Form.Control style={{width: "80vw", maxWidth: "500px"}} type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Last Name</Form.Label>
+                        <Form.Control type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    </Form.Group>
+                    <Button variant="contained" type="submit">
+                        Login
+                    </Button>
+                    {error && <p className="text-danger">{error}</p>}
+                </Form>
+                <div className="diner-message">
+                    <p>Oops! Are you a diner and just in search of delicious meals? Click here:</p>
+                    <Link to="/select-table">
+                        <Button variant="contained" >
+                            Dine In
+                        </Button>
+                    </Link>
+                </div>
+            </Container>
+        </>
     )
 }
