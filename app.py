@@ -1,347 +1,720 @@
+from functools import wraps
 from flask import Flask, jsonify, request, current_app
 from flask_cors import CORS, cross_origin
 from wms import *
-import json
+import json, jwt, datetime
 
 app = Flask(__name__)
 CORS(app)
 wms = Application()
 
-# A lot of the logic in here needs to be refactored to a new class. Speedrunning for now to get API working for frontend
+SECRET_KEY = "RomanticCheese"
+app.config['SECRET_KEY'] = SECRET_KEY
+
+
+def call(msg, func, *args):
+    """ Attempts to run a function func, returning a msg if it succeeds with no output.
+
+    Args:
+        msg (dict): Success message if no output
+        func (function): function to be called
+        *args (tuple): list of args to call to func
+
+    Returns:
+        json: the response to be sent to the frontend,
+        int: the response code
+    """
+    try:
+        output = func(*args)
+    except Exception as e:
+        # Uncomment this line for debugging
+        raise e
+        return jsonify({"error": e.args}), 400
+
+    if output is not None:
+        return jsonify(output), 200
+
+    else:
+        return jsonify(msg), 200
+    
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if "Authorization" in request.headers:
+            token = request.headers["Authorization"]
+        
+        if not token:
+            return jsonify({
+                "message": "Authentication Token missing",
+                "error": "Unauthorized"
+            }), 401
+        
+        try:
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = wms.user_handler.id_to_user(data["user_id"])
+            if current_user is None:
+                return jsonify({
+                    "message": "Invalid Authentication token",
+                    "error": "Unauthorized"
+                }), 401
+        except Exception as e:
+            return jsonify({
+                "message": "Something went wrong",
+                "error": str(e)
+            }), 500
+        
+        return f(current_user, *args, **kwargs)
+    
+    return decorated
 
 @app.route('/')
 def home():
-    return jsonify({"Hello world!"}), 200
+    """ Home Page of the app """
+    return jsonify({"message": "Hello world!"}), 200
 
 @app.route('/menu', methods=['GET'])
 def get_menu():
-    return jsonify(wms.menu_json()), 200
+    """ Gets the restaurant menu """
+    return call(
+        None, 
+        wms.menu_handler.jsonify
+    )
 
-@app.route('/menu/categories', methods=['GET','POST'])
-def create_category():
-    if request.method == "GET":
-        return jsonify(wms.jsonify_menu_categories()), 200
-    elif request.method == "POST":
-        '''
-        JSON FORMAT:
-        {"name": "string"}
-        '''
-        content_type = request.headers.get('Content-Type')
-        if (content_type == 'application/json'):
-            obj = request.json
-            wms.add_menu_category(obj["name"])
-            return jsonify({"message": f"Successfully added category {obj['name']}"}), 200
-        else:
-            return jsonify({"error": "Incorrect content-type"}), 400
+@app.route('/menu/categories', methods=['GET'])
+def get_categories():
+    """ Gets the menu categories """
+    return call(
+        None, 
+        wms.menu_handler.jsonify_categories
+    )
 
-@app.route('/menu/categories/<category>', methods=['GET', 'POST', 'DELETE'])
-def specific_category(category):
-    if request.method == 'GET':
-        return jsonify(wms.jsonify_menu_category(category)), 200
-    elif request.method == 'POST':
-        '''
-        ADDING A NEW MENU ITEM TO CATEGORY.
-        JSON FORMAT:
-        {"name": "string",
-         "price": float  ,
-         "image_url": "string"}
-        '''
-        content_type = request.headers.get('Content-Type')
-        if (content_type == 'application/json'):
-            obj = request.json
-            try:
-                name = obj["name"]
-                price = obj["price"]
-                imageURL = obj["image_url"]
-            except:
-                return jsonify({"error": "Incorrect fields"}), 400
-            
-            wms.add_menu_item(category, name, price, imageURL)
-            return jsonify({"message": f"Successfully added menuitem {name}"}), 200
-        
-    elif request.method == 'DELETE':
-        '''
-        REMOVING A SPECIFIC CATEGORY. DELETE METHOD FOR MENUITEM
-        IS IN THE SPECIFIC ROUTE FOR SPECIFIC MENU ITEM
-        '''
-        wms.remove_menu_category(category)
-        return jsonify({"message": f"Successfully deleted category {category}"}), 200
+@app.route('/menu/categories', methods=['POST'])
+@token_required
+def create_category(current_user):
+    """ Creates a new menu category
 
+    JSON FORMAT:
+    {
+        "name": "string"
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if (content_type == 'application/json'):
+        obj = request.json
     else:
-        return jsonify({"error": "Not a valid request"}), 400
+        return jsonify({"error": "Incorrect content-type"}), 400
     
-@app.route('/menu/categories/<category>/<menu_item>', methods=['GET', 'DELETE'])
-def menu_item(category, menu_item):
-    if wms.menu_item(category, menu_item) == None:
-        return jsonify({"error": "Unrecognised menu_item"}), 400
-    
-    if request.method == 'GET':
-        return jsonify(wms.menu_item_json(category, menu_item)), 200
-        
-    elif request.method == 'DELETE':
-        wms.remove_menu_item(category, menu_item)
-        return jsonify({"message": f"Successfully removed menuitem {menu_item} in category {category})"}), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+    if current_user.__class__ is not Manager:
+        return jsonify({"error": "Must be Manager to make this request"})
 
-@app.route('/menu/deals', methods=['GET','POST'])
-def create_deal():
-    if request.method == 'GET':
-        return jsonify(wms.get_deals_json()), 200
+    return call(
+        {"message": f"Successfully added category {obj['name']}"},
+        wms.menu_handler.add_category,
+        obj["name"]
+    )
+
+@app.route('/menu/categories/<category>', methods=['GET'])
+def get_category(category):
+    """ Gets a specific menu category """
+    return call(
+        None, 
+        wms.menu_handler.jsonify_category, 
+        category
+    )
+
+@app.route('/menu/categories/<category>', methods=['PATCH'])
+@token_required
+def update_category(current_user, category):
+    """ Updates a menu category with a new name or visibility status
+    Note that to set the category visible use the exact string "True", anything
+    else will set the visible boolean to False
+
+    JSON FORMAT:
+    {
+        "new_name": "string",
+        "visible": "string"
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
         
-    elif request.method == 'POST':
-        '''
-        JSON FORMAT:
-        {"discount": int,
-        "menu_items": [{"name": "string"},
-                        {"name": "string"}
-                        }]
-        }
+        new_name = obj["new_name"] if "new_name" in obj else None
+        visible = obj["visible"] if "visible" in obj else None
+
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully updated category"},
+            wms.menu_handler.update_category,
+            category,
+            new_name,
+            visible
+        )
+
+@app.route('/menu/categories/order', methods=['POST'])
+@token_required
+def reorder_categories(current_user):
+    """ Rearranges the categorie in the menu
+
+    JSON FORMAT:
+    {
+        "new_order": List[String]
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            new_order = obj["new_order"]
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"}), 400
         
-        '''
-        content_type = request.headers.get('Content-Type')
-        if (content_type == 'application/json'):
-            obj = request.json
-            # Check if all menu items exist
-            try: 
-                menu_item_lookup = [i["name"] for i in obj["menu_items"]]
-            except:
-                return jsonify({"error": "Incorrect fields"})
-            
-            proc = wms.add_deal(obj["discount"], menu_item_lookup)
-            if proc == None:
-                return jsonify({"error": "One or more menu items is not present in the menu"})
-            
-            return jsonify({"message": f"Successfully added deal with new id {str(proc)}"}), 200
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully reordered categories"},
+            wms.menu_handler.reorder_category,
+            new_order
+        )
+    return None
+
+@app.route('/menu/categories/<category>', methods=['POST'])
+@token_required
+def add_menu_item_to_category(current_user, category):
+    """ Adds a new menu item to a specific category
+
+    JSON FORMAT:
+    {
+        "name": "string",
+        "price": float,
+        "image_url": "string"
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            name = obj["name"]
+            price = obj["price"]
+            image_url = obj["image_url"]
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"}), 400
         
-        else:
-            return jsonify({"error": "Incorrect content-type"}), 400
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully added menuitem {name}"},
+            wms.menu_handler.add_menu_item,
+            category,
+            name,
+            price,
+            image_url
+        )
+    return None
+
+@app.route('/menu/categories/<category>', methods=['DELETE'])
+@token_required
+def delete_category(current_user, category):
+    """ Removes a specific category """
+
+    if current_user.__class__ is not Manager:
+        return jsonify({"error": "Must be Manager to make this request"}), 401
+
+    return call(
+        {"message": f"Successfully deleted category {category}"},
+        wms.menu_handler.remove_category,
+        category
+    )
+
+@app.route('/menu/categories/<category>/order', methods=['POST'])
+@token_required
+def reorder_menu_items(current_user, category):
+    """ Rearranges the categorie in the menu
+
+    JSON FORMAT:
+    {
+        "new_order": List[String]
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            new_order = obj["new_order"]
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully reordered menu items"},
+            wms.menu_handler.reorder_menu_items,
+            category,
+            new_order
+        )
+    return None
+
+@app.route('/menu/categories/<category>/<menu_item>', methods=['GET'])
+def get_menu_item(category, menu_item):
+    """ Gets a specific menu item from a specific category """
+    return call(None, wms.menu_handler.jsonify_menu_item, category, menu_item)
+
+@app.route('/menu/categories/<category>/<menu_item>', methods=['DELETE'])
+@token_required
+def delete_menu_item(current_user, category, menu_item):
+    """ Removes a specific menu item from a specific category """
+    if current_user.__class__ is not Manager:
+        return jsonify({"error": "Must be Manager to make this request"}), 401
+
+    return call(
+        {"message": f"Successfully removed menuitem {menu_item} in category {category}"},
+        wms.menu_handler.remove_menu_item,
+        category,
+        menu_item
+    )
+
+@app.route('/menu/categories/<category>/<menu_item>', methods=['PATCH'])
+@token_required
+def update_menu_item(current_user, category, menu_item):
+    """ Updates a menu category with a new name or visibility status
+    Note that to set the category visible use the exact string "True", anything
+    else will set the visible boolean to False
+
+    JSON FORMAT:
+    {
+        "new_name": "string",
+        "price": "string",
+        "image_url": "string",
+        "visible": "string"
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        
+        new_name = obj["new_name"] if "new_name" in obj else None
+        price = obj["price"] if "price" in obj else None
+        image_url = obj["image_url"] if "image_url" in obj else None
+        visible = obj["visible"] if "visible" in obj else None
+
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": f"Successfully updated menu item"},
+            wms.menu_handler.update_menu_item,
+            category,
+            menu_item,
+            new_name,
+            price,
+            image_url,
+            visible
+        )
+
+@app.route('/menu/deals', methods=['GET'])
+def get_deal():
+    """ Gets a menu deal """
+    return call(
+        None, 
+        wms.menu_handler.jsonify_deals
+    )
+
+@app.route('/menu/deals', methods=['POST'])
+@token_required
+def create_deal(current_user):
+    """ Creates a new menu deal
+
+    JSON FORMAT:
+    {
+        "discount": float,
+        "menu_items": [{"name": "string"},{"name": "string"},...]
+    }
+
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        # Check if all menu items exist
+        try:
+            menu_item_lookup = [i["name"] for i in obj["menu_items"]]
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"})
+        
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+
+        return call(
+            {"message": "Successfully added deal"},
+            wms.menu_handler.add_deal,
+            obj["discount"],
+            menu_item_lookup
+        )
+    return jsonify({"error": "Incorrect content-type"}), 400
+
+@app.route('/menu/search', methods=['GET'])
+def search_menu():
+    query = request.args.get('query')
+
+    return call(
+        None, 
+        wms.menu_handler.search,
+        query
+    )
+    
 
 @app.route('/table', methods=['GET'])
 def get_table():
-    return jsonify(wms.get_tables_json()), 200
+    """ Gets all of the restaurant tables """
+
+    return call(
+        None, 
+        wms.table_handler.jsonify
+    )
 
 @app.route('/table/add', methods=['POST'])
-def add_table():
-    '''
+@token_required
+def add_table(current_user):
+    """ Creates a new table
+
     JSON FORMAT:
-    {"table_limit": int,
-     "orders": List<Order>}
-    '''
+    {
+        "table_limit": int,
+        "orders": List[Order]
+    }
+    """
     content_type = request.headers.get('Content-Type')
-    if (content_type == 'application/json'):
+    if content_type == 'application/json':
         obj = request.json
         try:
             table_limit = obj["table_limit"]
             orders = obj["orders"]
-        except:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
-        table_id = wms.add_table(table_limit, orders)
-        return jsonify({"message": f"Successfully added table {str(table_id)}"}), 200
+        if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
 
-@app.route('/user', methods=['GET'])
-def get_user():
-    return jsonify(wms.get_users_json()), 200
+        return call(
+            {"message": "Successfully added table"},
+            wms.table_handler.add_table,
+            table_limit,
+            orders
+        )
+    return jsonify({"error": "Incorrect content-type"}), 400
+
+@app.route('/users', methods=['GET'])
+@token_required
+def get_user(current_user):
+    """ Gets all of the restaurant users """
+    if current_user.__class__ is not Manager:
+        return jsonify({"error": "Must be Manager to make this request"}), 401
+    
+    return call(
+        None, 
+        wms.user_handler.jsonify
+    )
+
+@app.route('/me', methods=['GET'])
+@token_required
+def get_current_user(current_user):
+    return call(
+        None,
+        current_user.jsonify
+    )
 
 @app.route('/user/add', methods=['POST'])
 def add_user():
-    '''
+    """ Creates a new user
+
     JSON FORMAT:
-    {"first_name": string,
-     "last_name": string,
-     "user_type": string}
-    '''
+    {
+        "first_name": string,
+        "last_name": string,
+        "user_type": string
+        if staffmember:
+            "password": string 
+    }
+    """
     content_type = request.headers.get('Content-Type')
-    if (content_type == 'application/json'):
+    if content_type == 'application/json':
         obj = request.json
         try:
             first_name = obj["first_name"]
             last_name = obj["last_name"]
             user_type = obj["user_type"]
-        except:
+            if user_type in ["Wait Staff", "Manager", "Kitchen Staff"]:
+                password = obj["password"]
+            else:
+                password = None
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"}), 400
+
+        return call(
+            {"message": f"Successfully added user {first_name} {last_name}"},
+            wms.user_handler.add_user,
+            first_name,
+            last_name,
+            user_type,
+            password
+        )
+    return jsonify({"error": "Incorrect content-type"}), 400
+
+@app.route('/user/login', methods=['POST'])
+def login():
+    """logs in a user given firstname, lastname and password. returns an auth token
+    
+    JSON FORMAT:
+    {
+        "first_name": string
+        "last_name": string
+        "password": string
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            first_name = obj["first_name"]
+            last_name = obj["last_name"]
+            password = obj["password"]
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
         
-        user_id = wms.add_user(first_name, last_name, user_type)
-        if user_id == None:
-            return jsonify({"error": "Unable to create user"}), 400
-        return jsonify({"message": f"Successfully added user {str(user_id)}"}), 200
+        user = wms.user_handler.login(first_name, last_name, password)
+        if user:
+            return jsonify({"message": "Success",
+                            "auth_token": jwt.encode(
+                                            {"user_id": user.id,
+                                             "expiry": str(datetime.datetime.utcnow().date())},
+                                            app.config['SECRET_KEY'],
+                                            algorithm="HS256"
+                            )}), 200
+        return jsonify({"error": "Incorrect credentials"}), 400
     
 @app.route('/table/add/customer', methods=['POST'])
 def add_table_customer():
-    '''
+    """ Adds a customer to a table
+
     JSON FORMAT:
-    {"table_id": int,
-     "customer_id": int}
-    '''
+    {
+        "table_id": int,
+        "customer_id": int
+    }
+    """
     content_type = request.headers.get('Content-Type')
-    if (content_type == 'application/json'):
+    if content_type == 'application/json':
         obj = request.json
         try:
             table_id = obj["table_id"]
             customer_id = obj["customer_id"]
-        except:
+        except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
-        
-        status = wms.add_table_customer(table_id, customer_id)
-        if not status:
-            return jsonify({"error": "Unable to move customer to table"}), 400
-        return jsonify({"message": "Successfully added customer to table"}), 200
-    
+        return call(
+            {"message": "Successfully added customer to table"},
+            wms.table_handler.add_customer,
+            table_id,
+            wms.user_handler.id_to_user(customer_id)
+        )
+    return jsonify({"error": "Incorrect content-type"}), 400
+
 #### ORDER MANAGER ENDPOINTS
-    
+
 @app.route('/ordermanager', methods=['GET'])
-def get_order_manager():
-    if request.method == 'GET':
-        return jsonify(wms.jsonify_order_manager()), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+@token_required
+def get_order_manager(current_user):
+    """ Gets the order manager """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
     
+    return call(
+        None, 
+        wms.om_handler.jsonify
+    )
+
 @app.route('/ordermanager/orders', methods=['GET'])
-def get_orders():
-    if request.method == 'GET':
-        return jsonify(wms.jsonify_order_manager_orders()), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+@token_required
+def get_orders(current_user):
+    """ Gets the list of orders present in the order manager """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+    
+    return call(
+        None, 
+        wms.om_handler.jsonify_orders
+    )
 
 @app.route('/ordermanager/orders/add/<table_id>' , methods=['POST'])
 def add_order(table_id):
-    '''
-    JSON FORMAT:
-    { "menu_items: [{"id": int}, ... , {"id": int}],
-      "deals:      [{"id": int}, ... , {"id": int}] }
-    '''
-    if request.method == 'POST':
-        content_type = request.headers.get('Content-Type')
-        if (content_type == 'application/json'):
-            obj = request.json
-            try:
-                menu_items_ids = [i["id"] for i in obj["menu_items"]]
-                deals_ids = [i["id"] for i in obj["deals"]]
-            except:
-                return jsonify({"error": "Incorrect fields"}), 400
-            
-            try:
-                wms.add_order_to_order_manager(table_id, menu_items_ids, deals_ids)
-            except ValueError:
-                return jsonify({"error":"Invalid args in json"}), 400
-            
-            return jsonify({"message": "Successfully added order"}), 200
+    """ Adds an order to the order manager with the table it belongs to
 
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
-    
-@app.route('/ordermanager/orders/remove/<table_id>/<order_id>', methods=['DELETE'])
-def remove_order(table_id, order_id):
-    if request.method == 'DELETE':
+    JSON FORMAT:
+    {
+        "menu_items: [{"id": int}, ... , {"id": int}],
+        "deals:      [{"id": int}, ... , {"id": int}]
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
         try:
-            wms.remove_order_from_order_manager(table_id, order_id)
-        except:
-            return jsonify({"error": "Bad request (See backend server for details)"}), 400
-        
-        return jsonify({"message": "Successfully deleted order"}), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+            menu_items_ids = [i["id"] for i in obj["menu_items"]]
+            deals_ids = [i["id"] for i in obj["deals"]]
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"}), 400
+        return call(
+            {"message": "Successfully added order"},
+            wms.om_handler.add_order,
+            int(table_id),
+            menu_items_ids,
+            deals_ids
+        )
+    return jsonify({"error": "Incorrect content-type"}), 400
+
+@app.route('/ordermanager/orders/remove/<table_id>/<order_id>', methods=['DELETE'])
+@token_required
+def remove_order(current_user, table_id, order_id):
+    """ Removes an order from the order manager """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
     
+    return call(
+        {"message": "Successfully deleted order"},
+        wms.om_handler.remove_order,
+        int(table_id),
+        int(order_id)
+    )
+
 @app.route('/ordermanager/tables/<table_id>', methods=['GET'])
 def get_table_orders(table_id):
-    if request.method == 'GET':
-        try:
-            output = wms.get_table_orders(table_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        
-        return jsonify(output), 200
+    """ Gets all the orders of a specific table """
+    return call(
+        None, 
+        wms.om_handler.get_table_orders, 
+        int(table_id)
+    )
 
-    else:
-        return jsonify({"error":"Unrecognised request"}), 400
+@app.route('/ordermanager/tables/<table_id>/bill', methods=['GET'])
+def get_table_bill(table_id):
+    """ Gets the bill for a table """
+    return call(
+        None, 
+        wms.om_handler.calculate_and_return_bill, 
+        int(table_id)
+    )
 
-@app.route('/ordermanager/tables/<table_id>/bill', methods=['GET','POST'])
-def manage_table_bill(table_id):
-    '''
-    EMPTY POST REQUEST. NO DATA EXPECTED
-    '''
-    if request.method == 'GET':
-        try:
-            output = wms.calculate_and_return_bill(table_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
+@app.route('/ordermanager/tables/<table_id>/bill', methods=['POST'])
+def pay_table_bill(table_id):
+    """ Endpoint to simulate bill payment for a table 
+        EMPTY POST REQUEST. NO DATA EXPECTED
+    """
+    return call(
+        {"message": "Successfully paid bill"},
+        wms.om_handler.pay_table_bill,
+        int(table_id)
+    )
 
-        return jsonify(output), 200
+@app.route("/ordermanager/orders/<order_id>", methods=['GET'])
+def get_order_by_id(order_id):
+    """ Gets an order by its ID value """
+    return call(
+        None, 
+        wms.om_handler.get_order_by_id, 
+        int(order_id)
+    )
 
+@app.route("/ordermanager/orders/<order_id>", methods=['DELETE'])
+@token_required
+def delete_order_by_id(current_user, order_id):
+    """ Deletes an order by its ID value """
+
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+
+    return call(
+        {"message": "Successfully removed order from ordermanager"},
+        wms.om_handler.delete_order_by_id,
+        int(order_id)
+    )
+
+@app.route("/ordermanager/orders/<order_id>/state", methods=['GET'])
+@token_required
+def get_order_state(current_user, order_id):
+    """ Gets the current state of an order """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
     
-    elif request.method == 'POST':
-        try:
-            wms.pay_table_bill(table_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        
-        return jsonify({"message": "Successfully paid bill"}), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
-    
-@app.route("/ordermanager/orders/<order_id>", methods=['GET','DELETE'])
-def manage_order_by_id(order_id):
-    if request.method == 'GET':
-        try:
-            order = wms.get_order_by_id(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify(order), 200
-    
-    elif request.method == 'DELETE':
-        try:
-            wms.delete_order_by_id(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify({"message": "Successfully removed order from ordermanager"}), 200
+    return call(
+        None, 
+        wms.om_handler.get_order_state,
+        int(order_id)
+    )
 
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
-    
-@app.route("/ordermanager/orders/<order_id>/state", methods=['GET', 'POST'])
-def affect_order_state(order_id):
-    if request.method == 'GET':
-        try:
-            output = wms.get_order_state(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify(output), 200
-    
-    elif request.method == 'POST':
-        '''
-        EMPTY FOR NOW. WE WILL EXPAND THIS LATER TO INCLUDE STATE LEAPS IF WE WANT
-        '''
-        try:
-            output = wms.change_order_state(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify({"message": f"Successfully changed state to {output}"}), 200
+@app.route("/ordermanager/orders/<order_id>/state", methods=['POST'])
+@token_required
+def advance_order_state(current_user, order_id):
+    """ Advances the state of a particular order
 
-        
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+    EMPTY FOR NOW. WE WILL EXPAND THIS LATER TO INCLUDE STATE LEAPS IF WE WANT
+    """
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
 
-@app.route("/ordermanager/orders/<order_id>/bill", methods=['GET', 'POST'])
-def manage_order_bill(order_id):
-    if request.method == 'GET':
-        try:
-            output = wms.get_order_bill(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        
-        return jsonify(output), 200
+    return call(
+        {"message": "Successfully changed state"},
+        wms.om_handler.change_order_state,
+        int(order_id)
+    )
+
+@app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['GET'])
+@token_required
+def get_menu_item_state(current_user, order_id, menu_item_id):
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
     
-    elif request.method == 'POST':
-        try:
-            wms.pay_order_bill(order_id)
-        except Exception as e:
-            return jsonify({"error": e.args}), 400
-        return jsonify({"message": "Successfully paid bill"}), 200
-    else:
-        return jsonify({"error": "Unrecognised request"}), 400
+    return call(
+        None, 
+        wms.om_handler.get_menu_item_state, 
+        int(order_id), 
+        int(menu_item_id)
+    )
+
+@app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['POST'])
+@token_required
+def change_menu_item_state(current_user, order_id, menu_item_id):
+
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"}), 401
+    
+    return call(
+        {"message": "Successfully changed state"},
+        wms.om_handler.change_menu_item_state, 
+        int(order_id), 
+        int(menu_item_id)
+    )
+
+@app.route("/ordermanager/orders/<order_id>/bill", methods=['GET'])
+def get_order_bill(order_id):
+    """ Gets the bill for an order """
+    return call(
+        None, 
+        wms.om_handler.get_order_bill, 
+        int(order_id)
+    )
+
+@app.route("/ordermanager/orders/<order_id>/bill", methods=['POST'])
+def pay_order_bill(order_id):
+    """ Endpoint to simulate bill payment for an order """
+    return call(
+        {"message": "Successfully paid bill"},
+        wms.om_handler.pay_order_bill,
+        int(order_id)
+    )
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

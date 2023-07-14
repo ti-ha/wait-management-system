@@ -1,6 +1,5 @@
-from .Menu import Menu
+from wms import Menu
 
 class RestaurantManager:
-    def __init__(self, menu):
-        self.__menu = menu
+    def __init__(self):
         self.__statistics = []

@@ -26,3 +26,31 @@ appropriate, and constructors. We don't really have a plan as to who is coding w
 following a first-come-first-serve system. I coded the Menu subsystem and fixed some bugs that made their way in 
 when I was setting up. I also implemented the rest api for the menu classes, leaving only the database connection 
 functionality to be completed for that subsystem.
+
+Week 5:
+The team has been further split into 1 frontend developer, 2 backend developers and 2 data/testing developers.
+I am still a backend developer together with Gordon. My main task for this week was to write the Order Management stories,
+which I completed. There were a lot of bugs to fix which I spent most of Wednesday ironing out. On Wednesday we had our demo
+which went well I think - our code ran and performed well. There's a lot of tech debt caused by the time crunch which we'll spend
+next week resolving, thankfully with no deadline.
+
+After wednesday we were all exhausted so we took the rest of the week off. I think in the next sprint we'll take full advantage
+of having double the amount of time we had for this sprint, not so much to get double the work done, but to stave off burnout a 
+bit better.
+
+Week 6 (flex week):
+We had a meeting on Monday about what to get done this week. The consensus was that we don't want to do anything extensive this week.
+So, to compromise and still keep progress moving, we're going to pay off the tech debt accumulated in the code,
+but we're not going to add any new functionality into the backend specifically. This gives time for the database
+team to catch up. The frontend will work on implementing a few outstanding API calls and then UX. Database team will
+aim to have database persistence implemented by the end of the week.
+
+We had another meeting on Sunday just to catch up, but we're making steady progress through the Jira board so no news is good news.
+
+Week 7:
+We had a meeting on Wednesday to catch up. Backend team is mostly completed with all of the board items,
+so just waiting on the frontend to reflect data passed from the backend. Testing is done for the menu objects.
+This week, by Wednesday, I was responsible for coding the core authentication functionality and the search 
+functionality. I learned a lot while coding them both as I have never had to code them before. Still to do before
+Saturday meeting at 6pm is the reordering functionality of the menu, then backend team is free to get an early start 
+to Sprint 3.

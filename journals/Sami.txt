@@ -25,4 +25,10 @@ Week 4
 
 Week 5
 •   Continued on development work in the frontend.
-•   Linked the frontend to the backend APIs.
+•   Linked the frontend to the backend APIs for the customer, kitchen staff and wait staff pages.
+•   Performed a demo for the Week 5 Progressive Demo A.
+•   Completed Retrospective 1 with the team.
+
+Week 6
+•   Had a meeting with the team on Monday to discuss plans for Sprint 2 - I will continue work on the frontend.
+

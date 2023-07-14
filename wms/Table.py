@@ -1,3 +1,4 @@
+from __future__ import annotations
 import itertools
 from .Order import Order
 from .Customer import Customer
@@ -8,48 +9,81 @@ class Table:
     # Unique identifier starting from 0
     __id_iter = itertools.count()
 
-    # Constructor for Table class
-    def __init__(self, tablelimit, orders=None):
+    def __init__(self, table_limit, orders=None):
+        """ Constructor for Table class
+
+        Args:
+            table_limit (integer): Limit to how many people can be seated at
+            this table
+            orders (List[Order], optional): List of orders to be predefined 
+            with the table. Defaults to None.
+        """
         self.__id = next(Table.__id_iter)
         # Initialize empty list
-        self.__orders = [] if orders == None else orders
+        self.__orders = [] if orders is None else orders
         self.__customers = []
         self.__occupied = False
-        self.__tablelimit = tablelimit
+        self.__table_limit = table_limit
         self.__bill = None
 
-    # Getters
-    def get_id(self):
+    # Getters for the class variables
+    @property
+    def id(self) -> itertools.count:
+        """ Returns table ID """
         return self.__id
 
-    def is_occupied(self):
+    @property
+    def occupied(self) -> bool:
+        """ Returns if the table is occupied """
         return self.__occupied
     
-    def get_orders(self) -> list[Order]:
+    @property
+    def orders(self) -> list[Order]:
+        """ Returns list of orders for the table """
         return self.__orders
-    
-    def get_order(self, orderNumber):
-        return self.__orders[orderNumber]
 
-    def get_customers(self):
+    @property
+    def customers(self) -> list[Customer]:
+        """ Returns list of customers at the table """
         return self.__customers
     
-    def get_tablelimit(self):
-        return self.__tablelimit
+    @property
+    def table_limit(self) -> int:
+        """ Returns the table person limit """
+        return self.__table_limit
     
-    def get_bill(self):
+    @property
+    def bill(self) -> Bill:
+        """ Returns the table bill """
         return self.__bill
     
-    def set_bill(self, bill: Bill):
+    # Setter for the bill 
+    @bill.setter
+    def bill(self, bill: Bill):
+        """ Sets the table bill """
         self.__bill = bill
 
-    # Unique getter to show how many open seats there are
-    def get_open_seats(self):
-        open_seats = self.__tablelimit - len(self.__customers)
-        return str(open_seats) + " / " + str(self.__tablelimit) if open_seats != 0 else "FULL"
+    def get_open_seats(self) -> str:
+        """ Unique getter to show how many open seats there are
 
-    # Adding a custoemr to the list of customers
+        Returns:
+            String: String that describes the number of open seats out of the 
+            total number of seats or the string FULL if there are no open seats
+        """
+        open_seats = self.__table_limit - len(self.__customers)
+        return f"{open_seats} / {self.__table_limit}" if open_seats != 0 else "FULL"
+
     def add_customers(self, customer):
+        """Adding a customer to the list of customers
+
+        Args:
+            customer (Customer): Customer to be added to the table
+
+        Raises:
+            TypeError: Raised when customer argument is not of type Customer
+            ValueError: Raised when either the Customer already exists or the 
+            table is full
+        """
         if not isinstance(customer, Customer):
             raise TypeError("Table: add_customers(): Object is not of type Customer")
         
@@ -60,12 +94,20 @@ class Table:
             raise ValueError("Table: add_customers(): Table is full")
         
         self.__customers.append(customer)
-        customer.set_table(self)
-        if len(self.__customers) >= self.__tablelimit:
+        customer.table = self
+        if len(self.__customers) >= self.__table_limit:
             self.__occupied = True
 
-    # Adding an order to the list of orders
     def add_order(self, order):
+        """ Adding an order to the list of orders
+
+        Args:
+            order (Order): Order to be added to the table
+
+        Raises:
+            TypeError: Raised when order argument is not of type Order
+            ValueError: Raised when the Order already exists
+        """
         if not isinstance(order, Order):
             raise TypeError("Table: add_order(): Object is not of type Order")
         
@@ -75,6 +117,15 @@ class Table:
         self.__orders.append(order)
 
     def remove_order(self, order):
+        """ Removing an order from the list of orders
+
+        Args:
+            order (Order): Order to be removed from the table
+
+        Raises:
+            TypeError: Raised when order argument is not of type Order
+            ValueError: Raised when the Order does not exist
+        """
         if not isinstance(order, Order):
             raise TypeError("Table: remove_order(): Object is not of type Order")
         
@@ -82,13 +133,3 @@ class Table:
             raise ValueError("Table: remove_order(): Order does not exist")
         
         self.__orders.remove(order)
-
-    # Getting the current bill for the table
-    # TODO: Rewrite this so that it works for all order functionality
-    def request_bill(self):
-        curr_bill = 0
-        for order in self.__orders:
-            if not isinstance(order, Order):
-                raise TypeError("Table: request_bill(): Object is not of type Order")
-            curr_bill += order.calculate_bill().get_price()
-        return curr_bill 
