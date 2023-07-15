@@ -1,22 +1,12 @@
 import itertools
-from sqlalchemy import Table, MetaData, Column, Integer, Double, String, ForeignKey
+from sqlalchemy import engine, Table, MetaData, Column, Integer, Double, String, ForeignKey, text
+from sqlalchemy.orm import Session
 
 
 class MenuItem():
 
     # Unique id
     __id_iter = itertools.count()
-
-    metadata_obj = MetaData()
-    menu_item_table = Table("menu_item",
-                            metadata_obj,
-                            Column("_id",Integer, primary_key=True, autoincrement='auto'),
-                            Column("_name",String(40), nullable=False),
-                            Column("_price",Double(2), nullable=False),
-                            Column("_category",Integer, ForeignKey('category.categoryId')),
-                            Column("_image_url",String(256))
-    )
-    
 
     def __init__(self, name, price, image_url = "None"):
         """ Constructor for the MenuItem class
@@ -27,11 +17,13 @@ class MenuItem():
             image_url (String, optional): URL of an image of the menu item. 
             Defaults to "None".
         """
+
         self.__id = next(MenuItem.__id_iter)
         self.__name = name
         self.__price = price
         self.__image_url = image_url
         self.__visible = True
+
 
     @property
     def id(self) -> itertools.count:

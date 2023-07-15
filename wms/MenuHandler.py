@@ -1,9 +1,12 @@
 from wms import Menu, Category, MenuItem, Deal
+from sqlalchemy import engine, Table, MetaData, Column, Integer, Double, String, ForeignKey, text
+from sqlalchemy.orm import Session
 
 class MenuHandler():
-    def __init__(self, menu: Menu):
+    def __init__(self, menu: Menu, db_engine):
         """ Constructor for the MenuHandler Class """
         self.__menu = menu
+        self.db_engine = db_engine
     
     
     def get_category(self, category) -> Category:
@@ -74,14 +77,33 @@ class MenuHandler():
             name (String): Name of the menu item
             price (Float): Price of the menu item
             imageurl (String): Image URL of the menu item
-        """
+        """        
         if self.__menu.get_category(category) is None:
             raise ValueError(f"Category with name {category} does not exist")
         
         if self.__menu.get_category(category).menu_item_by_name(name) is not None:
             raise ValueError("Menu item with this name already exists")
+        
         item = MenuItem(name, price, imageurl)
         self.__menu.get_category(category).add_menu_item(item)
+        
+        #TODO add foreign key once category table made
+        drop_menu_item = text("DROP TABLE IF EXISTS menu_item")
+        create_menu_item = text(
+            """CREATE TABLE menu_item (_id int not NULL, 
+                                        _name varchar(40), 
+                                        _price double,
+                                        _category int,
+                                        _image_url varchar(256),
+                                        PRIMARY KEY (_id))"""
+        )
+        db_engine = self.db_engine
+
+        with Session(db_engine) as session:
+            session.execute(drop_menu_item)
+            session.execute(create_menu_item)
+            session.commit()
+
 
     def add_deal(self, discount, menu_items) -> None:
         """ Adds a deal to the menu
