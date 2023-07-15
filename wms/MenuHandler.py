@@ -9,7 +9,6 @@ class MenuHandler():
         self.db_engine = db_engine
     
         # Creates menu table
-        #TODO add foreign key once category table made
         drop_menu_item = text("DROP TABLE IF EXISTS menu_item")
         create_menu_item = text(
             """CREATE TABLE menu_item (_id int not NULL, 
