@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import './Kitchen.css';
 import { Button } from '@mui/material';
 import { Check } from '@mui/icons-material';
 import { useIsStaffMember } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
+import Header from '../Common/Header.js';
 
 export default function Kitchen() {
 
     // Ensure the user is authorised to access this page
     const { isAuthorised, isLoading } = useIsStaffMember();
+    const userType = localStorage.getItem('user_type');
 
     const [orders, setOrders] = useState([]);
 
@@ -76,21 +77,7 @@ export default function Kitchen() {
 
     return (
         <div className="kitchenContainer">
-            <header className="kitchenHeader">
-                <h1>Kitchen View</h1>
-                <div className='headerButtons'>
-                    <Link to="/wait-staff">
-                        <Button variant="contained">
-                            Switch to Wait Staff View
-                        </Button>
-                    </Link>
-                    <Link to="/">
-                        <Button variant="contained">
-                            Landing Page
-                        </Button>
-                    </Link>
-                </div>
-            </header>
+            <Header userType={userType} currentPage="kitchen" />
 
             <main className="kitchenBody">
                 <section className='ordersReceived'>

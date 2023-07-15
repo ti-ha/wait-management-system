@@ -2,38 +2,38 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     height: 100vh;
+    padding: 2em 0;
 }
 
-.appName {
-    margin-bottom: 50px;
+.headertext {
+    font-style: italic;
+    font-size: 1em;
+    margin-bottom: 20px;
+}
+
+.welcomeBox {
+    margin-bottom: 1em;
     padding: 1em;
     font-size: 2em;
     border: 2px solid black;
 }
 
-.linksContainer {
-    display: flex;
-    justify-content: space-between;
-    width: 75%;
+.introText {
+    margin-bottom: 1em;
+    font-size: 1.5em;
 }
 
-.linkContainer {
+.bottomSection {
+    width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 150px;
-    width: 30%;
-    border: 2px solid black;
-    background-color: lightgray;
-    font-size: 2em;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 32px;
 }
 
-.linkContainer:hover {
-    background-color: gray;
-    cursor: pointer;
+.middleSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;  /* adjust this to change the space between the text and the button */
 }

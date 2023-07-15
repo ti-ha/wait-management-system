@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
 import './MenuEditor.css'
 import { Button } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
@@ -8,11 +7,11 @@ import AddItemModal from './AddItemModal.js'
 import EditCategoryModal from './EditCategoryModal.js';
 import DeleteConfirmationModal from "./DeleteConfirmationModal.js";
 import EditItemModal from "./EditItemModal.js";
-
-
+import { useIsManager } from '../Hooks/useIsAuthorised.js';
+import AccessDenied from '../Common/AccessDenied.js';
+import Header from "../Common/Header.js";
 
 export default function MenuEditor() {
-
     const [categories, setCategories] = useState([]);
     const [currentCategory, setCurrentCategory] = useState("");
     const [currentItems, setCurrentItems] = useState([]);
@@ -176,40 +175,22 @@ export default function MenuEditor() {
     };
     
     
-    
+    // Ensure the user is authorised to access this page
+    const { isAuthorised, isLoading } = useIsManager();
+    const userType = localStorage.getItem('user_type');
+
+    if (isLoading) {
+        return null;
+    }
+
+    if (!isAuthorised) {
+        return <AccessDenied userType={userType}/>
+    }
 
 
     return (
         <div className="customerPage">
-            <header className="editorPageHeader">
-                <div>
-                    <Link to="/menu-editor">
-                        <Button variant="contained" disabled>
-                            Menu Editor
-                        </Button>
-                    </Link>
-                    <Link to="/restaurant-manager">
-                        <Button variant="contained">
-                            Restaurant Manager
-                        </Button>
-                    </Link>
-                </div>
-                <div>
-                    <Link to="/staff">
-                        <Button variant="contained">
-                            Staff View
-                        </Button>
-                    </Link>
-                    <Link to="/">
-                        <Button variant="contained">
-                            Landing Page
-                        </Button>
-                    </Link>
-                </div>
-            </header>
-
-            
-
+            <Header userType={userType} currentPage="menu-editor" />
             <div className="editorContainer">
                 <div className="categories">
                     <Button 

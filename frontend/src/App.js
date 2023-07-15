@@ -9,14 +9,14 @@ import WaitStaff from './components/Staff/WaitStaff.js';
 import ManagerLanding from './components/Manager/ManagerLanding.js';
 import MenuEditor from './components/Manager/MenuEditor.js';
 import RestaurantManager from './components/Manager/RestaurantManager.js';
-import StaffLogin from './components/Staff/StaffLogin.js';
+import Login from './components/Common/Login.js'
 
 function App() {
   return (
       <BrowserRouter>
         <Routes>
           <Route exact path="/" element={<Landing />} />
-          <Route path="/staff-login" element={<StaffLogin />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/staff" element={<StaffLanding />} />
           <Route path="/select-table" element={<TableSelection />} />
           <Route path="/customer/:tableNumber" element={<Customer />} />

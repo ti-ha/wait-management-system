@@ -1,18 +1,18 @@
 import React from 'react';
-import { Form, Container, Col } from 'react-bootstrap'
+import { Form, Container } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useLogin } from '../Hooks/useLogin.js';
-import './StaffLogin.css'
+import './Login.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-export default function StaffLogin() {
+export default function Login() {
     const { firstName, lastName, password, error, setFirstName, setLastName, setPassword, handleLogin } = useLogin();
 
     return (
         <>
-            <header className="staff-login-header">
+            <header className="login-header">
                 <div className='header-buttons'>
                     <Link to="/">
                         <Button variant="contained">
@@ -21,8 +21,8 @@ export default function StaffLogin() {
                     </Link>
                 </div>
             </header>
-            <Container>
-                <h1>Staff Login</h1>
+            <Container style={{maxHeight: "90vh"}}>
+                <h1>Login</h1>
                 <Form onSubmit={(e) => handleLogin(e, ['KitchenStaff', 'WaitStaff', 'Manager'])}>
                     <Form.Group className="mb-3">
                         <Form.Label>First Name</Form.Label>

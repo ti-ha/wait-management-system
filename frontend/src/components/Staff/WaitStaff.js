@@ -5,12 +5,14 @@ import { Button } from '@mui/material';
 import { Check } from '@mui/icons-material';
 import { useIsStaffMember } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
+import Header from '../Common/Header.js';
 
 
 export default function WaitStaff() {
 
     // Ensure the user is authorised to access this page
     const { isAuthorised, isLoading } = useIsStaffMember();
+    const userType = localStorage.getItem('user_type');
 
     const [orders, setOrders] = useState([]);
 
@@ -74,21 +76,7 @@ export default function WaitStaff() {
     }
     return (
         <div className="waitStaffContainer">
-            <header className="waitStaffHeader">
-                <h1>Wait Staff View</h1>
-                <div className='headerButtons'>
-                    <Link to="/kitchen">
-                        <Button variant="contained">
-                            Switch to Kitchen View
-                        </Button>
-                    </Link>
-                    <Link to="/">
-                        <Button variant="contained">
-                            Landing Page
-                        </Button>
-                    </Link>
-                </div>
-            </header>
+            <Header userType={userType} currentPage="wait-staff" />
 
             <main className="waitStaffBody">
                 <section className='toBeServed'>

@@ -49,10 +49,8 @@ export function useLogin() {
         
         switch (userData.usertype) {
             case 'KitchenStaff':
-                navigate('/kitchen');
-                break;
             case 'WaitStaff':
-                navigate('/wait-staff');
+                navigate('/staff');
                 break;
             case 'Manager':
                 navigate('/manager');

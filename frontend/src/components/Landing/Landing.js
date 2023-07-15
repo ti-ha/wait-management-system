@@ -1,5 +1,7 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { Settings } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import './Landing.css'
 
 export default function Landing() {
@@ -10,53 +12,51 @@ export default function Landing() {
     const token = localStorage.getItem('token');
     const userType = localStorage.getItem('user_type');
     
-    const handleStaffPageNavigation = () => {
+    const handleAdminNavigation = () => {
         if (token) {
             switch(userType) {
                 case 'KitchenStaff':
-                    navigate('/kitchen');
-                    break;
                 case 'WaitStaff':
-                    navigate('/wait-staff');
-                    break;
-                case 'Manager':
                     navigate('/staff');
                     break;
+                case 'Manager':
+                    navigate('/manager');
+                    break;
                 default:
-                    navigate('/staff-login');
+                    navigate('/login');
                     break;
             }
         } else {
-            navigate('/staff-login');
+            navigate('/login');
         }
     }
 
-    const handleCustomerPageNavigation = () => {
-        navigate('/select-table');
-    };
-
-    const handleManagerPageNavigation = () => {
-        navigate('/manager');
-    };
-
-
     return (
         <div className="container">
-            <div className='appName'>
-                Romantic Cheese Systems
+            <div className="headertext">
+                Savour the Flavour of Cheesy Bliss!
             </div>
-            <div className="linksContainer">
-                <div className="linkContainer" onClick={handleStaffPageNavigation}> 
-                    Staff Page 
+            <div>
+                <div className='welcomeBox'>
+                    Welcome to Romantic Cheese Dining
                 </div>
-                <div className="linkContainer" onClick={handleCustomerPageNavigation}> 
-                    Customer Page 
+                <div className="middleSection">
+                    <div className="introText">
+                        We know you're hungry. Start ordering now...
+                    </div>
+                    <Button variant="contained" onClick={() => navigate('/select-table')}>
+                        Start Ordering
+                    </Button>
                 </div>
-                <div className="linkContainer" onClick={handleManagerPageNavigation}> 
-                    Manager Page 
-                </div>
+            </div>
+            <div className="bottomSection">
+                <Button 
+                    variant="contained"
+                    onClick={handleAdminNavigation}
+                    startIcon={<Settings />}>
+                    Admin Only
+                </Button>
             </div>
         </div>
     )
 }
-
