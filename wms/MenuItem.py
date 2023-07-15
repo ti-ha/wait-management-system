@@ -1,17 +1,22 @@
 import itertools
+from sqlalchemy import Table, MetaData, Column, Integer, Double, String, ForeignKey
+
 
 class MenuItem():
 
     # Unique id
     __id_iter = itertools.count()
 
-    __tablename__ = 'menu_item'
-
-    _id = Column(Integer, primary_key=True, autoincrement='auto')
-    _name = Column(String(40), nullable=False)
-    _price = Column(Double(2), nullable=False)
-    _category = Column(Integer, ForeignKey('category.categoryId'))
-    _image_url = Column(String(256))
+    metadata_obj = MetaData()
+    menu_item_table = Table("menu_item",
+                            metadata_obj,
+                            Column("_id",Integer, primary_key=True, autoincrement='auto'),
+                            Column("_name",String(40), nullable=False),
+                            Column("_price",Double(2), nullable=False),
+                            Column("_category",Integer, ForeignKey('category.categoryId')),
+                            Column("_image_url",String(256))
+    )
+    
 
     def __init__(self, name, price, image_url = "None"):
         """ Constructor for the MenuItem class
@@ -44,6 +49,11 @@ class MenuItem():
         if not isinstance(name, str):
             raise TypeError("MenuItem: menu_item.set_name(name): argument is not string")
         self.__name = name
+        # stmt = (
+        #     update(menu_item).
+        #     where(menu_item.c._id == self.id).
+        #     values(_name = self.name)
+        # )
     
     @property
     def price(self) -> float:
