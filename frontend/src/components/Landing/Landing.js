@@ -20,7 +20,7 @@ export default function Landing() {
                     navigate('/wait-staff');
                     break;
                 case 'Manager':
-                    navigate('/staff-landing');
+                    navigate('/staff');
                     break;
                 default:
                     navigate('/staff-login');
