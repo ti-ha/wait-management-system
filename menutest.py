@@ -473,6 +473,7 @@ class MenuTests(unittest.TestCase):
         self.menu.remove_category("Burgers")
         self.assertIsNone(self.menu.get_category("Burgers"))
 
+
     def test_remove_category_nonexist(self):
         """Add menu item to non-existing category"""
         with self.assertRaises(expected_exception=ValueError):

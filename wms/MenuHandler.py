@@ -8,7 +8,42 @@ class MenuHandler():
         self.__menu = menu
         self.db_engine = db_engine
     
+        # Creates menu table
+        #TODO add foreign key once category table made
+        drop_menu_item = text("DROP TABLE IF EXISTS menu_item")
+        create_menu_item = text(
+            """CREATE TABLE menu_item (_id int not NULL, 
+                                        _name varchar(40), 
+                                        _price double,
+                                        _category int,
+                                        _image_url varchar(256),
+                                        PRIMARY KEY (_id))
+                                        """
+        )
     
+        #TODO add foreign key once category table made
+        drop_category = text("DROP TABLE IF EXISTS category")
+        create_category = text(
+            """CREATE TABLE category (_id int not NULL, 
+                                        _name varchar(40), 
+                                        _visible bit,
+                                        PRIMARY KEY (_id))"""
+        )
+
+        with Session(db_engine) as session:
+            session.execute(drop_category)
+            session.commit()
+
+            session.execute(create_category)
+            session.commit()
+
+            session.execute(drop_menu_item)
+            session.commit()
+
+            session.execute(create_menu_item)
+
+            session.commit()
+
     def get_category(self, category) -> Category:
         """ Gets a given category from the menu
 
@@ -61,13 +96,27 @@ class MenuHandler():
                 return i
         return None
     
+    def add_category_to_db(self, category):
+            print(f"\n\n\n{category.name}\n\n\n")
+            add_category = text(
+                f"""INSERT INTO category (_id, _name, _visible) 
+                VALUES ({category.id}, '{category.name}', '{category.visible}')"""
+            )
+
+            with Session(self.db_engine) as session:
+                session.execute(add_category)
+                session.commit()
+    
     def add_category(self, category) -> None:
         """ Adds a category to the menu
 
         Args:
             category (String): Category to be added to the menu
         """
-        self.__menu.add_category(Category(category))
+        db_engine = self.db_engine
+        category = Category(db_engine, category)
+        self.__menu.add_category(category)
+        self.add_category_to_db(category)
 
     def add_menu_item(self, category, name, price, imageurl) -> None:
         """ Adds a menu item to the menu
@@ -84,25 +133,11 @@ class MenuHandler():
         if self.__menu.get_category(category).menu_item_by_name(name) is not None:
             raise ValueError("Menu item with this name already exists")
         
-        item = MenuItem(name, price, imageurl)
-        self.__menu.get_category(category).add_menu_item(item)
-        
-        #TODO add foreign key once category table made
-        drop_menu_item = text("DROP TABLE IF EXISTS menu_item")
-        create_menu_item = text(
-            """CREATE TABLE menu_item (_id int not NULL, 
-                                        _name varchar(40), 
-                                        _price double,
-                                        _category int,
-                                        _image_url varchar(256),
-                                        PRIMARY KEY (_id))"""
-        )
         db_engine = self.db_engine
 
-        with Session(db_engine) as session:
-            session.execute(drop_menu_item)
-            session.execute(create_menu_item)
-            session.commit()
+        item = MenuItem(db_engine, name, price, imageurl)
+        self.__menu.get_category(category).add_menu_item(item)
+    
 
 
     def add_deal(self, discount, menu_items) -> None:

@@ -1,13 +1,15 @@
 from __future__ import annotations
 from wms import MenuItem
 import itertools
+from sqlalchemy import engine, Table, MetaData, Column, Integer, Double, String, ForeignKey, text
+from sqlalchemy.orm import Session
 
 
 class Category():
 
     __id_iter = itertools.count()
 
-    def __init__(self, name, menu_items=None):
+    def __init__(self, db_engine, name, menu_items=None):
         """ Constructor (no menu items by default)
 
         Args:
@@ -19,6 +21,7 @@ class Category():
         self.__name = name
         self.__menu_items = [] if menu_items is None else menu_items
         self.__visible = True
+        self.__db_engine = db_engine
 
     @property
     def id(self) -> int:
@@ -113,7 +116,7 @@ class Category():
         #         return i
         # return None
         return next((it for it in self.menu_items if it.is_equal(menu_item)), None)
-    
+
     def menu_item_by_name(self, name) -> (MenuItem | None):
         """ Returns menu item by name
 
@@ -138,6 +141,17 @@ class Category():
             raise ValueError("Category: add_menu_item(): MenuItem already in category")
         
         self.menu_items.append(menu_item)
+        self.add_to_db(menu_item)
+
+    def add_to_db(self, menu_item: MenuItem):
+        add_menu_item = text(
+            f"""INSERT INTO menu_item (_id, _name, _price, _category, _image_url) 
+            VALUES ({menu_item.id}, '{menu_item.name}', {menu_item.price}, {self.id}, '{menu_item.image_url}')"""
+        )
+
+        with Session(self.__db_engine) as session:
+            session.execute(add_menu_item)
+            session.commit()
 
     def remove_menu_item(self, name) -> None:
         """ Removes a menu_item from the category
@@ -151,7 +165,16 @@ class Category():
         if self.menu_item_by_name(name) is None:
             raise ValueError("Category: category.remove_menu_item(): not an existing menu item")
         
+        self.remove_from_db(name)
         self.menu_items.remove(self.menu_item_by_name(name))
+
+    def remove_from_db(self, name):
+        delete_menu_item = text(
+            f"""DELETE FROM menu_item WHERE _name = '{name}'""")
+           
+        with Session(self.__db_engine) as session:
+            session.execute(delete_menu_item)
+            session.commit()
         
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the id, name and list of menu items 
