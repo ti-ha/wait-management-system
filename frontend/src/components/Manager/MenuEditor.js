@@ -22,6 +22,7 @@ export default function MenuEditor() {
     const [editItem, setEditItem] = useState({active: false, item: null});
     const [deleteItem, setDeleteItem] = useState({active: false, item: null, categoryName: null});
 
+    const auth_token = localStorage.getItem('token'); 
 
     const fetchCategories = async () => {
         try {
@@ -61,6 +62,7 @@ export default function MenuEditor() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
                 },
                 body: JSON.stringify({ name: categoryName }),
             });
@@ -89,6 +91,7 @@ export default function MenuEditor() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
                 },
                 body: JSON.stringify({ name: itemName, price: parseFloat(itemPrice), image_url: itemImageURL }),
             });
@@ -114,6 +117,9 @@ export default function MenuEditor() {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `${auth_token}`
+                }
             });
     
             if (!response.ok) { 
@@ -155,6 +161,9 @@ export default function MenuEditor() {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${categoryName}/${itemName}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `${auth_token}`
+                }
             });
     
             if (!response.ok) { 
