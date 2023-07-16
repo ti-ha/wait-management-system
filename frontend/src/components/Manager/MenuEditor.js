@@ -24,7 +24,7 @@ export default function MenuEditor() {
 
     const auth_token = localStorage.getItem('token'); 
 
-    const fetchCategories = async () => {
+    const fetchCategories = async (updatedCategoryName) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories`);
             if (!response.ok) { 
@@ -34,8 +34,15 @@ export default function MenuEditor() {
             }
             const data = await response.json();
             setCategories(data);
-            setCurrentCategory(data[0].name);
-            fetchItems(data[0].name);
+
+            const categoryName = updatedCategoryName || currentCategory;
+            const currentCategoryExists = data.some(category => category.name === categoryName);
+            if (currentCategoryExists) {
+                fetchItems(categoryName);
+            } else {
+                setCurrentCategory(data[0].name);
+                fetchItems(data[0].name);
+            }
         } catch (error) {
             console.error("Error fetching categories:", error);
         }
@@ -142,12 +149,37 @@ export default function MenuEditor() {
     const handleEditCategory = async (newCategoryName) => {
         const oldCategoryName = editCategory.category;
     
-        // TODO: Update backend
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${oldCategoryName}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
+                },
+                body: JSON.stringify({
+                    new_name: newCategoryName,
+                }),
+            });
     
-        // Update the categories on the client side
-        setCategories(categories.map(category => 
-            category.name === oldCategoryName ? {...category, name: newCategoryName} : category
-        ));
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            console.log(data.message);
+
+            if (oldCategoryName === currentCategory) {
+                setCurrentCategory(newCategoryName);
+                fetchCategories(newCategoryName);
+            } else {
+                // Fetch categories again to update the page state
+                fetchCategories();
+            }
+        } catch (error) {
+            console.error(`Error editing category '${oldCategoryName}':`, error);
+        }
     
         setEditCategory({active: false, category: ""});
     };
