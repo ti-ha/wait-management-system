@@ -9,15 +9,16 @@ class MenuItem():
         """ Constructor for the MenuItem class
 
         Args:
-            name (string): Name of the menu item
-            price (float): Price of the menu item
-            image_url (str, optional): URL of an image of the menu item. 
+            name (String): Name of the menu item
+            price (Float): Price of the menu item
+            image_url (String, optional): URL of an image of the menu item. 
             Defaults to "None".
         """
         self.__id = next(MenuItem.__id_iter)
         self.__name = name
         self.__price = price
         self.__image_url = image_url
+        self.__visible = True
 
     @property
     def id(self) -> itertools.count:
@@ -57,6 +58,16 @@ class MenuItem():
     def image_url(self, image_url: str):
         """ Sets the menu item image url """
         self.__image_url = image_url
+
+    @property
+    def visible(self) -> bool: 
+        """ Returns menu item visibility """
+        return self.__visible
+
+    @visible.setter
+    def visible(self, visible):
+        """ Sets the menu item visibility """
+        self.__visible = visible
     
     def is_equal(self, menu_item):
         """ Checks if another menu_item is equal to this one
@@ -80,6 +91,20 @@ class MenuItem():
     #     except ValueError:
     #         return False
         
+    def update(self, name, price, image_url, visible):
+        """ Updates menu item with new name, price or image_url
+
+        Args:
+            name (String): Name of the menu item
+            price (String): Price of the menu item
+            image_url (String): URL of an image of the menu item.
+            visible (String): Visibility of the menu item
+        """
+        if name is not None: self.name = name 
+        if price is not None: self.price = float(price) 
+        if image_url is not None: self.image_url = image_url 
+        if visible is not None: self.visible = (visible == "True")
+
     def jsonify(self):
         """ Creates a dictionary containing the id, name, price and image URL  
         of the menu item 
@@ -88,4 +113,5 @@ class MenuItem():
             dict: Dictionary containing the id, name, price and image URL  
         of the menu item 
         """
-        return {"id": self.id, "name": self.name, "price": self.price, "imageURL": self.image_url}
+        return {"id": self.id, "name": self.name, "price": self.price, 
+                "imageURL": self.image_url, "visible": self.visible}
