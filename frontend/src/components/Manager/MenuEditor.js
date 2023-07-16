@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import './MenuEditor.css'
 import { Button } from "@mui/material";
-import { Add, Edit, Delete } from "@mui/icons-material";
+import { Add, Edit, Delete, Visibility, VisibilityOff } from "@mui/icons-material";
 import AddCategoryModal from './AddCategoryModal.js';
 import AddItemModal from './AddItemModal.js'
 import EditCategoryModal from './EditCategoryModal.js';
@@ -247,6 +247,36 @@ export default function MenuEditor() {
         }
         setDeleteItem({active: false, item: null, categoryName: null});
     };
+
+    const handleVisibilityCategory = async (categoryName, visible) => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${categoryName}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
+                },
+                body: JSON.stringify({
+                    visible: String(visible),
+                }),
+            });
+    
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            console.log(data.message);
+    
+            // Fetch categories again to update the page state
+            fetchCategories();
+        } catch (error) {
+            console.error(`Error changing visibility of category '${categoryName}':`, error);
+        }
+    };
+    
     
     
     // Ensure the user is authorised to access this page
@@ -290,7 +320,12 @@ export default function MenuEditor() {
                             onClick={() => handleCategoryClick(category.name)}
                         >
                             <div className="editFunctionality">
-                                <p>{category.name}</p>
+                            {category.visible ? 
+                                <Visibility onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "False")}}/> 
+                                : 
+                                <VisibilityOff onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "True")}}/>
+                            }
+                                <p style={category.visible ? {} : {textDecoration: 'line-through'}}>{category.name}</p>
                                 <div>
                                     <Edit onClick={(e) => {e.stopPropagation(); setEditCategory({active: true, category: category.name})}}/>
                                     <Delete onClick={(e) => {e.stopPropagation(); setDeleteCategory({active: true, category: category.name})}}/>
