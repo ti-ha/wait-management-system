@@ -184,9 +184,42 @@ export default function MenuEditor() {
         setEditCategory({active: false, category: ""});
     };
 
-    const handleEditItem = async () => {
-
-    }
+    const handleEditItem = async (newItem) => {
+        const oldItemName = editItem.item.name;
+        const categoryName = currentCategory;
+    
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${categoryName}/${oldItemName}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
+                },
+                body: JSON.stringify({
+                    new_name: newItem.name,
+                    price: newItem.price,
+                    image_url: newItem.imageUrl,
+                    visible: newItem.visibility,
+                }),
+            });
+    
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            console.log(data.message);
+    
+            // Fetch items again to update the page state
+            fetchItems(categoryName);
+        } catch (error) {
+            console.error(`Error editing item '${oldItemName}':`, error);
+        }
+    
+        setEditItem({active: false, item: null});
+    };
 
     const handleDeleteItem = async (item, categoryName) => {
         const itemName = item.name;
