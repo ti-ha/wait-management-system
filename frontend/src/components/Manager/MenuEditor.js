@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import './MenuEditor.css'
 import { Button } from "@mui/material";
 import { Add, Edit, Delete, Visibility, VisibilityOff } from "@mui/icons-material";
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import AddCategoryModal from './AddCategoryModal.js';
 import AddItemModal from './AddItemModal.js'
 import EditCategoryModal from './EditCategoryModal.js';
@@ -10,6 +11,7 @@ import EditItemModal from "./EditItemModal.js";
 import { useIsManager } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
 import Header from "../Common/Header.js";
+import { useParams, useNavigate } from 'react-router-dom'
 
 export default function MenuEditor() {
     const [categories, setCategories] = useState([]);
@@ -21,6 +23,9 @@ export default function MenuEditor() {
     const [editCategory, setEditCategory] = useState({active: false, category: ""});
     const [editItem, setEditItem] = useState({active: false, item: null});
     const [deleteItem, setDeleteItem] = useState({active: false, item: null, categoryName: null});
+
+    const { categoryName: urlCategoryName } = useParams();
+    const navigate = useNavigate();
 
     const auth_token = localStorage.getItem('token'); 
 
@@ -35,13 +40,16 @@ export default function MenuEditor() {
             const data = await response.json();
             setCategories(data);
 
-            const categoryName = updatedCategoryName || currentCategory;
-            const currentCategoryExists = data.some(category => category.name === categoryName);
-            if (currentCategoryExists) {
-                fetchItems(categoryName);
+            const currentCategoryName = updatedCategoryName || urlCategoryName;
+            const categoryExists = data.some(category => category.name === currentCategoryName);
+            if (categoryExists) {
+                setCurrentCategory(currentCategoryName);
+                fetchItems(currentCategoryName);
             } else {
-                setCurrentCategory(data[0].name);
-                fetchItems(data[0].name);
+                const firstCategoryName = data[0].name;
+                setCurrentCategory(firstCategoryName);
+                navigate(`/menu-editor/${firstCategoryName}`);
+                fetchItems(firstCategoryName);
             }
         } catch (error) {
             console.error("Error fetching categories:", error);
@@ -50,7 +58,7 @@ export default function MenuEditor() {
 
     useEffect(() => {
         fetchCategories();
-    }, []);
+    }, [urlCategoryName]);
 
     const fetchItems = async (category) => {
         const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
@@ -59,8 +67,7 @@ export default function MenuEditor() {
     }
 
     const handleCategoryClick = (category) => {
-        setCurrentCategory(category);
-        fetchItems(category);
+        navigate(`/menu-editor/${category}`);
     };
 
     const handleAddCategory = async (categoryName) => {
@@ -276,6 +283,40 @@ export default function MenuEditor() {
             console.error(`Error changing visibility of category '${categoryName}':`, error);
         }
     };
+
+    // Reordering categories
+    const handleOnDragEnd = async (result) => {
+        if (!result.destination) return;
+
+        const items = Array.from(categories);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+
+        setCategories(items); 
+
+        const newOrder = items.map(category => category.id);
+
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/order`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
+                },
+                body: JSON.stringify({ new_order: newOrder })
+            });
+            
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            
+            console.log('Successfully reordered categories');
+        } catch (error) {
+            console.error("Error reordering categories:", error);
+        }
+    };
     
     
     
@@ -313,26 +354,42 @@ export default function MenuEditor() {
                         Add New Menu Item
                     </Button>
                     <h2>Menu</h2>
-                    {categories.map((category, index) => (
-                        <div 
-                            key={index} 
-                            className={`${category.name === currentCategory ? "selectedCategoryBox" : "categoryBox"}`}
-                            onClick={() => handleCategoryClick(category.name)}
-                        >
-                            <div className="editFunctionality">
-                            {category.visible ? 
-                                <Visibility onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "False")}}/> 
-                                : 
-                                <VisibilityOff onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "True")}}/>
-                            }
-                                <p style={category.visible ? {} : {textDecoration: 'line-through'}}>{category.name}</p>
-                                <div>
-                                    <Edit onClick={(e) => {e.stopPropagation(); setEditCategory({active: true, category: category.name})}}/>
-                                    <Delete onClick={(e) => {e.stopPropagation(); setDeleteCategory({active: true, category: category.name})}}/>
+
+                    <DragDropContext onDragEnd={handleOnDragEnd}>
+                        <Droppable droppableId="categories">
+                            {(provided) => (
+                                <div {...provided.droppableProps} ref={provided.innerRef}>
+                                    {categories.map((category, index) => (
+                                        <Draggable key={category.id.toString()} draggableId={category.id.toString()} index={index}>
+                                            {(provided) => (
+                                                <div 
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    className={`${category.name === currentCategory ? "selectedCategoryBox" : "categoryBox"}`}
+                                                    onClick={() => handleCategoryClick(category.name)}
+                                                >
+                                                    <div className="editFunctionality">
+                                                        {category.visible ? 
+                                                            <Visibility onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "False")}}/> 
+                                                            : 
+                                                            <VisibilityOff onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "True")}}/>
+                                                        }
+                                                        <p style={category.visible ? {} : {textDecoration: 'line-through'}}>{category.name}</p>
+                                                        <div>
+                                                            <Edit onClick={(e) => {e.stopPropagation(); setEditCategory({active: true, category: category.name})}}/>
+                                                            <Delete onClick={(e) => {e.stopPropagation(); setDeleteCategory({active: true, category: category.name})}}/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
                                 </div>
-                            </div>
-                        </div>
-                    ))}
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </div>
 
                 <div className="items">
