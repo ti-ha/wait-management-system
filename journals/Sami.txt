@@ -17,6 +17,7 @@ Week 3
 •   Worked with team to finish off and submit the Project Proposal.
 •   Meeting with team to set up the app.
 •   Created a frontend setup using create-react-app and updated the Readme.
+•   Split into roles for working on the project - I will do the frontend.
 
 Week 4
 •   Development work - frontend of the project.
@@ -31,4 +32,14 @@ Week 5
 
 Week 6
 •   Had a meeting with the team on Monday to discuss plans for Sprint 2 - I will continue work on the frontend.
+•   Continued on frontend development work.
+•   Created menu editor and restaurant manager page with basic functionality.
+
+Week 7
+•   Busy week - continued with frontend development work.
+•   Staff login and authorisation logic for the frontend implemented.
+•   Implemented Menu editor functionality - adding, deleting, editing menu items and categories.
+•   Significant UX/UI overhaul to improve the aesthatics and useability of the system.
+
+
 
