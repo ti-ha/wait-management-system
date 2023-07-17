@@ -23,7 +23,7 @@ class UserHandler():
             None: Returns None if an invalid user_type was provided
         """
         match user_type:
-            case "Customer":      new_user = Customer(firstname, lastname)
+            case "Customer":      new_user = Customer(firstname, lastname, password)
             case "Kitchen Staff": new_user = KitchenStaff(firstname, lastname, password)
             case "Wait Staff":    new_user = WaitStaff(firstname, lastname, password)
             case "Manager":       new_user = Manager(firstname, lastname, password)
