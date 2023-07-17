@@ -165,7 +165,7 @@ class OrderManagerHandler():
         order = self.__order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
-        order.get_menu_item_state_by_id(menu_item_id).transition_state()
+        order.change_menu_item_state_by_id(menu_item_id)
 
     def remove_order(self, table_id: int, order_id: int):
         """ Remove an order from the list of orders

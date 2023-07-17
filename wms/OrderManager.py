@@ -1,5 +1,6 @@
 from __future__ import annotations
-from wms import Order, Table, Bill, States
+from wms import Table, Bill, States
+from .Order import Order
 
 class OrderManager:
     def __init__(self):
