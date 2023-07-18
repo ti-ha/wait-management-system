@@ -212,11 +212,12 @@ class Menu():
                          for j in i.menu_items] 
                          for i in self.categories]
 
+        if max([i for sublist in levenschtein for i in sublist]) == 0:
+            return {"message": "No matches"}
         # Get the normal dictionary of menu_items in self.categories
         normal = [[j 
                    for j in i.menu_items] 
                    for i in self.categories]
-        
         # Sort the normal list by the levenschtein one, zipping them together and removing bad matches
         sorted_by_levenschtein = [
             sorted(
