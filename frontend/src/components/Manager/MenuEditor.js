@@ -285,7 +285,7 @@ export default function MenuEditor() {
     };
 
     // Reordering categories
-    const handleOnDragEnd = async (result) => {
+    const handleOnDragEndCategories = async (result) => {
         if (!result.destination) return;
 
         const items = Array.from(categories);
@@ -317,6 +317,42 @@ export default function MenuEditor() {
             console.error("Error reordering categories:", error);
         }
     };
+
+    // Reordering menu items
+    const handleOnDragEndItems = async (result) => {
+        if (!result.destination) return;
+    
+        const items = Array.from(currentItems);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+    
+        setCurrentItems(items); 
+    
+        const newOrder = items.map(item => item.id);
+    
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${currentCategory}/order`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
+                },
+                body: JSON.stringify({ new_order: newOrder })
+            });
+            
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            
+            console.log('Successfully reordered items');
+        } catch (error) {
+            console.error("Error reordering items:", error);
+        }
+    };
+    
+    
     
     
     
@@ -355,7 +391,7 @@ export default function MenuEditor() {
                     </Button>
                     <h2>Menu</h2>
 
-                    <DragDropContext onDragEnd={handleOnDragEnd}>
+                    <DragDropContext onDragEnd={handleOnDragEndCategories}>
                         <Droppable droppableId="categories">
                             {(provided) => (
                                 <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -394,24 +430,41 @@ export default function MenuEditor() {
 
                 <div className="items">
                     <h2 className="itemsTitle">{currentCategory}</h2>
-                    <div className="itemContainer">
-                        {currentItems.map((item, index) => (
-                            <div className="itemBox" key={index}>
-                                <div className="imageContainer">
-                                    <img src={item.imageURL} alt={item.name}/> 
+                    <DragDropContext onDragEnd={handleOnDragEndItems}>
+                        <Droppable droppableId="items">
+                            {(provided) => (
+                                <div className="editorItemContainer" {...provided.droppableProps} ref={provided.innerRef}>
+                                    {currentItems.map((item, index) => (
+                                        <Draggable key={item.id.toString()} draggableId={item.id.toString()} index={index}>
+                                            {(provided) => (
+                                                <div 
+                                                    className="itemBox"
+                                                    ref={provided.innerRef} 
+                                                    {...provided.draggableProps} 
+                                                    {...provided.dragHandleProps} 
+                                                >
+                                                    <div className="imageContainer">
+                                                        <img src={item.imageURL} alt={item.name}/> 
+                                                    </div>
+                                                    <div className="itemInfo">
+                                                        <p>{item.name}</p>
+                                                        <p>${item.price}</p>
+                                                    </div>
+                                                    <div className="editDeleteIcons">
+                                                        <Edit onClick={(e) => {e.stopPropagation(); setEditItem({active: true, item})}}/>
+                                                        <Delete onClick={(e) => {e.stopPropagation(); setDeleteItem({active: true, item: item, categoryName: currentCategory})}}/>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
                                 </div>
-                                <div className="itemInfo">
-                                    <p>{item.name}</p>
-                                    <p>${item.price}</p>
-                                </div>
-                                <div className="editDeleteIcons">
-                                    <Edit onClick={(e) => {e.stopPropagation(); setEditItem({active: true, item})}}/>
-                                    <Delete onClick={(e) => {e.stopPropagation(); setDeleteItem({active: true, item: item, categoryName: currentCategory})}}/>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
                 </div>
+
             </div>
 
             {showAddCategoryModal && 
