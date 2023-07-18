@@ -212,8 +212,10 @@ class Menu():
                          for j in i.menu_items] 
                          for i in self.categories]
 
-        if max([i for sublist in levenschtein for i in sublist]) < STRENGTH_COEFFICIENT:
-            return {"message": "No matches"}
+        #if len(levenschtein) == 0:
+        #    return {"message": "No matches"}
+        #if max([i for sublist in levenschtein for i in sublist]) < STRENGTH_COEFFICIENT:
+        #    return {"message": "No matches"}
         # Get the normal dictionary of menu_items in self.categories
         normal = [[j 
                    for j in i.menu_items] 
@@ -221,9 +223,11 @@ class Menu():
         # Sort the normal list by the levenschtein one, zipping them together and removing bad matches
         sorted_by_levenschtein = [
             sorted(
-            list(zip((i for i in levenschtein[k]), 
-                     (j.jsonify() for j in normal[k]))), reverse=True)
-                      for k, _ in enumerate(normal)
+            list(zip(
+                    (i for i in levenschtein[k]), 
+                    (j.jsonify() for j in normal[k]))), 
+                    key = lambda x: x[0], reverse=True) 
+                    for k, _ in enumerate(normal)
         ]
         # Remove values with low ratios
         cropped_output = [[i 
