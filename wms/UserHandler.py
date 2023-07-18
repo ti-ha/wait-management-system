@@ -17,15 +17,15 @@ class UserHandler():
             firstname (String): First name of the user
             lastname (String): Last name of the user
             user_type (String): Class type of the user. Must be one of Customer,
-            Kitchen Staff, Wait Staff or Manager 
+            KitchenStaff, WaitStaff or Manager 
 
         Returns:
             None: Returns None if an invalid user_type was provided
         """
         match user_type:
-            case "Customer":      new_user = Customer(firstname, lastname)
-            case "Kitchen Staff": new_user = KitchenStaff(firstname, lastname, password)
-            case "Wait Staff":    new_user = WaitStaff(firstname, lastname, password)
+            case "Customer":      new_user = Customer(firstname, lastname, password)
+            case "KitchenStaff": new_user = KitchenStaff(firstname, lastname, password)
+            case "WaitStaff":    new_user = WaitStaff(firstname, lastname, password)
             case "Manager":       new_user = Manager(firstname, lastname, password)
             case _:               return None
         

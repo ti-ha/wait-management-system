@@ -64,6 +64,32 @@ class State:
                 return "completed"
             case _:
                 raise ValueError("State outside bounds")
+            
+    @property
+    def value(self) -> int:
+        """ Converts state to int
+
+        Raises:
+            ValueError: Current state out of bounds somehow
+
+        Returns:
+            int: The state value
+        """
+        match self.__state:
+            case States.DELETED:
+                return -1
+            case States.ORDERED:
+                return 0
+            case States.COOKING:
+                return 1
+            case States.READY:
+                return 2
+            case States.SERVED:
+                return 3
+            case States.COMPLETED:
+                return 4
+            case _:
+                raise ValueError("State outside bounds")
 
 class Order:
 
@@ -132,6 +158,10 @@ class Order:
     def state(self) -> str:
         """ Returns current state of the order """
         return self.__state.state
+    
+    @property
+    def state_value(self) -> int:
+        return self.__state.value
 
     def get_menu_item_state_obj(self, menu_item: MenuItem) -> State:
         """Gets the state of a menu_item within the order
@@ -147,8 +177,8 @@ class Order:
         """
         if menu_item == None:
             raise ValueError("Order: get_menu_item_state(): menu_item does not exist in order")
-
-        return next((i["state"] for i in self.menu_item_states if i["menu_item"] == menu_item))
+        
+        return next((i["state"] for i in self.menu_item_states if i["menu_item"] == menu_item), None)
 
     def get_menu_item_state_by_id(self, id):
         """Gets the state of a menu_item within the order, searching by order-native id
@@ -173,8 +203,13 @@ class Order:
         """
         if menu_item is None:
             raise ValueError("Order: change_menu_item_state(): menu_item does not exist in order")
-
+        
+        # move current state of order if it's behind
         self.get_menu_item_state_obj(menu_item).transition_state()
+
+        while min([i["state"].value for i in self.menu_item_states]) > self.state_value:
+            self.change_state()
+
 
     def change_menu_item_state_by_id(self, id):
         """Transitions the state of a menu item to the next state, looking up by id
@@ -182,7 +217,7 @@ class Order:
         Args:
             id (int): The id of the menu_item in the order
         """
-        menu_item = self.get_menu_item_state_by_id(id)
+        menu_item = self.get_menu_item_by_id(id)
         self.change_menu_item_state(menu_item)
 
     def change_state(self):
@@ -241,6 +276,9 @@ class Order:
         if menu_item in self.__menu_items:
             raise ValueError("Order: add_menu_item(): MenuItem already exists")
         self.__menu_items.append(menu_item)
+
+    def get_menu_item_by_id(self, id) -> MenuItem:
+        return next((i["menu_item"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
 
     def remove_menu_item(self, menu_item):
         """ Removing a menu item from the order
