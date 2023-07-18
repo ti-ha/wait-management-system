@@ -31,8 +31,14 @@ export default function Customer() {
                 }
                 const data = await response.json();
                 setCategories(data);
-                setCurrentCategory(data[0].name);
-                fetchItems(data[0].name);
+                
+                // Find the first visible category
+                const firstVisibleCategory = data.find(category => category.visible);
+                if (firstVisibleCategory) {
+                    setCurrentCategory(firstVisibleCategory.name);
+                    fetchItems(firstVisibleCategory.name);
+                }
+
             } catch (error) {
                 console.error("Error fetching categories:", error);
             }
@@ -131,7 +137,9 @@ export default function Customer() {
             <div className="customerContainer">
                 <div className="categories">
                     <h2>Menu</h2>
-                    {categories.map((category, index) => (
+                    {categories
+                        .filter(category => category.visible)
+                        .map((category, index) => (
                         <div 
                             key={index} 
                             className={`${category.name === currentCategory ? "selectedCategoryBox" : "categoryBox"}`}

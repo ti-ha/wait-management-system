@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import './WaitStaff.css';
 import { Button } from '@mui/material';
 import { Check } from '@mui/icons-material';

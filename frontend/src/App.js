@@ -23,7 +23,7 @@ function App() {
           <Route path="/kitchen" element={<Kitchen />} />
           <Route path="/wait-staff" element={<WaitStaff />} />
           <Route path="/manager" element={<ManagerLanding />} />
-          <Route path="/menu-editor" element={<MenuEditor />} />
+          <Route path="/menu-editor/:categoryName?" element={<MenuEditor />} />
           <Route path="/restaurant-manager" element={<RestaurantManager />} />
         </Routes>
       </BrowserRouter>

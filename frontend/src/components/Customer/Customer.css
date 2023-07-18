@@ -105,7 +105,7 @@
 }
 
 .itemContainer {
-    max-height: calc(100vh - 400px); /* Adjust as needed */
+    max-height: calc(100vh - 400px);
     overflow-y: auto;
 }
 
