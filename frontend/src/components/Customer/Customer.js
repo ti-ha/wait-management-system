@@ -3,8 +3,9 @@ import { Link, useParams } from 'react-router-dom';
 import ItemModal from "./ItemModal.js";
 import BillModal from "./BillModal.js";
 import './Customer.css'
-import { Button, Icon, IconButton } from "@mui/material";
+import { Button, IconButton, TextField } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material"
+import useDebounce from "../Hooks/useDebounce.js";
 
 
 export default function Customer() {
@@ -19,6 +20,40 @@ export default function Customer() {
     const [orders, setOrders] = useState([]);
     const [billOrders, setBillOrders] = useState([]);
     const [isBillOpen, setIsBillOpen] = useState(false);
+
+    const [searchInput, setSearchInput] = useState("");
+    const [searchResults, setSearchResults] = useState(null);
+    const debouncedSearchTerm = useDebounce(searchInput, 500);
+
+    useEffect(() => {
+        if (debouncedSearchTerm) {
+            fetchSearchResults(debouncedSearchTerm);
+        } else {
+            setSearchResults(null);
+        }
+    }, [debouncedSearchTerm]);
+
+    const fetchSearchResults = async (query) => {
+        console.log(`The query is ${query}`)
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/search?query=${query}`);
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(`The search results are`, data)
+            setSearchResults(data);
+        } catch (error) {
+            console.error("Error searching menu:", error);
+        }
+    }
+
+    const handleSearchChange = (event) => {
+        setSearchInput(event.target.value);
+    }
+
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -53,6 +88,8 @@ export default function Customer() {
     }
 
     const handleCategoryClick = (category) => {
+        setSearchResults(null);
+        setSearchInput("");
         setCurrentCategory(category);
         fetchItems(category);
     };
@@ -136,6 +173,13 @@ export default function Customer() {
 
             <div className="customerContainer">
                 <div className="categories">
+                    <TextField
+                        value={searchInput}
+                        onChange={handleSearchChange}
+                        label="Search"
+                        variant="outlined"
+                        sx={{marginBottom: '50px'}}
+                    />
                     <h2>Menu</h2>
                     {categories
                         .filter(category => category.visible)
@@ -151,20 +195,48 @@ export default function Customer() {
                 </div>
 
                 <div className="items">
-                    <h2 className="itemsTitle">{currentCategory}</h2>
-                    <div className="itemContainer">
-                        {currentItems.map((item, index) => (
-                            <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
-                                <div className="imageContainer">
-                                    <img src={item.imageURL} alt={item.name}/> 
-                                </div>
-                                <div className="itemInfo">
-                                    <p>{item.name}</p>
-                                    <p>${item.price}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    {(currentItems.length > 0 && (!searchResults)) &&
+                        <h2 className="itemsTitle">{currentCategory}</h2>
+                    }
+                    {(searchResults && Object.keys(searchResults).length !== 0) &&
+                        <h2 className="itemsTitle">Search Results</h2>
+                    }
+                        <div className="itemContainer">
+                            {searchResults ? 
+                                (
+                                Object.keys(searchResults).length !== 0 ? 
+                                <>
+                                    {Object.values(searchResults).flat().map((item, index) => (
+                                        <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
+                                            <div className="imageContainer">
+                                                <img src={item.imageURL} alt={item.name}/> 
+                                            </div>
+                                            <div className="itemInfo">
+                                                <p>{item.name}</p>
+                                                <p>${item.price}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                                :
+                           
+                                <h2>No Results Found</h2>
+                         
+                            )   
+                            :
+                                currentItems.map((item, index) => (
+                                    <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
+                                        <div className="imageContainer">
+                                            <img src={item.imageURL} alt={item.name}/> 
+                                        </div>
+                                        <div className="itemInfo">
+                                            <p>{item.name}</p>
+                                            <p>${item.price}</p>
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                        </div>
                 </div>
 
                 <div className="orderContainer">
