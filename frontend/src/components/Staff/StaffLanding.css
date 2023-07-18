@@ -1,5 +1,6 @@
 .staffLandingContainer {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -8,6 +9,18 @@
 
 .staffButton {
     padding: 20px;
-    width: 300px;
-    height: 200px;
+    width: 400px;
+    height: 100px;
+}
+
+.headToText {
+    margin-bottom: 20px; /* adjust as needed */
+}
+
+.staff-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0px 3px 6px #00000023;
 }

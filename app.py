@@ -36,15 +36,24 @@ def call(msg, func, *args):
 
     else:
         return jsonify(msg), 200
-    
+
 def token_required(f):
+    """Performs authentication for methods that REQUIRE authentication.
+
+    Args:
+        f (func): View function to be executed
+
+    Returns:
+        func: The decorated function
+    """
     @wraps(f)
-    def decorated(*args, **kwargs):
+    def inner(*args, **kwargs):
         token = None
         if "Authorization" in request.headers:
             token = request.headers["Authorization"]
         
         if not token:
+            
             return jsonify({
                 "message": "Authentication Token missing",
                 "error": "Unauthorized"
@@ -66,22 +75,62 @@ def token_required(f):
         
         return f(current_user, *args, **kwargs)
     
-    return decorated
+    return inner
+
+
+def token_optional(f):
+    """Performs authentication for methods that do not require 
+    but can benefit from authentication.
+
+    Args:
+        f (func): View function to be executed
+
+    Returns:
+        func: The decorated function
+    """
+    @wraps(f)
+    def inner(*args, **kwargs):
+        token = None
+        if "Authorization" in request.headers:
+            token = request.headers["Authorization"]
+        
+        if not token:
+            return f(None, *args, **kwargs)
+        
+        try:
+            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = wms.user_handler.id_to_user(data["user_id"])
+            if current_user is None:
+                return jsonify({
+                    "message": "Invalid Authentication token",
+                    "error": "Unauthorized"
+                }), 401
+        
+        except Exception as e:
+            return jsonify({
+                "message": "Something went wrong",
+                "error": str(e)
+            }), 500
+        
+        return f(current_user, *args, **kwargs)
+    
+    return inner
 
 @app.route('/')
 def home():
     """ Home Page of the app """
     return jsonify({"message": "Hello world!"}), 200
 
-@app.route('/menu', methods=['GET'])
+@app.route('/menu', methods=['GET'], endpoint='get_menu')
 def get_menu():
     """ Gets the restaurant menu """
+
     return call(
         None, 
         wms.menu_handler.jsonify
     )
 
-@app.route('/menu/categories', methods=['GET'])
+@app.route('/menu/categories', methods=['GET'], endpoint='get_categories')
 def get_categories():
     """ Gets the menu categories """
     return call(
@@ -89,7 +138,7 @@ def get_categories():
         wms.menu_handler.jsonify_categories
     )
 
-@app.route('/menu/categories', methods=['POST'])
+@app.route('/menu/categories', methods=['POST'], endpoint='create_category')
 @token_required
 def create_category(current_user):
     """ Creates a new menu category
@@ -123,7 +172,7 @@ def get_category(category):
         category
     )
 
-@app.route('/menu/categories/<category>', methods=['PATCH'])
+@app.route('/menu/categories/<category>', methods=['PATCH'], endpoint='update_category')
 @token_required
 def update_category(current_user, category):
     """ Updates a menu category with a new name or visibility status
@@ -154,7 +203,7 @@ def update_category(current_user, category):
             visible
         )
 
-@app.route('/menu/categories/order', methods=['POST'])
+@app.route('/menu/categories/order', methods=['POST'], endpoint='reorder_categories')
 @token_required
 def reorder_categories(current_user):
     """ Rearranges the categorie in the menu
@@ -182,7 +231,7 @@ def reorder_categories(current_user):
         )
     return None
 
-@app.route('/menu/categories/<category>', methods=['POST'])
+@app.route('/menu/categories/<category>', methods=['POST'], endpoint='add_menu_item_to_category')
 @token_required
 def add_menu_item_to_category(current_user, category):
     """ Adds a new menu item to a specific category
@@ -217,7 +266,7 @@ def add_menu_item_to_category(current_user, category):
         )
     return None
 
-@app.route('/menu/categories/<category>', methods=['DELETE'])
+@app.route('/menu/categories/<category>', methods=['DELETE'], endpoint='delete_category')
 @token_required
 def delete_category(current_user, category):
     """ Removes a specific category """
@@ -231,7 +280,7 @@ def delete_category(current_user, category):
         category
     )
 
-@app.route('/menu/categories/<category>/order', methods=['POST'])
+@app.route('/menu/categories/<category>/order', methods=['POST'], endpoint='reorder_menu_items')
 @token_required
 def reorder_menu_items(current_user, category):
     """ Rearranges the categorie in the menu
@@ -260,12 +309,12 @@ def reorder_menu_items(current_user, category):
         )
     return None
 
-@app.route('/menu/categories/<category>/<menu_item>', methods=['GET'])
+@app.route('/menu/categories/<category>/<menu_item>', methods=['GET'], endpoint='get_menu_item')
 def get_menu_item(category, menu_item):
     """ Gets a specific menu item from a specific category """
     return call(None, wms.menu_handler.jsonify_menu_item, category, menu_item)
 
-@app.route('/menu/categories/<category>/<menu_item>', methods=['DELETE'])
+@app.route('/menu/categories/<category>/<menu_item>', methods=['DELETE'], endpoint='delete_menu_item')
 @token_required
 def delete_menu_item(current_user, category, menu_item):
     """ Removes a specific menu item from a specific category """
@@ -279,7 +328,7 @@ def delete_menu_item(current_user, category, menu_item):
         menu_item
     )
 
-@app.route('/menu/categories/<category>/<menu_item>', methods=['PATCH'])
+@app.route('/menu/categories/<category>/<menu_item>', methods=['PATCH'], endpoint='update_menu_item')
 @token_required
 def update_menu_item(current_user, category, menu_item):
     """ Updates a menu category with a new name or visibility status
@@ -317,7 +366,7 @@ def update_menu_item(current_user, category, menu_item):
             visible
         )
 
-@app.route('/menu/deals', methods=['GET'])
+@app.route('/menu/deals', methods=['GET'], endpoint='get_deal')
 def get_deal():
     """ Gets a menu deal """
     return call(
@@ -325,7 +374,7 @@ def get_deal():
         wms.menu_handler.jsonify_deals
     )
 
-@app.route('/menu/deals', methods=['POST'])
+@app.route('/menu/deals', methods=['POST'], endpoint='create_deal')
 @token_required
 def create_deal(current_user):
     """ Creates a new menu deal
@@ -357,7 +406,7 @@ def create_deal(current_user):
         )
     return jsonify({"error": "Incorrect content-type"}), 400
 
-@app.route('/menu/search', methods=['GET'])
+@app.route('/menu/search', methods=['GET'], endpoint='search_menu')
 def search_menu():
     query = request.args.get('query')
 
@@ -368,7 +417,7 @@ def search_menu():
     )
     
 
-@app.route('/table', methods=['GET'])
+@app.route('/table', methods=['GET'], endpoint='get_table')
 def get_table():
     """ Gets all of the restaurant tables """
 
@@ -377,7 +426,7 @@ def get_table():
         wms.table_handler.jsonify
     )
 
-@app.route('/table/add', methods=['POST'])
+@app.route('/table/add', methods=['POST'], endpoint='add_table')
 @token_required
 def add_table(current_user):
     """ Creates a new table
@@ -408,7 +457,7 @@ def add_table(current_user):
         )
     return jsonify({"error": "Incorrect content-type"}), 400
 
-@app.route('/users', methods=['GET'])
+@app.route('/users', methods=['GET'], endpoint='get_user')
 @token_required
 def get_user(current_user):
     """ Gets all of the restaurant users """
@@ -420,7 +469,7 @@ def get_user(current_user):
         wms.user_handler.jsonify
     )
 
-@app.route('/me', methods=['GET'])
+@app.route('/me', methods=['GET'], endpoint='get_current_user')
 @token_required
 def get_current_user(current_user):
     return call(
@@ -428,7 +477,7 @@ def get_current_user(current_user):
         current_user.jsonify
     )
 
-@app.route('/user/add', methods=['POST'])
+@app.route('/user/add', methods=['POST'], endpoint='add_user')
 def add_user():
     """ Creates a new user
 
@@ -448,10 +497,7 @@ def add_user():
             first_name = obj["first_name"]
             last_name = obj["last_name"]
             user_type = obj["user_type"]
-            if user_type in ["Wait Staff", "Manager", "Kitchen Staff"]:
-                password = obj["password"]
-            else:
-                password = None
+            password = obj["password"]
         except KeyError:
             return jsonify({"error": "Incorrect fields"}), 400
 
@@ -465,7 +511,7 @@ def add_user():
         )
     return jsonify({"error": "Incorrect content-type"}), 400
 
-@app.route('/user/login', methods=['POST'])
+@app.route('/user/login', methods=['POST'], endpoint='login')
 def login():
     """logs in a user given firstname, lastname and password. returns an auth token
     
@@ -497,7 +543,7 @@ def login():
                             )}), 200
         return jsonify({"error": "Incorrect credentials"}), 400
     
-@app.route('/table/add/customer', methods=['POST'])
+@app.route('/table/add/customer', methods=['POST'], endpoint='add_table_customer')
 def add_table_customer():
     """ Adds a customer to a table
 
@@ -525,7 +571,7 @@ def add_table_customer():
 
 #### ORDER MANAGER ENDPOINTS
 
-@app.route('/ordermanager', methods=['GET'])
+@app.route('/ordermanager', methods=['GET'], endpoint='get_order_manager')
 @token_required
 def get_order_manager(current_user):
     """ Gets the order manager """
@@ -537,7 +583,7 @@ def get_order_manager(current_user):
         wms.om_handler.jsonify
     )
 
-@app.route('/ordermanager/orders', methods=['GET'])
+@app.route('/ordermanager/orders', methods=['GET'], endpoint='get_orders')
 @token_required
 def get_orders(current_user):
     """ Gets the list of orders present in the order manager """
@@ -549,7 +595,7 @@ def get_orders(current_user):
         wms.om_handler.jsonify_orders
     )
 
-@app.route('/ordermanager/orders/add/<table_id>' , methods=['POST'])
+@app.route('/ordermanager/orders/add/<table_id>' , methods=['POST'], endpoint='add_order')
 def add_order(table_id):
     """ Adds an order to the order manager with the table it belongs to
 
@@ -576,7 +622,7 @@ def add_order(table_id):
         )
     return jsonify({"error": "Incorrect content-type"}), 400
 
-@app.route('/ordermanager/orders/remove/<table_id>/<order_id>', methods=['DELETE'])
+@app.route('/ordermanager/orders/remove/<table_id>/<order_id>', methods=['DELETE'], endpoint='remove_order')
 @token_required
 def remove_order(current_user, table_id, order_id):
     """ Removes an order from the order manager """
@@ -590,7 +636,7 @@ def remove_order(current_user, table_id, order_id):
         int(order_id)
     )
 
-@app.route('/ordermanager/tables/<table_id>', methods=['GET'])
+@app.route('/ordermanager/tables/<table_id>', methods=['GET'], endpoint='get_table_orders')
 def get_table_orders(table_id):
     """ Gets all the orders of a specific table """
     return call(
@@ -599,7 +645,7 @@ def get_table_orders(table_id):
         int(table_id)
     )
 
-@app.route('/ordermanager/tables/<table_id>/bill', methods=['GET'])
+@app.route('/ordermanager/tables/<table_id>/bill', methods=['GET'], endpoint='get_table_bill')
 def get_table_bill(table_id):
     """ Gets the bill for a table """
     return call(
@@ -608,7 +654,7 @@ def get_table_bill(table_id):
         int(table_id)
     )
 
-@app.route('/ordermanager/tables/<table_id>/bill', methods=['POST'])
+@app.route('/ordermanager/tables/<table_id>/bill', methods=['POST'], endpoint='pay_table_bill')
 def pay_table_bill(table_id):
     """ Endpoint to simulate bill payment for a table 
         EMPTY POST REQUEST. NO DATA EXPECTED
@@ -619,7 +665,7 @@ def pay_table_bill(table_id):
         int(table_id)
     )
 
-@app.route("/ordermanager/orders/<order_id>", methods=['GET'])
+@app.route("/ordermanager/orders/<order_id>", methods=['GET'], endpoint='get_order_by_id')
 def get_order_by_id(order_id):
     """ Gets an order by its ID value """
     return call(
@@ -628,7 +674,7 @@ def get_order_by_id(order_id):
         int(order_id)
     )
 
-@app.route("/ordermanager/orders/<order_id>", methods=['DELETE'])
+@app.route("/ordermanager/orders/<order_id>", methods=['DELETE'], endpoint='delete_order_by_id')
 @token_required
 def delete_order_by_id(current_user, order_id):
     """ Deletes an order by its ID value """
@@ -642,7 +688,7 @@ def delete_order_by_id(current_user, order_id):
         int(order_id)
     )
 
-@app.route("/ordermanager/orders/<order_id>/state", methods=['GET'])
+@app.route("/ordermanager/orders/<order_id>/state", methods=['GET'], endpoint='get_order_state')
 @token_required
 def get_order_state(current_user, order_id):
     """ Gets the current state of an order """
@@ -655,7 +701,7 @@ def get_order_state(current_user, order_id):
         int(order_id)
     )
 
-@app.route("/ordermanager/orders/<order_id>/state", methods=['POST'])
+@app.route("/ordermanager/orders/<order_id>/state", methods=['POST'], endpoint='advance_order_state')
 @token_required
 def advance_order_state(current_user, order_id):
     """ Advances the state of a particular order
@@ -671,7 +717,7 @@ def advance_order_state(current_user, order_id):
         int(order_id)
     )
 
-@app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['GET'])
+@app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['GET'], endpoint='get_menu_item_state')
 @token_required
 def get_menu_item_state(current_user, order_id, menu_item_id):
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
@@ -684,7 +730,7 @@ def get_menu_item_state(current_user, order_id, menu_item_id):
         int(menu_item_id)
     )
 
-@app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['POST'])
+@app.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['POST'], endpoint='change_menu_item_state')
 @token_required
 def change_menu_item_state(current_user, order_id, menu_item_id):
 
@@ -698,7 +744,7 @@ def change_menu_item_state(current_user, order_id, menu_item_id):
         int(menu_item_id)
     )
 
-@app.route("/ordermanager/orders/<order_id>/bill", methods=['GET'])
+@app.route("/ordermanager/orders/<order_id>/bill", methods=['GET'], endpoint='get_order_bill')
 def get_order_bill(order_id):
     """ Gets the bill for an order """
     return call(
@@ -707,7 +753,7 @@ def get_order_bill(order_id):
         int(order_id)
     )
 
-@app.route("/ordermanager/orders/<order_id>/bill", methods=['POST'])
+@app.route("/ordermanager/orders/<order_id>/bill", methods=['POST'], endpoint='pay_order_bill')
 def pay_order_bill(order_id):
     """ Endpoint to simulate bill payment for an order """
     return call(
