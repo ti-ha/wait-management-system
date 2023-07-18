@@ -448,9 +448,10 @@
 #     # test32()
 
 import unittest
-from wms import Application, Category, MenuItem, Deal
+from wms import Application, Category, MenuItem, Deal, User, Customer, WaitStaff, KitchenStaff, Manager
 
 class MenuTests(unittest.TestCase):
+    """ Tests for menu handling functionality"""
 
     def setUp(self):
         self.app = Application()
@@ -511,7 +512,7 @@ class MenuTests(unittest.TestCase):
         self.menu.add_category("Burgers")
         self.menu.add_menu_item("Burgers", "Cheeseburger", 20.00, "/cheeseburger.png")
         self.menu.add_menu_item("Burgers", "Quarter Pounder", 15.00, "/quarterpounder.png")
-        self.menu.add_menu_item("Burgers", "Angus Burger", 17.00, "/cheeseburger.png")
+        self.menu.add_menu_item("Burgers", "Angus Burger", 17.00, "/angusburger.png")
         self.menu.add_deal(5.0, ["Cheeseburger", "Quarter Pounder"])
         self.assertIsInstance(self.menu.get_deals_by_id(0), Deal)
 
@@ -520,9 +521,70 @@ class MenuTests(unittest.TestCase):
         self.menu.add_category("Burgers")
         self.menu.add_menu_item("Burgers", "Cheeseburger", 20.00, "/cheeseburger.png")
         self.menu.add_menu_item("Burgers", "Quarter Pounder", 15.00, "/quarterpounder.png")
-        self.menu.add_menu_item("Burgers", "Angus Burger", 17.00, "/cheeseburger.png")
+        self.menu.add_menu_item("Burgers", "Angus Burger", 17.00, "/angusburger.png")
         with self.assertRaises(expected_exception=ValueError):
             self.menu.add_deal(5.0, ["Cheeseburger", "Random Burger"])
+
+class UserTests(unittest.TestCase):
+    """Tests for user handling functionality"""
+    def setUp(self):
+        self.app = Application()
+        self.user = self.app.user_handler
+        # self.user.add_user("John", "Doe", "Customer", "12345678")
+
+    # def test_add_customer(self):
+    #     self.user.
+    def test_login_success(self):
+        """Successful login"""
+        self.user.add_user("John", "A", "Customer", "12345678")
+        self.assertIsInstance(self.user.login("John", "A", "12345678"), Customer)
+
+        self.user.add_user("John", "B", "KitchenStaff", "12345678")
+        self.assertIsInstance(self.user.login("John", "B", "12345678"), KitchenStaff)
+
+        self.user.add_user("John", "C", "WaitStaff", "12345678")
+        self.assertIsInstance(self.user.login("John", "C", "12345678"), WaitStaff)
+
+        self.user.add_user("John", "D", "Manager", "12345678")
+        self.assertIsInstance(self.user.login("John", "D", "12345678"), Manager)
+    
+    def test_login_fail(self):
+        """Failed login"""
+        self.user.add_user("John", "A", "Customer", "12345678")
+        self.assertIsNone(self.user.login("John", "A", "ABCDEFGH"))
+
+        self.user.add_user("John", "B", "KitchenStaff", "12345678")
+        self.assertIsNone(self.user.login("John", "B", "ABCDEFGH"))
+
+        self.user.add_user("John", "C", "WaitStaff", "12345678")
+        self.assertIsNone(self.user.login("John", "C", "ABCDEFGH"))
+
+        self.user.add_user("John", "D", "Manager", "12345678")
+        self.assertIsNone(self.user.login("John", "D", "ABCDEFGH"))
+
+
+
+# class OrderTests(unittest.TestCase):
+#     """Tests for order handling functionality"""
+
+#     def setUp(self):
+#         self.app = Application()
+#         self.menu = self.app.menu_handler
+#         self.table = self.app.table_handler
+#         self.order = self.app.om_handler
+#         self.menu.add_category("Burgers")
+#         self.menu.add_menu_item("Burgers", "Cheeseburger", 20.00, "/cheeseburger.png")
+#         self.menu.add_menu_item("Burgers", "Quarter Pounder", 15.00, "/quarterpounder.png")
+#         self.menu.add_menu_item("Burgers", "Angus Burger", 17.00, "/angusburger.png")
+#         self.menu.add_category("Pastas")
+#         self.menu.add_menu_item("Pastas", "Sphagetti", 25.00, "/sphagetti.png")
+#         self.menu.add_menu_item("Pastas", "Aglio Olio", 22.00, "/quarterpounder.png")
+    
+#     def test_add_order(self):
+#         """Add new order"""
+#         self.app.user_handler.add_user()
+#         self.order.add_order()
+#         self.table.add_table(4, )
 
 if __name__ == '__main__':
     unittest.main()
