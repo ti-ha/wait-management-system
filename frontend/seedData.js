@@ -9,13 +9,13 @@ const users = [
     {
         first_name: "WaitStaff",
         last_name: "One",
-        user_type: "Wait Staff",
+        user_type: "WaitStaff",
         password: "waitstaff"
     },
     {
         first_name: "KitchenStaff",
         last_name: "One",
-        user_type: "Kitchen Staff",
+        user_type: "KitchenStaff",
         password: "kitchenstaff"
     },
     {
