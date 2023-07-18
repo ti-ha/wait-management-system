@@ -212,7 +212,7 @@ class Menu():
                          for j in i.menu_items] 
                          for i in self.categories]
 
-        if max([i for sublist in levenschtein for i in sublist]) == 0:
+        if max([i for sublist in levenschtein for i in sublist]) < STRENGTH_COEFFICIENT:
             return {"message": "No matches"}
         # Get the normal dictionary of menu_items in self.categories
         normal = [[j 
