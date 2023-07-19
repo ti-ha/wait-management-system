@@ -24,3 +24,10 @@ Week 4
   Recreated unit testing for menus (categories, items) -> (not done)
   Refactored some code for manageability in future -> (not done, plan for W6)
   
+Week 5
+  Refactored wms for code readability and style consistency
+  Fixed several bugs and altered some design choices
+  
+Week 7
+  Finished menu and user testing, started testing on orders, tables, etc.
+  Implemented database for menu_item/category using SQLalchemy, rest soon to follow
