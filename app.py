@@ -762,5 +762,49 @@ def pay_order_bill(order_id):
         int(order_id)
     )
 
+@app.route("/servicerequests", methods = ['GET'], endpoint='show_request_queue')
+@token_required
+def show_request_queue(current_user):
+    if current_user.__class__ not in [Manager, WaitStaff]:
+        return jsonify({"error": "Access denied"}), 401
+    
+    return call(
+        None,
+        wms.srm_handler.jsonify
+    )
+
+@app.route("/servicerequests", methods = ['POST'], endpoint="")
+def add_request_to_queue():
+    """
+    JSON FORMAT:
+    {
+        "subject": "string",
+        "summary": "string",
+        "table_id": int
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            subject = obj["subject"]
+            summary = obj["summary"]
+            table_id = obj["table_id"]
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        table = wms.table_handler.id_to_table(table_id)
+        if not table:
+            return jsonify({"error": "Table not found"}), 400
+
+
+    return call(
+        {"message": "Added request to queue"},
+        wms.srm_handler.srm.add_request,
+        table, 
+        subject, 
+        summary
+    )
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
