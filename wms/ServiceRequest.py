@@ -1,7 +1,7 @@
 import itertools
 from .Table import Table
-from .WaitStaff import WaitStaff
 from datetime import datetime
+from wms import User
 
 class ServiceRequest:
 
@@ -27,7 +27,7 @@ class ServiceRequest:
     
     @property
     def subject(self):
-        return self.subject
+        return self.__subject
     
     @property
     def summary(self):
@@ -42,7 +42,7 @@ class ServiceRequest:
         return self.__completed
     
     @property
-    def assignee(self) -> WaitStaff:
+    def assignee(self) -> User:
         return self.__assignee
     
     @table.setter
@@ -62,14 +62,16 @@ class ServiceRequest:
         self.__completed = value
 
     @assignee.setter
-    def assignee(self, assignee: WaitStaff):
+    def assignee(self, assignee: User):
         self.__assignee = assignee
 
     def jsonify(self):
         return {
             "id": self.id,
-            "table": self.table.jsonify(),
+            "table": self.table.id,
             "summary": self.summary,
+            "subject": self.subject,
             "timestamp": self.timestamp,
-            "completed": self.completed 
+            "completed": self.completed,
+            "assignee": f"{self.assignee.firstname}, {self.assignee.lastname}" if self.assignee else None 
         }

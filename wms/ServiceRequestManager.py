@@ -8,8 +8,8 @@ class ServiceRequestManager:
     def queue(self) -> list[ServiceRequest]:
         return self.__queue
     
-    def add_request(self, table, summary):
-        self.queue.append(ServiceRequest(table, summary))
+    def add_request(self, table, subject, summary):
+        self.queue.append(ServiceRequest(table, subject, summary))
 
     def get_request(self, id) -> ServiceRequest:
         return next((i for i in self.queue if i.id == id), None)
