@@ -209,8 +209,8 @@ class Menu():
         # Good luck deciphering all this
         # Generate levenschtein distances for each menu item in all categories against the query argument
         levenschtein = [[sm(None, j.name, query).ratio() 
-                         for j in i.menu_items] 
-                         for i in self.categories]
+                         for j in i.menu_items if j.visible == True] 
+                         for i in self.categories if i.visible == True]
 
         #if len(levenschtein) == 0:
         #    return {"message": "No matches"}
@@ -218,8 +218,8 @@ class Menu():
         #    return {"message": "No matches"}
         # Get the normal dictionary of menu_items in self.categories
         normal = [[j 
-                   for j in i.menu_items] 
-                   for i in self.categories]
+                   for j in i.menu_items if j.visible == True] 
+                   for i in self.categories if i.visible == True]
         # Sort the normal list by the levenschtein one, zipping them together and removing bad matches
         sorted_by_levenschtein = [
             sorted(
@@ -236,7 +236,7 @@ class Menu():
 
         # Add the categories back in and remove the levenschtein value from the output
         with_categories = {category.name: [i[1] for i in cropped_output[k]] 
-                           for k, category in enumerate(self.categories)}
+                           for k, category in enumerate(i for i in self.categories if i.visible == True)}
         
         # Clean up the data and return. Automatically omits empty categories
         return {key: with_categories[key] 
