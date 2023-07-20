@@ -1,3 +1,4 @@
+from __future__ import annotations
 from wms import *
 
 class Application():
@@ -5,9 +6,33 @@ class Application():
         """ Constructor for the Application class. A decorator class for 
         managing the app
         """
-        self.menu_handler = MenuHandler(Menu())
-        self.table_handler = TableHandler()
-        self.om_handler = OrderManagerHandler(OrderManager(), self.table_handler, self.menu_handler)
-        self.user_handler = UserHandler()
-        self.srm_handler = SRMHandler(ServiceRequestManager())
-        self.restaurant_manager_handler = RestaurantManagerHandler(RestaurantManager(), self.menu_handler)
+        self.__menu_handler = MenuHandler(Menu())
+        self.__table_handler = TableHandler()
+        self.__om_handler = OrderManagerHandler(OrderManager(), self.table_handler, self.menu_handler)
+        self.__user_handler = UserHandler()
+        self.__srm_handler = SRMHandler(ServiceRequestManager())
+        self.__restaurant_manager_handler = RestaurantManagerHandler(RestaurantManager(), self.menu_handler)
+
+    @property
+    def menu_handler(self):
+        return self.__menu_handler
+    
+    @property
+    def table_handler(self):
+        return self.__table_handler
+    
+    @property
+    def om_handler(self):
+        return self.__om_handler
+    
+    @property
+    def user_handler(self):
+        return self.__user_handler
+    
+    @property
+    def srm_handler(self):
+        return self.__srm_handler
+    
+    @property
+    def restaurant_manager_handler(self):
+        return self.__restaurant_manager_handler
