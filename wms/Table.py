@@ -133,3 +133,11 @@ class Table:
             raise ValueError("Table: remove_order(): Order does not exist")
         
         self.__orders.remove(order)
+
+    def jsonify(self):
+        return {
+            "id": self.id,
+            "availability": self.get_open_seats(),
+            "table_limit": self.table_limit,
+            "is_occupied": self.occupied
+        }
