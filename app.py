@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Flask, jsonify, request, current_app
+from flask import Flask, jsonify, request, current_app, session
 from flask_cors import CORS, cross_origin
 from wms import *
 import json, jwt, datetime
@@ -513,7 +513,9 @@ def add_user():
 
 @app.route('/user/login', methods=['POST'], endpoint='login')
 def login():
-    """logs in a user given firstname, lastname and password. returns an auth token
+    """logs in a user given firstname, lastname and password. returns an auth
+    token
+    sets the session user to the userID
     
     JSON FORMAT:
     {
@@ -534,6 +536,8 @@ def login():
         
         user = wms.user_handler.login(first_name, last_name, password)
         if user:
+            # Define the session user_id
+            session['user_id'] = user.id
             return jsonify({"message": "Success",
                             "auth_token": jwt.encode(
                                             {"user_id": user.id,
