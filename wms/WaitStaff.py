@@ -1,5 +1,5 @@
 from __future__ import annotations
-from wms import User, Order
+from wms import User, ServiceRequest
 
 class WaitStaff(User):
     def __init__(self, firstname, lastname, password):
@@ -14,12 +14,12 @@ class WaitStaff(User):
         self.__requests = []
 
     @property
-    def requests(self) -> list[Order]:
+    def requests(self) -> list[ServiceRequest]:
         """ Returns the wait staff's list of requests """
         return self.__requests
     
     def assign_requests(self, order):
-        """ Add an order to the list of requests
+        """ Add a request to the list of requests
 
         Args:
             order (Order): Order to be added to the list of requests
@@ -28,14 +28,15 @@ class WaitStaff(User):
             TypeError: Raised when order argument is not of type Order
             ValueError: Raised when the Order already exists
         """
-        if not isinstance(order, Order):
-            raise TypeError("WaitStaff: assign_requests(): Object is not of type Order")
+        if not isinstance(order, ServiceRequest):
+            raise TypeError("WaitStaff: assign_requests(): Object is not of type ServiceRequest")
         
         if order in self.__requests:
-            raise ValueError("WaitStaff: assign_requests(): Order already exists")
+            raise ValueError("WaitStaff: assign_requests(): Request already exists")
+        
         self.__requests.append(order)
 
-    def remove_requests(self, order):
+    def remove_requests(self, request):
         """ Remove an order from the list of requests
 
         Args:
@@ -45,12 +46,10 @@ class WaitStaff(User):
             TypeError: Raised when order argument is not of type Order
             ValueError: Raised when the Order does not exist
         """
-        if not isinstance(order, Order):
-            raise TypeError("WaitStaff: remove_requests(): Object is not of type Order")
+        if not isinstance(request, ServiceRequest):
+            raise TypeError("WaitStaff: remove_requests(): Object is not of type ServiceRequest")
         
-        if order not in self.__requests:
-            raise ValueError("WaitStaff: remove_requests(): Order does not exist")
-        order_num = self.__requests.index(order)
-        self.__requests[order_num].change_state()
+        if request not in self.__requests:
+            raise ValueError("WaitStaff: remove_requests(): Request does not exist")
         # Move order to complete
-        self.__requests.remove(order) 
+        self.requests.remove(request) 
