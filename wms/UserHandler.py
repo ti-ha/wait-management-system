@@ -22,6 +22,15 @@ class UserHandler():
         Returns:
             None: Returns None if an invalid user_type was provided
         """
+        user_lookup = next((i for i in self.users if 
+                       i.firstname == firstname and 
+                       i.lastname == lastname and 
+                       i.__class__.__name__ == user_type and 
+                       i.check_password(password) == True), None)
+        
+        if user_lookup:
+            raise ValueError("UserHandler: add_user(): User with exact credentials already exists")
+        
         match user_type:
             case "Customer":      new_user = Customer(firstname, lastname, password)
             case "KitchenStaff": new_user = KitchenStaff(firstname, lastname, password)
