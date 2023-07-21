@@ -97,55 +97,74 @@ class ServiceRequest:
 
     @property
     def id(self):
+        """ The id of the service request."""
         return self.__id
     
     @property
     def table(self):
+        """ The table at which the service request is being called from.  """
         return self.__table
     
     @property
     def subject(self):
+        """ The subject field of the service request. """
         return self.__subject
     
     @property
     def summary(self):
+        """ The summary field of the service request. """
         return self.__summary
     
     @property
     def timestamp(self):
+        """ The time when the service request was created. """
         return self.__timestamp
     
     @property
     def status(self) -> str:
+        """ The status of the service request. """
         return self.__status.state
     
     @property
     def assignee(self) -> User:
+        """ The WaitStaff assigned to the request. Defaults to None. """
         return self.__assignee
     
     def transition_state(self):
+        """ Move the state of the order one pace forward. """
         self.__status.transition_state()
 
     def set_as_deleted(self):
+        """ Marks the request as deleted. """
         self.__status = State(-1)
     
     @table.setter
     def table(self, table: Table):
+        """ Sets the table of the request. """
         self.__table = table
 
     @subject.setter
     def subject(self, subject: str):
+        """ Sets the subject of the request. """
         self.__subject = subject
 
     @summary.setter
     def summary(self, string: str):
+        """ Sets the summary of the request. """
         self.__summary = string
 
     @assignee.setter
     def assignee(self, assignee: User):
+        """ Sets the assignee of the request. """
         self.__assignee = assignee
 
     def jsonify(self):
+        """Generates a JSON-style dictionary containing all the relevant
+        attributes of the Service Request.
+
+        Returns:
+            dict: the JSON-style object containing all attribute info
+        """
         return {
             "id": self.id,
             "table": self.table.id,
