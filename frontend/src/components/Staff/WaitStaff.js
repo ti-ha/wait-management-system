@@ -38,6 +38,8 @@ export default function WaitStaff() {
 
     useEffect(() => {
         fetchOrders()
+        const intervalId = setInterval(fetchOrders, 10000);
+        return () => clearInterval(intervalId);
     }, []);
 
     const allMenuItems = orders.flatMap((order) =>
