@@ -15,9 +15,10 @@ export default function WaitStaff() {
 
     const [orders, setOrders] = useState([]);
 
+    const auth_token = localStorage.getItem('token'); 
+    
     const fetchOrders = async () => {
         try {
-            const auth_token = localStorage.getItem('token'); 
             const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager`, {
                 headers: { 'Authorization': `${auth_token}` }
             });
@@ -39,12 +40,15 @@ export default function WaitStaff() {
         fetchOrders()
     }, []);
 
-    const toBeServedOrders = orders.filter(order => order.state === 'ready');
+    const allMenuItems = orders.flatMap((order) =>
+        order.menu_items.map((item) => ({ ...item, order_id: order.id, table_id: order.table_id }))
+    );
 
-    const updateOrderState = async (orderId) => {
+    const toBeServedOrders = allMenuItems.filter((item) => item.state === 'ready');
+
+    const updateOrderState = async (orderId, menuItemId) => {
         try {
-            const auth_token = localStorage.getItem('token');
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/orders/${orderId}/state`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/orders/${orderId}/${menuItemId}/state`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -85,18 +89,16 @@ export default function WaitStaff() {
                         <h3>Item</h3>
                         <h3>Served</h3>
                     </div>
-                    {toBeServedOrders && toBeServedOrders.flatMap((order, index) =>
-                        order.menu_items.map((item, itemIndex) => (
-                            <div key={`${index}-${itemIndex}`} className='orderBox'>
-                                <p>Table {order.table_id + 1}</p>
-                                <p>{item.name}</p>
-                                <Button 
-                                    variant="contained" 
-                                    startIcon={<Check />}
-                                    onClick={() => updateOrderState(order.id)}>Ready</Button>
-                            </div>
-                        ))
-                    )}
+                    {toBeServedOrders.map((item, index) => (
+                        <div key={index} className='orderBox'>
+                            <p>Table {item.table_id + 1}</p>
+                            <p>{item.name}</p>
+                            <Button 
+                                variant="contained" 
+                                startIcon={<Check />}
+                                onClick={() => updateOrderState(item.order_id, item.order_specific_id)}>Ready</Button>
+                        </div>
+                    ))}
                 </section>
                 <section className='assistanceRequired'>
                     <h2>Assistance Required</h2>
