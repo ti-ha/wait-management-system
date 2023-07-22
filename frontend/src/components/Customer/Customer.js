@@ -101,11 +101,28 @@ export default function Customer() {
 
     const handleCloseModal = () => {
         setSelectedItem(null);
+        setQuantity(1);
     }
 
     const handleAddToOrder = () => {
-        const newOrder = { tableNumber, ...selectedItem, quantity };
-        setCurrentOrder(prevOrder => [...prevOrder, newOrder])
+        setCurrentOrder(prevOrder => {
+            // Check if the item already exists in the order
+            const existingOrderItem = prevOrder.find(order => order.id === selectedItem.id);
+            
+            // If the item exists, increment its quantity
+            if (existingOrderItem) {
+                return prevOrder.map(order => {
+                    if (order.id === selectedItem.id) {
+                        return { ...order, quantity: order.quantity + quantity };
+                    }
+                    return order;
+                });
+            }
+            
+            // If the item does not exist, add a new order item
+            const newOrder = { tableNumber, ...selectedItem, quantity };
+            return [...prevOrder, newOrder];
+        });
         handleCloseModal();
     }
 
