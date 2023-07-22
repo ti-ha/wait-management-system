@@ -74,7 +74,7 @@ class OrderManagerHandler():
             raise ValueError("Not a valid order_id")
 
         return {
-            "state": order.get_menu_item_state_by_id(menu_item_id).state
+            "state": order.get_menu_item_state_obj(menu_item_id).state
         }
 
     def get_order_bill(self, order_id: int) -> dict:

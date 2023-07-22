@@ -163,11 +163,11 @@ class Order:
     def state_value(self) -> int:
         return self.__state.value
 
-    def get_menu_item_state_obj(self, menu_item: MenuItem) -> State:
+    def get_menu_item_state_obj(self, id: int) -> State:
         """Gets the state of a menu_item within the order
 
         Args:
-            menu_item (MenuItem): The menu_item whose state is to be fetched
+            id (int): The order_specific_id of the menu_item whose state is to be fetched
 
         Raises:
             ValueError: Raised if the menu_item does not exist in the order
@@ -175,50 +175,23 @@ class Order:
         Returns:
             string: The state of the menu_item
         """
-        if menu_item == None:
+        menu_item_state = next((i["state"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
+        if menu_item_state == None:
             raise ValueError("Order: get_menu_item_state(): menu_item does not exist in order")
         
-        return next((i["state"] for i in self.menu_item_states if i["menu_item"] == menu_item), None)
-
-    def get_menu_item_state_by_id(self, id):
-        """Gets the state of a menu_item within the order, searching by order-native id
-
-        Args:
-            id (int): The id of the menu_item whose state is to be fetched
-
-        Returns:
-            string: The state of the menu_item
-        """
-        menu_item = next((i["menu_item"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
-        return self.get_menu_item_state_obj(menu_item)
-
-    def change_menu_item_state(self, menu_item: MenuItem):
-        """Transitions the state of a menu item based upon the menu_item itself
-
-        Args:
-            menu_item (MenuItem): the menu item whose state is to be transitioned
-
-        Raises:
-            ValueError: Raised if the menu_item does not exist in the order
-        """
-        if menu_item is None:
-            raise ValueError("Order: change_menu_item_state(): menu_item does not exist in order")
-        
-        # move current state of order if it's behind
-        self.get_menu_item_state_obj(menu_item).transition_state()
-
-        while min([i["state"].value for i in self.menu_item_states]) > self.state_value:
-            self.change_state()
+        return menu_item_state
 
 
     def change_menu_item_state_by_id(self, id):
-        """Transitions the state of a menu item to the next state, looking up by id
+        """Transitions the state of a menu item to the next state, looking up by order_specific_id
 
         Args:
             id (int): The id of the menu_item in the order
         """
-        menu_item = self.get_menu_item_by_id(id)
-        self.change_menu_item_state(menu_item)
+        self.get_menu_item_state_obj(id).transition_state()
+
+        while min([i["state"].value for i in self.menu_item_states]) > self.state_value:
+            self.change_state()
 
     def change_state(self):
         """ Transitions state to the next one """
