@@ -96,7 +96,7 @@ class Order:
     # Unique identifier starting from 0
     __id_iter = itertools.count()
 
-    def __init__(self, menu_items=None, deals=None):
+    def __init__(self, menu_items=None, deals=None, customer=None):
         """ Constructor for the Order class
 
         Args:
@@ -104,12 +104,14 @@ class Order:
             order. Defaults to None.
             deals (List[Deal], optional): Deals to be added to the order.
             Defaults to None.
+            customer (User, optional): The customer to be assigned to the order.
         """
         self.__id = next(Order.__id_iter)
         self.__bill = None
         self.__state = State()
         self.__deals = [deals] if isinstance(deals, Deal) else deals
         self.__menu_items_ids = itertools.count()
+        self.__customer = customer if customer else None
 
         # Perhaps there is a more pythonic way to do this
         if menu_items == None:
@@ -144,7 +146,12 @@ class Order:
     def deals(self) -> list[Deal]:
         """ Returns list of deals in the order """
         return self.__deals
-
+    
+    @property
+    def customer(self) -> int:
+        """ Returns the customer id assigned to the order"""
+        return self.__customer
+    
     @property
     def menu_items(self) -> list[MenuItem]:
         """ Returns list of menu items in the order """
@@ -377,7 +384,8 @@ class Order:
             "bill": bill,
             "state": self.state,
             "menu_items": self.jsonify_menu_item_states(),
-            "deals": [i.jsonify() for i in self.deals]
+            "deals": [i.jsonify() for i in self.deals],
+            "user": self.customer
         }
 
         if table_id is not None:

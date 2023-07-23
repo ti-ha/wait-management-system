@@ -1,4 +1,4 @@
-from wms import OrderManager, TableHandler, MenuHandler, Order
+from wms import OrderManager, TableHandler, MenuHandler, UserHandler, Order
 
 class OrderManagerHandler():
     def __init__(self, order_manager: OrderManager,
@@ -8,6 +8,7 @@ class OrderManagerHandler():
         self.__order_manager = order_manager
         self.__table_handler = table_handler
         self.__menu_handler = menu_handler
+
 
     def get_table_orders(self, table_id: int) -> dict:
         """ Acquires the table orders of a particular table
@@ -101,7 +102,7 @@ class OrderManagerHandler():
             "paid": order.bill.paid
         }
 
-    def add_order(self, table_id: int, menu_items_ids: list[int], deals_ids: list[int]):
+    def add_order(self, table_id: int, menu_items_ids: list[int], deals_ids: list[int], user=None):
         """ Adds an order to the list of orders
 
         Args:
@@ -136,7 +137,7 @@ class OrderManagerHandler():
                 raise ValueError("OrderManagerHandler: add_order(): Deal does not exist")
             deals.append(deal)
 
-        self.__order_manager.add_order(Order(menu_items, deals), table)
+        self.__order_manager.add_order(Order(menu_items, deals, user), table)
 
     def change_order_state(self, order_id: int):
         """ Changes the state of an order

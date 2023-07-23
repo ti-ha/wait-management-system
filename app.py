@@ -1,5 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, session
 from flask_cors import CORS
+import uuid
 
 # import the API routes
 from routes import *
@@ -16,6 +17,13 @@ app.register_blueprint(order_routes.order_blueprint)
 app.register_blueprint(user_routes.user_blueprint)
 app.register_blueprint(service_routes.service_blueprint)
 app.register_blueprint(restaurant_routes.restaurant_blueprint)
+
+@app.before_request
+def assign_session_id():
+    """ Assign a unique user id for guest users """
+    if not session.get('user_id'):
+        session['user_id'] = uuid.uuid4()
+        session.permanent = True
 
 @app.route('/')
 def home():
