@@ -8,7 +8,7 @@ service_blueprint = Blueprint("service", __name__)
 @service_blueprint.route("/servicerequests/queue", methods = ['GET'], endpoint='show_request_queue')
 @token_required
 def show_request_queue(current_user):
-    if current_user.__class__ not in [Manager, WaitStaff]:
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
         return jsonify({"error": "Access denied"}), 401
     
     return call(
@@ -63,8 +63,8 @@ def add_request_to_queue():
 @service_blueprint.route("/servicerequests/<id>", methods = ['GET'], endpoint="get_service_request")
 @token_required
 def get_service_request(current_user, id):
-    if current_user.__class__ not in [Manager, WaitStaff]:
-        return jsonify({"error": "Must be a Manager or WaitStaff to perform this request"}), 401
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a Staff Member to perform this request"}), 401
     
     return call(
         None,
@@ -99,8 +99,8 @@ def update_service_request(id):
 @service_blueprint.route("/servicerequests/<id>", methods = ['DELETE'], endpoint="delete_service_request")
 @token_required
 def delete_service_request(current_user, id):
-    if current_user.__class__ not in [Manager, WaitStaff]:
-        return jsonify({"error": "Must be a Manager or WaitStaff to perform this request"}), 401
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a Staff Member to perform this request"}), 401
     
     return call(
         {"message": "Deleted service request from queue"},
@@ -115,8 +115,8 @@ def transition_service_request_state(current_user, id):
     """
         Empty post request to update the state of a service request
     """
-    if current_user.__class__ not in [Manager, WaitStaff]:
-        return jsonify({"error": "Must be a Manager or WaitStaff to perform this request"}), 401
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a Staff Member to perform this request"}), 401
     
     return call(
         {"message": "Updated state successfully"},
