@@ -1,5 +1,5 @@
 from wms import RestaurantManager, MenuHandler, TableHandler, UserHandler, Table
-from Order import State
+from wms.Order import State
 from functools import cmp_to_key
 
 class RestaurantManagerHandler():
@@ -38,7 +38,7 @@ class RestaurantManagerHandler():
             sorted by their table size
         """
         sorted_list = sorted(self.table_handler.tables, key=lambda table: table.table_limit)
-        return self.table_handler.jsonify(sorted_list)
+        return self.jsonify_tables(sorted_list)
     
     def tables_sort_orders(self) -> dict:
         """ Sorts the tables by their order status
@@ -48,9 +48,9 @@ class RestaurantManagerHandler():
             sorted by their order status
         """
         sorted_list = sorted(self.table_handler.tables, key=cmp_to_key(self.table_order_compare))
-        return self.table_handler.jsonify(sorted_list)
+        return self.jsonify_tables(sorted_list)
 
-    def table_order_compare(table_1: Table, table_2: Table) -> int:
+    def table_order_compare(self, table_1: Table, table_2: Table) -> int:
         """ Compare function to compare two tables by their order status
 
         Args:
@@ -63,4 +63,12 @@ class RestaurantManagerHandler():
         """
         return sum([i.state_value for i in table_1.orders]) - sum([i.state_value for i in table_2.orders])
     
-   
+    def jsonify_tables(self, table_list : list[Table]) -> dict:
+        """ Creates a dictionary containing the id, availability string, table
+        limit and occupied boolean of the table  
+
+        Returns:
+            Dict: A dictionary containing the id, availability string, table
+        limit and occupied boolean of the table  
+        """
+        return {"tables": [table.jsonify() for table in table_list]}
