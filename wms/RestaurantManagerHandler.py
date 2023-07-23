@@ -137,25 +137,42 @@ class RestaurantManagerHandler():
             members sorted by their login status
         """
         staff_list = [i for i in self.user_handler.users if i.__class__ in [WaitStaff, KitchenStaff, Manager]]
-        sorted_list = sorted(staff_list, key=lambda user: len(user.__class__.__name__))
-        return self.jsonify_user_position(sorted_list)
+        sorted_list = sorted(staff_list, key=lambda user: (not user.status, len(user.__class__.__name__)))
+        return self.jsonify_user_status(sorted_list)
     
     def jsonify_user_position(self, user_list: list[User]) -> dict:
-        """ Creates a dictionary containing the id, availability string, table
-        limit, occupied boolean and the state and order_id of lowest order
-        status of the table (ignoring deleted orders)
+        """ Creates a dictionary containing the id, first name, last name and
+        position of the staff member.
 
         Args:
             user_list (list[User]): List of users to jsonify
 
         Returns:
-            Dict: A dictionary containing the id, availability string, table
-        limit, occupied boolean and the state and order_id of lowest order
-        status of the table (ignoring deleted orders)
+            Dict: A dictionary containing the id, first name, last name and
+        position of the staff member.
         """
         user_info = []
         for user in user_list:
             user_dict = user.jsonify()
             user_dict.pop("password")
+            user_info.append(user_dict)
+        return {"staff": user_info}
+    
+    def jsonify_user_status(self, user_list: list[User]) -> dict:
+        """ Creates a dictionary containing the id, first name, last name,
+        position and login status of the staff member.
+
+        Args:
+            user_list (list[User]): List of users to jsonify
+
+        Returns:
+            Dict: A dictionary containing the id, first name, last name and
+        position of the staff member.
+        """
+        user_info = []
+        for user in user_list:
+            user_dict = user.jsonify()
+            user_dict.pop("password")
+            user_dict["logged in"] = user.status
             user_info.append(user_dict)
         return {"staff": user_info}

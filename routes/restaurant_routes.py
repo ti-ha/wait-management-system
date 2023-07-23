@@ -41,3 +41,15 @@ def sort_staff_position(current_user):
         None,
         backend.restaurant_manager_handler.staff_sort_position
     )
+
+@restaurant_blueprint.route('/restaurant/staff/status', methods=['GET'], endpoint='sort_staff_status')
+@token_required
+def sort_staff_status(current_user):
+    """ Sorts restaurant staff members by status """
+    if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+    
+    return call(
+        None,
+        backend.restaurant_manager_handler.staff_sort_status
+    )
