@@ -134,7 +134,14 @@ class Table:
         
         self.__orders.remove(order)
 
-    def jsonify(self):
+    def jsonify(self) -> dict:
+        """ Creates a dictionary containing the id, availability string, table
+        limit and occupied boolean of the table  
+
+        Returns:
+            Dict: A dictionary containing the id, availability string, table
+        limit and occupied boolean of the table  
+        """
         return {
             "id": self.id,
             "availability": self.get_open_seats(),
