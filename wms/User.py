@@ -17,6 +17,7 @@ class User:
         self.__firstname = firstname
         self.__lastname = lastname
         self.__password = generate_password_hash(password)
+        self.__logged_in = False
 
     # Getters
     @property
@@ -36,12 +37,31 @@ class User:
     
     @property
     def password_hash(self) -> str:
+        """ Returns user's hashed password """
         return self.__password
     
-    def check_password(self, password):
+    @property
+    def status(self) -> bool:
+        """ Returns user's logged in status """
+        return self.__logged_in
+    
+    @status.setter
+    def status(self, status: bool):
+        """ Sets the user's logged in status """
+        self.__logged_in = status
+    
+    def check_password(self, password) -> bool:
+        """ Check given password against hashed password """
         return check_password_hash(self.password_hash, password)
     
-    def jsonify(self):
+    def jsonify(self) -> dict:
+        """ Creates a dictionary containing the id, first name, last name, 
+        usertype and password of all the users.
+
+        Returns:
+            Dict: Creates a dictionary containing the id, first name, last name, 
+        usertype and password of all the users.
+        """
         return {"id": self.id,
                 "first_name": self.firstname,
                 "last_name": self.lastname,

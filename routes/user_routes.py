@@ -63,9 +63,8 @@ def add_user():
 
 @user_blueprint.route('/user/login', methods=['POST'], endpoint='login')
 def login():
-    """logs in a user given firstname, lastname and password. returns an auth
-    token
-    sets the session user to the userID
+    """ Logs in a user given firstname, lastname and password. Returns an auth
+    token and sets the session user to the userID
     
     JSON FORMAT:
     {
@@ -95,4 +94,29 @@ def login():
                                             current_app.config['SECRET_KEY'],
                                             algorithm="HS256"
                             )}), 200
+        return jsonify({"error": "Incorrect credentials"}), 400
+    
+@user_blueprint.route('/user/logout', methods=['POST'], endpoint='logout')
+def logout():
+    """ Logs out a user given a firstname and lastname
+    
+    JSON FORMAT:
+    {
+        "first_name": string
+        "last_name": string
+    }
+    """
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        obj = request.json
+        try:
+            first_name = obj["first_name"]
+            last_name = obj["last_name"]
+        except KeyError:
+            return jsonify({"error": "Incorrect fields"}), 400
+        
+        user = backend.user_handler.logout(first_name, last_name)
+        if user:
+            # TODO: Token logout 
+            return jsonify({"message": "Successfully logged out"}), 200
         return jsonify({"error": "Incorrect credentials"}), 400

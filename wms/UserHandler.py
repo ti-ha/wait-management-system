@@ -40,7 +40,18 @@ class UserHandler():
         
         self.__users.append(new_user)
 
-    def login(self, firstname, lastname, password):
+    def login(self, firstname, lastname, password) -> User | None:
+        """ Attempts to log in the user
+
+        Args:
+            firstname (String): First name of the user
+            lastname (String): Last name of the user
+            password (String): Password of the user
+
+        Returns:
+            User: Returns the user if log in was successful, otherwise 
+            returns None
+        """
         usermatch = next((i for i in self.users 
                      if i.firstname == firstname and i.lastname == lastname), None)
         
@@ -48,14 +59,28 @@ class UserHandler():
             success = usermatch.check_password(password)
         else:
             return None
-        
-        if success:
-            return usermatch
-        
-        else:
-            return None
-        
     
+        usermatch.status = True
+        return usermatch if success else None
+        
+    def logout(self, firstname, lastname) -> bool:
+        """ Attempts to log out the user
+
+        Args:
+            firstname (String): First name of the user
+            lastname (String): Last name of the user
+
+        Returns:
+            Bool: Returns true if logout was successful, false otherwise
+        """
+        usermatch = next((i for i in self.users 
+                     if i.firstname == firstname and i.lastname == lastname), None)
+        
+        if usermatch is not None:
+            usermatch.status = False
+            return True
+        return False
+
     def jsonify(self) -> dict:
         """ Creates a dictionary of all the users and their first name, last 
         name and class type. 
