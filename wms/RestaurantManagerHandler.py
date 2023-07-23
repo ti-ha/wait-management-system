@@ -1,5 +1,7 @@
-from wms import RestaurantManager, MenuHandler, TableHandler, UserHandler, Table
-from wms.Order import State
+from wms import (
+    RestaurantManager, MenuHandler, TableHandler, UserHandler, Table, User, 
+    WaitStaff, KitchenStaff, Manager
+)
 from functools import cmp_to_key
 
 class RestaurantManagerHandler():
@@ -85,6 +87,9 @@ class RestaurantManagerHandler():
         limit and occupied boolean of the table that have been sorted by table 
         limit 
 
+        Args:
+            table_list (list[Table]): List of tables to jsonify
+
         Returns:
             Dict: A dictionary containing the id, availability string, table
         limit and occupied boolean of the table that have been sorted by table
@@ -96,6 +101,9 @@ class RestaurantManagerHandler():
         """ Creates a dictionary containing the id, availability string, table
         limit, occupied boolean and the state and order_id of lowest order
         status of the table (ignoring deleted orders)
+
+        Args:
+            table_list (list[Table]): List of tables to jsonify
 
         Returns:
             Dict: A dictionary containing the id, availability string, table
@@ -109,3 +117,45 @@ class RestaurantManagerHandler():
             table_dict["order_id"] = self.get_min_order_state(table)[2]
             table_info.append(table_dict)
         return {"tables": table_info}
+    
+    def staff_sort_position(self) -> dict:
+        """ Sorts the staff members by their position
+
+        Returns:
+            Dict: A dictionary containing information about all the staff 
+            members sorted by their position
+        """
+        staff_list = [i for i in self.user_handler.users if i.__class__ in [WaitStaff, KitchenStaff, Manager]]
+        sorted_list = sorted(staff_list, key=lambda user: len(user.__class__.__name__))
+        return self.jsonify_user_position(sorted_list)
+    
+    def staff_sort_status(self) -> dict:
+        """ Sorts the staff members by their login status
+
+        Returns:
+            Dict: A dictionary containing information about all the staff 
+            members sorted by their login status
+        """
+        staff_list = [i for i in self.user_handler.users if i.__class__ in [WaitStaff, KitchenStaff, Manager]]
+        sorted_list = sorted(staff_list, key=lambda user: len(user.__class__.__name__))
+        return self.jsonify_user_position(sorted_list)
+    
+    def jsonify_user_position(self, user_list: list[User]) -> dict:
+        """ Creates a dictionary containing the id, availability string, table
+        limit, occupied boolean and the state and order_id of lowest order
+        status of the table (ignoring deleted orders)
+
+        Args:
+            user_list (list[User]): List of users to jsonify
+
+        Returns:
+            Dict: A dictionary containing the id, availability string, table
+        limit, occupied boolean and the state and order_id of lowest order
+        status of the table (ignoring deleted orders)
+        """
+        user_info = []
+        for user in user_list:
+            user_dict = user.jsonify()
+            user_dict.pop("password")
+            user_info.append(user_dict)
+        return {"staff": user_info}
