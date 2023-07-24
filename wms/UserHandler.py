@@ -31,12 +31,16 @@ class UserHandler():
         if user_lookup:
             raise ValueError("UserHandler: add_user(): User with exact credentials already exists")
         
-        match user_type:
-            case "Customer":      new_user = Customer(firstname, lastname, password)
-            case "KitchenStaff": new_user = KitchenStaff(firstname, lastname, password)
-            case "WaitStaff":    new_user = WaitStaff(firstname, lastname, password)
-            case "Manager":       new_user = Manager(firstname, lastname, password)
-            case _:               return None
+        if user_type == "Customer": 
+            new_user = Customer(firstname, lastname, password)
+        elif user_type == "KitchenStaff":
+            new_user = KitchenStaff(firstname, lastname, password)
+        elif user_type == "WaitStaff":
+            new_user = WaitStaff(firstname, lastname, password)
+        elif user_type == "Manager":
+            new_user = Manager(firstname, lastname, password)
+        else: 
+            return None
         
         self.__users.append(new_user)
 

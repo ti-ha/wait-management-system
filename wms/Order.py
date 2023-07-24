@@ -49,21 +49,20 @@ class State:
         Returns:
             str: Current state as a string
         """
-        match self.__state:
-            case States.DELETED:
-                return "deleted"
-            case States.ORDERED:
-                return "ordered"
-            case States.COOKING:
-                return "cooking"
-            case States.READY:
-                return "ready"
-            case States.SERVED:
-                return "served"
-            case States.COMPLETED:
-                return "completed"
-            case _:
-                raise ValueError("State outside bounds")
+        if self.__state   == States.DELETED:
+            return "deleted"
+        elif self.__state == States.ORDERED:
+            return "ordered"
+        elif self.__state == States.COOKING:
+            return "cooking"
+        elif self.__state == States.READY:
+            return "ready"
+        elif self.__state == States.SERVED:
+            return "served"
+        elif self.__state == States.COMPLETED:
+            return "completed"
+        else:
+            raise ValueError("State outside bounds")
             
     @property
     def value(self) -> int:
@@ -75,21 +74,20 @@ class State:
         Returns:
             int: The state value
         """
-        match self.__state:
-            case States.DELETED:
-                return -1
-            case States.ORDERED:
-                return 0
-            case States.COOKING:
-                return 1
-            case States.READY:
-                return 2
-            case States.SERVED:
-                return 3
-            case States.COMPLETED:
-                return 4
-            case _:
-                raise ValueError("State outside bounds")
+        if self.__state   == States.DELETED:
+            return -1
+        elif self.__state == States.ORDERED:
+            return 0
+        elif self.__state == States.COOKING:
+            return 1
+        elif self.__state == States.READY:
+            return 2
+        elif self.__state == States.SERVED:
+            return 3
+        elif self.__state == States.COMPLETED:
+            return 4
+        else:
+            raise ValueError("State outside bounds")
 
 class Order:
 
