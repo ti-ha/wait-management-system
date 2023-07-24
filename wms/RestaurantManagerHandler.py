@@ -1,26 +1,25 @@
 from wms import (
-    RestaurantManager, MenuHandler, TableHandler, UserHandler, Table, User, 
-    WaitStaff, KitchenStaff, Manager
+    RestaurantManager, TableHandler, UserHandler, Table, User, WaitStaff, 
+    KitchenStaff, Manager
 )
 from functools import cmp_to_key
 
 class RestaurantManagerHandler():
-    def __init__(self, restaurant_manager, menu_handler, table_handler, user_handler):
+    def __init__(self, restaurant_manager, menu_handler, order_handler, table_handler, user_handler):
         """ Constructor for the RestaurantManagerHandler Class """
         self.__rm = restaurant_manager
-        self.__menu_handler = menu_handler
         self.__table_handler = table_handler
         self.__user_handler = user_handler
+
+        self.__menu_handler = menu_handler
+        self.__order_handler = order_handler
+        self.__menu_handler.attach(self)
+        self.__order_handler.attach(self)
 
     @property
     def rm(self) -> RestaurantManager:
         """ Returns the ServiceRequestManager object """
         return self.__rm
-    
-    @property
-    def menu_handler(self) -> MenuHandler:
-        """ Returns the User Handler object """
-        return self.__menu_handler
     
     @property
     def table_handler(self) -> TableHandler:
@@ -31,7 +30,16 @@ class RestaurantManagerHandler():
     def user_handler(self) -> UserHandler:
         """ Returns the User Handler object """
         return self.__user_handler
-    
+
+    def menu_update(self, menu_item: str):
+        self.rm.add_menu_item(menu_item)
+
+    def order_update(self, menu_items):
+        self.rm.increase_count(menu_items)
+
+    def get_menu_stats(self):
+        return self.rm.jsonify()
+
     def tables_sort_size(self) -> dict:
         """ Sorts the tables by their table size
 

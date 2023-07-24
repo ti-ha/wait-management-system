@@ -1,10 +1,17 @@
-from wms import Menu, Category, MenuItem, Deal
+from wms import Menu, Category, MenuItem, Deal, RestaurantManagerHandler
 
 class MenuHandler():
     def __init__(self, menu: Menu):
         """ Constructor for the MenuHandler Class """
         self.__menu = menu
-    
+        self.__observers = []
+
+    def attach(self, observer: RestaurantManagerHandler):
+        self.__observers.append(observer)
+
+    def notify(self, menu_item: str):
+        for observer in self.__observers:
+            observer.menu_update(menu_item)
     
     def get_category(self, category) -> Category:
         """ Gets a given category from the menu
@@ -82,6 +89,7 @@ class MenuHandler():
             raise ValueError("Menu item with this name already exists")
         item = MenuItem(name, price, imageurl)
         self.__menu.get_category(category).add_menu_item(item)
+        self.notify(name)
 
     def add_deal(self, discount, menu_items) -> None:
         """ Adds a deal to the menu
