@@ -1,4 +1,5 @@
 from wms import Menu, Category, MenuItem, Deal, RestaurantManagerHandler
+from collections import OrderedDict
 
 class MenuHandler():
     def __init__(self, menu: Menu):
@@ -278,16 +279,17 @@ class MenuHandler():
         """
         return [i.jsonify() for i in self.__menu.deals]
 
-    def jsonify_stats(self, statistics: dict):
-        """ Converts a dictionary with menu item ids as keys to a dictionary
-        with menu item names that corresponded to the ids
+    def jsonify_stats(self, statistics: list):
+        """ Converts a list with tuples of menu item ids and order frequency to 
+        a dictionary with menu item names that corresponded to the ids as keys
+        and frequency as values
 
         Returns:
-            Dict: a Dictionary with menu item ids as keys to a dictionary
-        with menu item names that corresponded to the ids
+            Dict: A dictionary with menu item names and frequencies as key value
+            pairs
         """
-        menu_item_stats = {}
-        for key in statistics.keys():
-            menu_item_stats[self.get_menu_item_by_id(key).name] = statistics[key]
+        menu_item_stats = OrderedDict()
+        for item in statistics:
+            menu_item_stats[self.get_menu_item_by_id(item[0]).name] = item[1]
 
         return menu_item_stats

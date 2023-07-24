@@ -1,6 +1,6 @@
 from wms import (
-    RestaurantManager, TableHandler, UserHandler, Table, User, WaitStaff, 
-    KitchenStaff, Manager
+    RestaurantManager, TableHandler, MenuHandler, OrderManagerHandler, 
+    UserHandler, Table, User, WaitStaff, KitchenStaff, Manager
 )
 from functools import cmp_to_key
 
@@ -30,6 +30,16 @@ class RestaurantManagerHandler():
     def user_handler(self) -> UserHandler:
         """ Returns the User Handler object """
         return self.__user_handler
+    
+    @property
+    def menu_handler(self) -> MenuHandler:
+        """ Returns the User Handler object """
+        return self.__menu_handler
+    
+    @property
+    def order_handler(self) -> OrderManagerHandler:
+        """ Returns the User Handler object """
+        return self.__order_handler
 
     def menu_add(self, menu_item_id: int):
         """ Adds a statistic dictionary key """
@@ -44,7 +54,12 @@ class RestaurantManagerHandler():
         self.rm.increase_count(menu_items)
 
     def get_menu_stats(self):
-        return self.__menu_handler.jsonify_stats(self.rm.jsonify())
+        """ Gets menu statistics with menu item names as keys """
+        return self.menu_handler.jsonify_stats(self.rm.jsonify())
+    
+    def get_menu_stats_reversed(self):
+        """ Gets menu statistics but with unpopular first """
+        return self.menu_handler.jsonify_stats(self.rm.jsonify(reverse=False))
 
     def tables_sort_size(self) -> dict:
         """ Sorts the tables by their table size

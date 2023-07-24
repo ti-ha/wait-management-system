@@ -1,4 +1,3 @@
-
 class RestaurantManager:
     def __init__(self):
         """ Constructor for the RestaurantManager Class """
@@ -52,12 +51,16 @@ class RestaurantManager:
                 raise ValueError("RestaurantManager: increase_count(): Menu Item is not in the statistics")
             self.statistics[item] += 1
 
-    def jsonify(self) -> dict:
-        """ Creates a dictionary for all the menu items and the number of menu
-        item orders
+    def jsonify(self, reverse = True) -> list:
+        """ Creates a list of all the menu items and the number of menu item 
+        orders
+
+        Args:
+            reverse (bool, optional): Boolean to sort by ascending or descending
+            frequency. Defaults to True.
 
         Returns:
-            dict: A dictionary for all the menu items and the number of menu
-        item orders
+            list: A list of all the menu items and the number of menu item 
+        orders
         """
-        return dict(sorted(self.statistics.items(), key=lambda item:item[1], reverse=True))
+        return sorted(self.statistics.items(), key=lambda item:item[1], reverse=reverse)
