@@ -5,7 +5,6 @@ from flask import request, jsonify
 
 restaurant_blueprint = Blueprint("restaurant", __name__)
 
-### Your routes here
 @restaurant_blueprint.route('/restaurant/table/size', methods=['GET'], endpoint='sort_table_size')
 @token_required
 def sort_table_size(current_user):
@@ -52,4 +51,16 @@ def sort_staff_status(current_user):
     return call(
         None,
         backend.restaurant_manager_handler.staff_sort_status
+    )
+
+@restaurant_blueprint.route('/restaurant/menu/stats', methods=['GET'], endpoint='get_menu_stats')
+@token_required
+def get_menu_stats(current_user):
+    """ Sorts restaurant staff members by status """
+    if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+    
+    return call(
+        None,
+        backend.restaurant_manager_handler.get_menu_stats
     )
