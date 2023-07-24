@@ -9,6 +9,7 @@ CORS(app)
 
 SECRET_KEY = "RomanticCheese"
 app.config['SECRET_KEY'] = SECRET_KEY
+app.json.sort_keys = False
 
 app.register_blueprint(menu_routes.menu_blueprint)
 app.register_blueprint(table_routes.table_blueprint)
