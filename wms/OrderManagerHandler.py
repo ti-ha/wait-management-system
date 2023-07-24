@@ -11,9 +11,11 @@ class OrderManagerHandler():
         self.__observers = []
 
     def attach(self, observer: RestaurantManagerHandler):
+        """ Attach observer to order manager handler """
         self.__observers.append(observer)
 
     def notify(self, menu_items: list):
+        """ Notify observers of a new order """
         for observer in self.__observers:
             observer.order_update(menu_items)
 

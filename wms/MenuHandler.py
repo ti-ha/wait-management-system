@@ -7,9 +7,11 @@ class MenuHandler():
         self.__observers = []
 
     def attach(self, observer: RestaurantManagerHandler):
+        """ Attach observer to menu handler """
         self.__observers.append(observer)
 
     def notify(self, menu_item: str):
+        """ Notify observers of a change to the menu """
         for observer in self.__observers:
             observer.menu_update(menu_item)
     

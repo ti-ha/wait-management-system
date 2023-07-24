@@ -32,9 +32,11 @@ class RestaurantManagerHandler():
         return self.__user_handler
 
     def menu_update(self, menu_item: str):
+        """ Update statistic dictionary keys """
         self.rm.add_menu_item(menu_item)
 
     def order_update(self, menu_items):
+        """ Update statistic dictionary values """
         self.rm.increase_count(menu_items)
 
     def get_menu_stats(self):
