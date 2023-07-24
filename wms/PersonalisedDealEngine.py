@@ -6,6 +6,7 @@ class PersonalisedDealEngine():
     def __init__(self, user_handler, order_manager_handler):
         self.__user_handler = user_handler
         self.__order_manager_handler = order_manager_handler
+        self.__data = self.load_data()
 
     @property
     def user_handler(self) -> UserHandler:
@@ -18,6 +19,17 @@ class PersonalisedDealEngine():
     @property
     def menu_handler(self) -> MenuHandler:
         return self.order_manager_handler.menu_handler
+    
+    @property
+    def data(self) -> dict:
+        return self.__data
+    
+    @data.setter
+    def data(self, data: dict):
+        self.__data = data
+    
+    def reload_data(self):
+        self.data = self.load_data()
     
     def load_data(self):
         ratings_dict = {
@@ -58,7 +70,7 @@ class PersonalisedDealEngine():
     
     def dataset(self):
         # creates a Panda dataframe from the data in load_data()
-        dataframe = pd.DataFrame(self.load_data())
+        dataframe = pd.DataFrame(self.data)
         reader = Reader(rating_scale=(0,5))
         data = Dataset.load_from_df(dataframe[["user", "item", "rating"]], reader)
 
@@ -76,12 +88,13 @@ class PersonalisedDealEngine():
     
     def generate_prediction(self, user, id):
         # Feeds the dataset into the algorithm
+        self.reload_data()
+
         training_set = self.dataset().build_full_trainset()
         algorithm = self.algorithm()
 
         algorithm.fit(training_set)
         prediction = algorithm.predict(user, id)
-        
         return prediction.est
 
 
