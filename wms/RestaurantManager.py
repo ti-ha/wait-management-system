@@ -10,7 +10,7 @@ class RestaurantManager:
         return self.__statistics
 
     def add_menu_item(self, menu_item_id: int):
-        """ Adds menu item name to statistics dictionary
+        """ Adds menu item id to statistics dictionary
 
         Args:
             menu_item_id (Integer): Menu item to be added to the dictionary
@@ -22,6 +22,20 @@ class RestaurantManager:
             self.statistics[menu_item_id] = 0
         else:
             raise ValueError("RestaurantManager: add_menu_item(): Menu Item is already in the statistics")
+        
+    def delete_menu_item(self, menu_item_id: int):
+        """ Deletes a menu item id to statistics dictionary
+
+        Args:
+            menu_item_id (Integer): Menu item to be removed from the dictionary
+
+        Raises:
+            ValueError: Raised if menu item is not in the dictionary
+        """
+        if menu_item_id in self.statistics:
+            self.statistics.pop(menu_item_id)
+        else:
+            raise ValueError("RestaurantManager: delete_menu_item(): Menu Item is not in the statistics")
         
     def increase_count(self, menu_items: list[int]):
         """ Increments count of a menu item key in the dictionary for tracking

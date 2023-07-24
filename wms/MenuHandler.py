@@ -10,10 +10,15 @@ class MenuHandler():
         """ Attach observer to menu handler """
         self.__observers.append(observer)
 
-    def notify(self, menu_item_id: int):
-        """ Notify observers of a change to the menu """
+    def notify_add(self, menu_item_id: int):
+        """ Notify observers of a new addition to the menu """
         for observer in self.__observers:
-            observer.menu_update(menu_item_id)
+            observer.menu_add(menu_item_id)
+
+    def notify_delete(self, menu_item_id: int):
+        """ Notify observers of an item deletion to the menu """
+        for observer in self.__observers:
+            observer.menu_delete(menu_item_id)
     
     def get_category(self, category) -> Category:
         """ Gets a given category from the menu
@@ -91,7 +96,7 @@ class MenuHandler():
             raise ValueError("Menu item with this name already exists")
         item = MenuItem(name, price, imageurl)
         self.__menu.get_category(category).add_menu_item(item)
-        self.notify(item.id)
+        self.notify_add(item.id)
 
     def add_deal(self, discount, menu_items) -> None:
         """ Adds a deal to the menu
@@ -134,7 +139,8 @@ class MenuHandler():
             category (String): Category that menu item belongs to
             name (String): Name of the menu item
         """
-        self.__menu.get_category(category).remove_menu_item(name)
+        removed_id = self.__menu.get_category(category).remove_menu_item(name)
+        self.notify_delete(removed_id)
 
     def update_category(self, category, name, visible):
         """ Updates category name and/or visibility

@@ -31,9 +31,13 @@ class RestaurantManagerHandler():
         """ Returns the User Handler object """
         return self.__user_handler
 
-    def menu_update(self, menu_item_id: int):
-        """ Update statistic dictionary keys """
+    def menu_add(self, menu_item_id: int):
+        """ Adds a statistic dictionary key """
         self.rm.add_menu_item(menu_item_id)
+
+    def menu_delete(self, menu_item_id: int):
+        """ Removes a statistic dictionary key """
+        self.rm.delete_menu_item(menu_item_id)
 
     def order_update(self, menu_items: list[int]):
         """ Update statistic dictionary values """
