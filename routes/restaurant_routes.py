@@ -56,7 +56,7 @@ def sort_staff_status(current_user):
 @restaurant_blueprint.route('/restaurant/menu/stats', methods=['GET'], endpoint='get_menu_stats')
 @token_required
 def get_menu_stats(current_user):
-    """ Sorts restaurant staff members by status """
+    """ Prints out menu item order frequency statistics """
     if current_user.__class__ is not Manager:
             return jsonify({"error": "Must be Manager to make this request"}), 401
     
