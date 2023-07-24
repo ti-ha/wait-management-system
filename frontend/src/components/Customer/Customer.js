@@ -177,6 +177,31 @@ export default function Customer() {
         }).filter(order => order.quantity > 0));
     };
 
+    const sendAssistanceRequest = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/servicerequests/queue`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    subject: "",
+                    summary: "",
+                    table_id: tableNumber - 1 
+                })
+            });
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            console.log('Assistance request sent successfully');
+        } catch (error) {
+            console.error('Error sending assistance request:', error);
+        }
+    }
+    
+
     return (
         <div className="customerPage">
             <header className="customerPageHeader">
@@ -288,8 +313,12 @@ export default function Customer() {
                         </Button>
                     </div>
 
-                    <Button variant="contained" onClick={fetchBill}>
+                    <Button style={{ marginTop: "10px" }} variant="contained" onClick={fetchBill}>
                         View Bill
+                    </Button>
+
+                    <Button style={{ marginTop: "10px" }} variant="contained" onClick={sendAssistanceRequest}>
+                        Request Assistance
                     </Button>
                 </div>
             </div>
