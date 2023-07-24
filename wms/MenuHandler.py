@@ -10,10 +10,10 @@ class MenuHandler():
         """ Attach observer to menu handler """
         self.__observers.append(observer)
 
-    def notify(self, menu_item: str):
+    def notify(self, menu_item_id: int):
         """ Notify observers of a change to the menu """
         for observer in self.__observers:
-            observer.menu_update(menu_item)
+            observer.menu_update(menu_item_id)
     
     def get_category(self, category) -> Category:
         """ Gets a given category from the menu
@@ -91,7 +91,7 @@ class MenuHandler():
             raise ValueError("Menu item with this name already exists")
         item = MenuItem(name, price, imageurl)
         self.__menu.get_category(category).add_menu_item(item)
-        self.notify(name)
+        self.notify(item.id)
 
     def add_deal(self, discount, menu_items) -> None:
         """ Adds a deal to the menu
@@ -272,4 +272,16 @@ class MenuHandler():
         """
         return [i.jsonify() for i in self.__menu.deals]
 
+    def jsonify_stats(self, statistics: dict):
+        """ Converts a dictionary with menu item ids as keys to a dictionary
+        with menu item names that corresponded to the ids
 
+        Returns:
+            Dict: a Dictionary with menu item ids as keys to a dictionary
+        with menu item names that corresponded to the ids
+        """
+        menu_item_stats = {}
+        for key in statistics.keys():
+            menu_item_stats[self.get_menu_item_by_id(key).name] = statistics[key]
+
+        return menu_item_stats

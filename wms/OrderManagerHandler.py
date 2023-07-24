@@ -14,7 +14,7 @@ class OrderManagerHandler():
         """ Attach observer to order manager handler """
         self.__observers.append(observer)
 
-    def notify(self, menu_items: list):
+    def notify(self, menu_items: list[int]):
         """ Notify observers of a new order """
         for observer in self.__observers:
             observer.order_update(menu_items)
@@ -147,7 +147,7 @@ class OrderManagerHandler():
             deals.append(deal)
 
         self.__order_manager.add_order(Order(menu_items, deals), table)
-        self.notify([i.name for i in menu_items])
+        self.notify(menu_items_ids)
 
     def change_order_state(self, order_id: int):
         """ Changes the state of an order

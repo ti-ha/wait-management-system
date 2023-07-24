@@ -31,16 +31,16 @@ class RestaurantManagerHandler():
         """ Returns the User Handler object """
         return self.__user_handler
 
-    def menu_update(self, menu_item: str):
+    def menu_update(self, menu_item_id: int):
         """ Update statistic dictionary keys """
-        self.rm.add_menu_item(menu_item)
+        self.rm.add_menu_item(menu_item_id)
 
-    def order_update(self, menu_items):
+    def order_update(self, menu_items: list[int]):
         """ Update statistic dictionary values """
         self.rm.increase_count(menu_items)
 
     def get_menu_stats(self):
-        return self.rm.jsonify()
+        return self.__menu_handler.jsonify_stats(self.rm.jsonify())
 
     def tables_sort_size(self) -> dict:
         """ Sorts the tables by their table size
