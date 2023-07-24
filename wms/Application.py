@@ -43,3 +43,8 @@ class Application():
     def restaurant_manager_handler(self) -> RestaurantManagerHandler:
         """ Returns the RestaurantManagerHandler object."""
         return self.__restaurant_manager_handler
+    
+    @property
+    def pd_engine(self) -> PersonalisedDealEngine:
+        """ Returns the Personalised Deal Engine """
+        return self.__pd_engine

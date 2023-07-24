@@ -17,6 +17,7 @@ app.register_blueprint(order_routes.order_blueprint)
 app.register_blueprint(user_routes.user_blueprint)
 app.register_blueprint(service_routes.service_blueprint)
 app.register_blueprint(restaurant_routes.restaurant_blueprint)
+app.register_blueprint(personalised_deal_routes.deals_blueprint)
 
 @app.before_request
 def assign_session_id():
