@@ -21,5 +21,6 @@ from .TableHandler import TableHandler
 from .UserHandler import UserHandler
 from .SRMHandler import SRMHandler
 from .RestaurantManagerHandler import RestaurantManagerHandler
+from .PersonalisedDealEngine import PersonalisedDealEngine
 from .Application import Application
 

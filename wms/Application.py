@@ -11,6 +11,7 @@ class Application():
         self.__menu_handler = MenuHandler(Menu())
         self.__srm_handler = SRMHandler(ServiceRequestManager(), self.user_handler)
         self.__om_handler = OrderManagerHandler(OrderManager(), self.table_handler, self.menu_handler)
+        self.__pd_engine = PersonalisedDealEngine(self.user_handler, self.om_handler)
         self.__restaurant_manager_handler = RestaurantManagerHandler(RestaurantManager(), self.menu_handler)
 
     @property
