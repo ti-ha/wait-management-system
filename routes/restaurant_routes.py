@@ -64,3 +64,15 @@ def get_menu_stats(current_user):
         None,
         backend.restaurant_manager_handler.get_menu_stats
     )
+
+@restaurant_blueprint.route('/restaurant/menu/stats/reversed', methods=['GET'], endpoint='get_menu_stats_reversed')
+@token_required
+def get_menu_stats_reversed(current_user):
+    """ Prints out menu item order frequency statistics in reverse order """
+    if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+    
+    return call(
+        None,
+        backend.restaurant_manager_handler.get_menu_stats_reversed
+    )
