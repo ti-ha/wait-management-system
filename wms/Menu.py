@@ -1,6 +1,7 @@
 from __future__ import annotations
 from difflib import SequenceMatcher as sm
 from wms import Category, MenuItem, Deal
+from .PersonalisedDeal import PersonalisedDeal
 
 class Menu():
 
@@ -128,6 +129,19 @@ class Menu():
         
         self.__deals.remove(deal)
         return deal
+    
+    def user_has_personalised(self, user):
+        for i in self.deals:
+            if isinstance(i, PersonalisedDeal):
+                if i.user == user and i.is_expired():
+                    self.remove_deal(i)
+
+        for i in self.deals:
+            if isinstance(i, PersonalisedDeal):
+                if i.user == user:
+                    return True
+                
+        return False
     
     def menu_items(self) -> list[MenuItem]:
         """ Returns a list of menu items

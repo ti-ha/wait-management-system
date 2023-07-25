@@ -1,4 +1,5 @@
 from wms import OrderManager, TableHandler, MenuHandler, Order
+from .PersonalisedDeal import PersonalisedDeal
 
 class OrderManagerHandler():
     def __init__(self, order_manager: OrderManager,
@@ -8,6 +9,18 @@ class OrderManagerHandler():
         self.__order_manager = order_manager
         self.__table_handler = table_handler
         self.__menu_handler = menu_handler
+
+    @property
+    def order_manager(self):
+        return self.__order_manager
+    
+    @property
+    def table_handler(self):
+        return self.__table_handler
+    
+    @property
+    def menu_handler(self):
+        return self.__menu_handler
 
     def get_table_orders(self, table_id: int) -> dict:
         """ Acquires the table orders of a particular table
@@ -22,7 +35,7 @@ class OrderManagerHandler():
             Dict: A dictionary of all the table orders of a particular table
         """
         try:
-            orders = self.__order_manager.get_table_orders(table_id)
+            orders = self.order_manager.get_table_orders(table_id)
         except ValueError as exc:
             raise ValueError("table_id does not exist in map") from exc
 
@@ -42,7 +55,7 @@ class OrderManagerHandler():
         Returns:
             Dict: A dictionary of the order to be found
         """
-        order = self.__order_manager.get_order(order_id)
+        order = self.order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
 
@@ -60,7 +73,7 @@ class OrderManagerHandler():
         Returns:
             Dict: A dictionary of the order's state
         """
-        order = self.__order_manager.get_order(order_id)
+        order = self.order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
 
@@ -69,7 +82,7 @@ class OrderManagerHandler():
         }
 
     def get_menu_item_state(self, order_id: int, menu_item_id: int) -> dict:
-        order = self.__order_manager.get_order(order_id)
+        order = self.order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
 
@@ -90,7 +103,7 @@ class OrderManagerHandler():
             Dict: A dictionary of the order's bill price and whether it is paid
             or not
         """
-        order = self.__order_manager.get_order(order_id)
+        order = self.order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
         if order.bill is None:
@@ -101,7 +114,7 @@ class OrderManagerHandler():
             "paid": order.bill.paid
         }
 
-    def add_order(self, table_id: int, menu_items_ids: list[int], deals_ids: list[int]):
+    def add_order(self, table_id: int, menu_items_ids: list[int], deals_ids: list[int], user=None):
         """ Adds an order to the list of orders
 
         Args:
@@ -117,26 +130,28 @@ class OrderManagerHandler():
             menu item
             ValueError: Raised if a deal_id does not correspond to any deal
         """
-        table = self.__table_handler.id_to_table(table_id)
+        table = self.table_handler.id_to_table(table_id)
 
         if table is None:
             raise ValueError("OrderManagerHandler: add_order(): Table does not exist")
 
         menu_items = []
         for i in menu_items_ids:
-            item = self.__menu_handler.get_menu_item_by_id(i)
+            item = self.menu_handler.get_menu_item_by_id(i)
             if item is None:
                 raise ValueError("OrderManagerHandler: add_order(): MenuItem does not exist")
             menu_items.append(item)
 
         deals = []
         for i in deals_ids:
-            deal = self.__menu_handler.get_deals_by_id(i)
+            deal = self.menu_handler.get_deals_by_id(i)
             if deal is None:
                 raise ValueError("OrderManagerHandler: add_order(): Deal does not exist")
             deals.append(deal)
+            if isinstance(deal, PersonalisedDeal):
+                self.menu_handler.menu.remove_deal(deal)
 
-        self.__order_manager.add_order(Order(menu_items, deals), table)
+        self.order_manager.add_order(Order(menu_items, deals, user), table)
 
     def change_order_state(self, order_id: int):
         """ Changes the state of an order
@@ -147,10 +162,10 @@ class OrderManagerHandler():
         Raises:
             ValueError: Raised if order_id does not match any of the orders
         """
-        order = self.__order_manager.get_order(order_id)
+        order = self.order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
-        self.__order_manager.change_state(order_id)
+        self.order_manager.change_state(order_id)
 
     def change_menu_item_state(self, order_id: int, menu_item_id: int):
         """ Changes the state of a menu_item within an order
@@ -162,7 +177,7 @@ class OrderManagerHandler():
         Raises:
             ValueError: Order id provided does not exist
         """
-        order = self.__order_manager.get_order(order_id)
+        order = self.order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
         order.change_menu_item_state_by_id(menu_item_id)
@@ -179,12 +194,12 @@ class OrderManagerHandler():
             correspond to a table or order object respectively
             ValueError: Raised if the order is not assigned to the table
         """
-        table = self.__table_handler.id_to_table(table_id)
-        order = self.__order_manager.get_order(order_id)
+        table = self.table_handler.id_to_table(table_id)
+        order = self.order_manager.get_order(order_id)
         if table is None or order is None:
             raise ValueError("OrderManagerHandler: remove_order(): either table or order do not exist")
         try:
-            self.__order_manager.remove_order(order, table)
+            self.order_manager.remove_order(order, table)
         except ValueError as exc:
             raise ValueError(
                 "OrderManagerHandler: remove_order(): Order either doesn't exist or is not assigned to a table"
@@ -200,21 +215,21 @@ class OrderManagerHandler():
             ValueError: Raised if order_id does not match any of the orders
             ValueError: Raised if the order does not apart of any table
         """
-        order = self.__order_manager.get_order(int(order_id))
+        order = self.order_manager.get_order(int(order_id))
         if order is None:
             raise ValueError("Not a valid order_id")
 
         # tID = -1
 
         t_id = next(
-            (i for i in self.__order_manager.map if int(order_id) in self.__order_manager.map[i]), 
+            (i for i in self.order_manager.map if int(order_id) in self.order_manager.map[i]), 
             None
         )
 
         if t_id is None:
             raise ValueError("Order is not in a table. How did you manage that?")
 
-        self.__order_manager.remove_order(order, self.__table_handler.id_to_table(t_id))
+        self.order_manager.remove_order(order, self.table_handler.id_to_table(t_id))
 
     def calculate_and_return_bill(self, table_id: int) -> dict:
         """ Calculates and returns the current bill
@@ -230,15 +245,15 @@ class OrderManagerHandler():
             Dict: A dictionary of the bill's price and whether or not it has
             been paid
         """
-        if self.__table_handler.id_to_table(table_id).bill == None:
+        if self.table_handler.id_to_table(table_id).bill == None:
             try:
-                bill = self.__order_manager.calculate_table_bill(table_id)
+                bill = self.order_manager.calculate_table_bill(table_id)
             except Exception as exc:
                 raise exc
         else:
-            return self.__table_handler.id_to_table(table_id).bill.jsonify()
+            return self.table_handler.id_to_table(table_id).bill.jsonify()
 
-        self.__table_handler.id_to_table(table_id).bill = bill
+        self.table_handler.id_to_table(table_id).bill = bill
         return {"price": bill.price, "paid": bill.paid}
 
     def pay_table_bill(self, table_id: int):
@@ -252,7 +267,7 @@ class OrderManagerHandler():
             ValueError: Raised if the table's bill has not been created yet
             ValueError: Raised if an order of the table has not been served yet
         """
-        table = self.__table_handler.id_to_table(table_id)
+        table = self.table_handler.id_to_table(table_id)
         if table is None:
             raise ValueError("Not a valid table_id")
 
@@ -280,7 +295,7 @@ class OrderManagerHandler():
             ValueError: Raised if the order's bill has not been created yet
             e: Raised if the order has not been served yet
         """
-        order = self.__order_manager.get_order(order_id)
+        order = self.order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
         if order.bill is None:
@@ -297,7 +312,7 @@ class OrderManagerHandler():
             dict: Dictionary containing a list of all of the orders of
         each individual table
         """
-        return self.__order_manager.jsonify()
+        return self.order_manager.jsonify()
 
     def jsonify_orders(self) -> dict:
         """ Creates a dictionary with a list containing all of the current orders
@@ -305,4 +320,4 @@ class OrderManagerHandler():
         Returns:
             dict: Dictionary containing a list of all the current orders
         """
-        return self.__order_manager.orders_json()
+        return self.order_manager.orders_json()

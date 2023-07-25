@@ -46,17 +46,16 @@ class State:
         Returns:
             str: Current state as a string
         """
-        match self.__state:
-            case States.DELETED:
-                return "deleted"
-            case States.READY:
-                return "ready"
-            case States.INPROGRESS:
-                return "in_progress"
-            case States.COMPLETED:
-                return "completed"
-            case _:
-                raise ValueError("State outside bounds")
+        if self.__state   == States.DELETED:
+            return "deleted"
+        elif self.__state == States.READY: 
+            return "ready"
+        elif self.__state == States.INPROGRESS:
+            return "in_progress"
+        elif self.__state == States.COMPLETED:
+            return "completed"
+        else:
+            raise ValueError("State outside bounds")
             
     @property
     def value(self) -> int:
@@ -68,17 +67,16 @@ class State:
         Returns:
             int: The state value
         """
-        match self.__state:
-            case States.DELETED:
-                return -1
-            case States.READY:
-                return 0
-            case States.INPROGRESS:
-                return 1
-            case States.COMPLETED:
-                return 2
-            case _:
-                raise ValueError("State outside bounds")
+        if self.__state   == States.DELETED:
+            return -1
+        elif self.__state == States.READY: 
+            return 0
+        elif self.__state == States.INPROGRESS:
+            return 1
+        elif self.__state == States.COMPLETED:
+            return 2
+        else:
+            raise ValueError("State outside bounds")
 
 
 class ServiceRequest:

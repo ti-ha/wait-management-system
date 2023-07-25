@@ -5,6 +5,9 @@ class MenuHandler():
         """ Constructor for the MenuHandler Class """
         self.__menu = menu
     
+    @property
+    def menu(self) -> Menu:
+        return self.__menu
     
     def get_category(self, category) -> Category:
         """ Gets a given category from the menu
