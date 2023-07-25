@@ -38,7 +38,7 @@ class OrderManager:
         Returns:
             Order: Item of type Order based off provided ID
         """
-        return next(([i for i in self.orders if i.id == order_ID]), None)
+        return next((i for i in self.orders if i.id == order_ID), None)
     
     def get_table_from_order(self, order_ID) -> Table:
         """ Given an order ID, finds the table that the order belongs to

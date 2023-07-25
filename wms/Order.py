@@ -3,6 +3,7 @@ import itertools
 from enum import Enum
 from .Bill import Bill
 from .Deal import Deal
+from .PersonalisedDeal import PersonalisedDeal
 from .MenuItem import MenuItem
 
 class States(Enum):
@@ -217,6 +218,12 @@ class Order:
 
         if deal in self.__deals:
             raise ValueError("Order: add_deal(): Deal already exists")
+        
+        if isinstance(deal, PersonalisedDeal):
+            if deal.is_expired():
+                raise ValueError("Order: add_deal(): Deal has expired")
+            elif deal.user != self.customer:
+                raise ValueError("Order: add_deal(): That is not your deal")
 
         self.deals.append(deal)
 

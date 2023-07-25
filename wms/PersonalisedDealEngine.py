@@ -1,8 +1,23 @@
 from wms import OrderManagerHandler, UserHandler,  MenuHandler
+from .PersonalisedDeal import PersonalisedDeal
 import pandas as pd
 from surprise import Dataset, Reader, KNNWithMeans
+import warnings
+from random import choice
+
+
+# A user-controlled variable to allow the user to control how many deals get
+# returned to the user.
+MAX_DEALS = 3
+
+# Discounts are not determined algorithmically so you have to set bounds for
+# this yourself. The reason being that it is completely arbitrary and up to the
+# store to decide how much of a discount they wish to offer.
+MIN_DISCOUNT = 0.1
+MAX_DISCOUNT = 0.3
 
 class PersonalisedDealEngine():
+
     def __init__(self, user_handler, order_manager_handler):
         self.__user_handler = user_handler
         self.__order_manager_handler = order_manager_handler
@@ -88,14 +103,63 @@ class PersonalisedDealEngine():
     
     def generate_prediction(self, user, id):
         # Feeds the dataset into the algorithm
-        self.reload_data()
 
+        # This function prints a thing because of the library being used. I have
+        # tried EVERYTHING to stop it from printing but I can't. We just have to
+        # live with the consequences. It's someone else's bug, the arg for
+        # turning it off just doesn't work.
         training_set = self.dataset().build_full_trainset()
         algorithm = self.algorithm()
 
         algorithm.fit(training_set)
-        prediction = algorithm.predict(user, id)
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            prediction = algorithm.predict(user, id)
+            if w and issubclass(w[0].category, RuntimeWarning):
+                return 0
+        
         return prediction.est
+    
+    def generate_top_predictions(self, user):
+        # make sure the data is up to date
+        self.reload_data()
+
+        # sort by top N
+        if len(self.menu_handler.menu.menu_items()) >= MAX_DEALS + 1:
+            n = MAX_DEALS
+        else:
+            n = len(self.menu_handler.menu.menu_items()) + 1
+
+        predictions = sorted([(i.id, self.generate_prediction(user, i.id)) 
+                       for i in self.menu_handler.menu.menu_items()], 
+                       reverse=True,
+                       key = lambda x: x[1])[:n]
+        
+        return predictions
+    
+    def make_deals(self, user):
+        if self.menu_handler.menu.user_has_personalised(user):
+            return [i.jsonify() for i in self.menu_handler.menu.deals 
+                    if isinstance(i, PersonalisedDeal) and i.user == user]
+
+        deals = [
+            PersonalisedDeal(
+                choice(range(int(MIN_DISCOUNT*100), int(MAX_DISCOUNT*100), 5))/100,
+                self.menu_handler.menu.menu_item_lookup(i[0]),
+                user
+                )
+                for i in self.generate_top_predictions(user)
+        ]
+
+        for i in deals:
+            self.menu_handler.menu.add_deal(i)
+
+        return [i.jsonify() for i in deals]
+    
+
+
+
 
 
 

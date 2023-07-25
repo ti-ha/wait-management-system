@@ -2,6 +2,7 @@ from .Bill import Bill
 from .Category import Category
 from .Customer import Customer
 from .Deal import Deal
+from .PersonalisedDeal import Deal
 from .KitchenStaff import KitchenStaff
 from .Manager import Manager
 from .Menu import Menu

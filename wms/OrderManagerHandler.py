@@ -1,4 +1,5 @@
 from wms import OrderManager, TableHandler, MenuHandler, Order
+from .PersonalisedDeal import PersonalisedDeal
 
 class OrderManagerHandler():
     def __init__(self, order_manager: OrderManager,
@@ -147,6 +148,8 @@ class OrderManagerHandler():
             if deal is None:
                 raise ValueError("OrderManagerHandler: add_order(): Deal does not exist")
             deals.append(deal)
+            if isinstance(deal, PersonalisedDeal):
+                self.menu_handler.menu.remove_deal(deal)
 
         self.order_manager.add_order(Order(menu_items, deals, user), table)
 
