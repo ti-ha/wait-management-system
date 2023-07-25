@@ -261,6 +261,13 @@ class MenuHandler():
     def jsonify_menu_item(self, category, name) -> dict:
         """ Creates a dictionary for a specific menu_item in a menu
 
+        Args:
+            category (String): Category in the menu
+            name (String): Specific menu item in the category
+
+        Raises:
+            KeyError: Raised if menu item is not found in the category
+
         Returns:
             Dict: A dictionary for a specific menu_item in a menu
         """
@@ -279,10 +286,14 @@ class MenuHandler():
         """
         return [i.jsonify() for i in self.__menu.deals]
 
-    def jsonify_stats(self, statistics: list):
+    def jsonify_stats(self, statistics: list[tuple]):
         """ Converts a list with tuples of menu item ids and order frequency to 
         a dictionary with menu item names that corresponded to the ids as keys
         and frequency as values
+
+        Args:
+            Statistics (List[Tuple]): List of tuples of menu items ids to order
+            frequency 
 
         Returns:
             Dict: A dictionary with menu item names and frequencies as key value
@@ -291,5 +302,46 @@ class MenuHandler():
         menu_item_stats = OrderedDict()
         for item in statistics:
             menu_item_stats[self.get_menu_item_by_id(item[0]).name] = item[1]
+
+        return menu_item_stats
+
+    def jsonify_stats_full(self, statistics: dict):
+        """ Recreates the 2D dictionary structure of full menu statistics with
+        all menu item id values converted into their proper menu item names
+
+        Args:
+            Statistics (Dict): 2D dictionary where each key is a menu item id,
+            and the key value is another dictionary relating to frequency of 
+            menu items ordered with the menu item specified by the key
+
+        Returns:
+            Dict: A 2D dictionary with menu item names and the number of orders
+            with other menu items as key value pairs
+        """
+        menu_item_stats = OrderedDict()
+        for key in statistics.keys():
+            key_dict = {}
+            for item in statistics[key]:
+                key_dict[self.get_menu_item_by_id(item).name] = statistics[key][item]
+            menu_item_stats[self.get_menu_item_by_id(key).name] = key_dict
+        return menu_item_stats
+    
+    def jsonify_frequent_pairs(self, statistics: list[tuple]):
+        """ Converts a list with tuples of menu item ids and order frequency to 
+        a dictionary with menu item names that corresponded to the ids as keys
+        and frequency as values
+
+        Args:
+            Statistics (List[Tuple]): List of tuples where each tuple contains
+            a menu item id and the id of the menu item that it gets ordered the
+            most with
+
+        Returns:
+            Dict: A dictionary with a menu item as a key and the its most 
+            frequent menu item pairing as its key value
+        """
+        menu_item_stats = OrderedDict()
+        for item in statistics:
+            menu_item_stats[self.get_menu_item_by_id(item[0]).name] = self.get_menu_item_by_id(item[1]).name
 
         return menu_item_stats

@@ -60,6 +60,14 @@ class RestaurantManagerHandler():
     def get_menu_stats_reversed(self):
         """ Gets menu statistics but with unpopular first """
         return self.menu_handler.jsonify_stats(self.rm.jsonify(reverse=False))
+    
+    def get_menu_stats_full(self):
+        """ Gets full 2D menu statistics """
+        return self.menu_handler.jsonify_stats_full(self.rm.jsonify_full())
+    
+    def get_menu_stats_pairs(self):
+        """ Gets most paired item for each menu item """
+        return self.menu_handler.jsonify_frequent_pairs(self.rm.jsonify_frequent_pair())
 
     def tables_sort_size(self) -> dict:
         """ Sorts the tables by their table size
