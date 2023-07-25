@@ -33,12 +33,12 @@ class RestaurantManagerHandler():
     
     @property
     def menu_handler(self) -> MenuHandler:
-        """ Returns the User Handler object """
+        """ Returns the Menu Handler object """
         return self.__menu_handler
     
     @property
     def order_handler(self) -> OrderManagerHandler:
-        """ Returns the User Handler object """
+        """ Returns the Order Manager Handler object """
         return self.__order_handler
 
     def menu_add(self, menu_item_id: int):
