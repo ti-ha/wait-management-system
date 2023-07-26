@@ -8,9 +8,7 @@ from routes import *
 app = Flask(__name__)
 CORS(app)
 
-SECRET_KEY = os.urandom(24)
-
-app.config['SECRET_KEY'] = SECRET_KEY
+app.config['SECRET_KEY'] = os.urandom(24)
 app.json.sort_keys = False
 
 app.register_blueprint(menu_routes.menu_blueprint)
