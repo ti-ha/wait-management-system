@@ -3,6 +3,7 @@ import itertools
 from enum import Enum
 from .Bill import Bill
 from .Deal import Deal
+from .PersonalisedDeal import PersonalisedDeal
 from .MenuItem import MenuItem
 
 class States(Enum):
@@ -49,21 +50,20 @@ class State:
         Returns:
             str: Current state as a string
         """
-        match self.__state:
-            case States.DELETED:
-                return "deleted"
-            case States.ORDERED:
-                return "ordered"
-            case States.COOKING:
-                return "cooking"
-            case States.READY:
-                return "ready"
-            case States.SERVED:
-                return "served"
-            case States.COMPLETED:
-                return "completed"
-            case _:
-                raise ValueError("State outside bounds")
+        if self.__state   == States.DELETED:
+            return "deleted"
+        elif self.__state == States.ORDERED:
+            return "ordered"
+        elif self.__state == States.COOKING:
+            return "cooking"
+        elif self.__state == States.READY:
+            return "ready"
+        elif self.__state == States.SERVED:
+            return "served"
+        elif self.__state == States.COMPLETED:
+            return "completed"
+        else:
+            raise ValueError("State outside bounds")
             
     @property
     def value(self) -> int:
@@ -75,28 +75,27 @@ class State:
         Returns:
             int: The state value
         """
-        match self.__state:
-            case States.DELETED:
-                return -1
-            case States.ORDERED:
-                return 0
-            case States.COOKING:
-                return 1
-            case States.READY:
-                return 2
-            case States.SERVED:
-                return 3
-            case States.COMPLETED:
-                return 4
-            case _:
-                raise ValueError("State outside bounds")
+        if self.__state   == States.DELETED:
+            return -1
+        elif self.__state == States.ORDERED:
+            return 0
+        elif self.__state == States.COOKING:
+            return 1
+        elif self.__state == States.READY:
+            return 2
+        elif self.__state == States.SERVED:
+            return 3
+        elif self.__state == States.COMPLETED:
+            return 4
+        else:
+            raise ValueError("State outside bounds")
 
 class Order:
 
     # Unique identifier starting from 0
     __id_iter = itertools.count()
 
-    def __init__(self, menu_items=None, deals=None):
+    def __init__(self, menu_items=None, deals=None, customer=None):
         """ Constructor for the Order class
 
         Args:
@@ -104,12 +103,14 @@ class Order:
             order. Defaults to None.
             deals (List[Deal], optional): Deals to be added to the order.
             Defaults to None.
+            customer (User, optional): The customer to be assigned to the order.
         """
         self.__id = next(Order.__id_iter)
         self.__bill = None
         self.__state = State()
         self.__deals = [deals] if isinstance(deals, Deal) else deals
         self.__menu_items_ids = itertools.count()
+        self.__customer = customer if customer else None
 
         # Perhaps there is a more pythonic way to do this
         if menu_items == None:
@@ -144,7 +145,12 @@ class Order:
     def deals(self) -> list[Deal]:
         """ Returns list of deals in the order """
         return self.__deals
-
+    
+    @property
+    def customer(self) -> int:
+        """ Returns the customer id assigned to the order"""
+        return self.__customer
+    
     @property
     def menu_items(self) -> list[MenuItem]:
         """ Returns list of menu items in the order """
@@ -212,6 +218,12 @@ class Order:
 
         if deal in self.__deals:
             raise ValueError("Order: add_deal(): Deal already exists")
+        
+        if isinstance(deal, PersonalisedDeal):
+            if deal.is_expired():
+                raise ValueError("Order: add_deal(): Deal has expired")
+            elif deal.user != self.customer:
+                raise ValueError("Order: add_deal(): That is not your deal")
 
         self.deals.append(deal)
 
@@ -377,7 +389,8 @@ class Order:
             "bill": bill,
             "state": self.state,
             "menu_items": self.jsonify_menu_item_states(),
-            "deals": [i.jsonify() for i in self.deals]
+            "deals": [i.jsonify() for i in self.deals],
+            "user": self.customer
         }
 
         if table_id is not None:

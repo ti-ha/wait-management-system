@@ -32,8 +32,13 @@ class ServiceRequestManager:
             subject (string): The subject field of the request
             summary (string): The summary field of the request
         """
-        self.queue.append(ServiceRequest(table, subject, summary))
-        self.history.append(self.queue[-1])
+        request_active = next((i for i in self.queue if i.table == table), None)
+        
+        if not request_active:
+            self.queue.append(ServiceRequest(table, subject, summary))
+            self.history.append(self.queue[-1])
+        else:
+            raise Exception("ServiceRequestManager: add_request(): A request is already active at this table")
 
     def get_request(self, id) -> ServiceRequest:
         """Gets a request from the queue that matches the id.

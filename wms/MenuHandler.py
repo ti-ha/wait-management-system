@@ -6,6 +6,10 @@ class MenuHandler():
         """ Constructor for the MenuHandler Class """
         self.__menu = menu
         self.__observers = []
+    
+    @property
+    def menu(self) -> Menu:
+        return self.__menu
 
     def attach(self, observer: RestaurantManagerHandler):
         """ Attach observer to menu handler """
