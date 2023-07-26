@@ -1,6 +1,6 @@
 from flask import Blueprint
 from wms import *
-from globals import backend, token_optional, token_required, call
+from middlewares import backend, token_optional, token_required, call
 from flask import request, session, jsonify
 
 order_blueprint = Blueprint("order", __name__)

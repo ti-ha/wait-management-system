@@ -1,6 +1,6 @@
 from flask import Blueprint
 from wms import *
-from globals import backend, token_optional, token_required, call
+from middlewares import backend, token_optional, token_required, call
 from flask import request, jsonify, session, current_app
 import jwt
 import datetime

@@ -1,6 +1,6 @@
 from flask import Blueprint
 from wms import *
-from globals import backend, call
+from middlewares import backend, call
 from flask import session
 
 deals_blueprint = Blueprint("deals", __name__)
