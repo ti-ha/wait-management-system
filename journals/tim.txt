@@ -113,3 +113,35 @@ frontend it still makes the most sense. By Tuesday we had completed all that was
 necessary for Sprint 2 (nothing outstanding, woohoo!), so I just focused on getting
 some rest before sprint 3 begins. I also pre-formatted our Retrospective B
 document so that we can blitz through that with relative ease.
+
+In the tailend of the week I started on ServiceRequests, getting close to
+completion.
+I also found out that Flask uses cookies for its sessions by default, meaning
+that what we'd learned earlier in the week about optional authentication was now
+redundant - We can remember who users are because we can make those cookies
+persist permanently, meaning that if someone goes away and comes back to the
+app, their cookie uuid remains the same.
+
+Week 9:
+This week our first meeting is on Wednesday at our tutorial, so there is little
+to do but get on with things. My primary tasks this week are ServiceRequests and
+PersonalisedDeals. I finished Service Requests on Sunday then fixed some
+requests made by the frontend to make it work better, then began doing some
+research on what would be required for Personalised Deals.
+
+As we were fairly ahead of schedule, I opted to go in a more challenging
+direction than I had initially told the team I would be prepared to go - at our
+Week 7 Saturday meeting I'd told them I didn't want to do a highly algorithmic
+approach cause I thought it'd be pretty daunting, but some research from earlier
+in the week revealed that an algorithm using item-based collaborative filtering
+would actually be very achievable due to tools readily available in python.
+
+By wednesday I had completed the algorithm and spent a day cleaning it up and
+improving efficiency - I'm really proud of the approach I took, definitely
+pushed me out of my comfort zone. In the meantime, Gordon has completed his work
+on Restaurant Manager, the database team is hard at work, and Sami is steadily
+implementing all the methods we provide in the frontend. No doubt, because
+we'reclose to being done, everyone is working overtime to reach the finish line
+quicker. The backend team is now mostly done with Sprint 3 leading into Week 9
+Wednesday. We may actually have enough time to do the report and do it well!
+Phew.
