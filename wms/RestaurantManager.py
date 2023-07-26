@@ -63,8 +63,9 @@ class RestaurantManager:
             key = sorted_menu_items[i]
             rest = sorted_menu_items[i + 1:]
             for item in rest:
-                self.statistics[key][item] += 1
-                self.statistics[item][key] += 1
+                if key is not item:
+                    self.statistics[key][item] += 1
+                    self.statistics[item][key] += 1
 
     def jsonify(self, reverse = True) -> list:
         """ Creates a list of all the menu items and the number of menu item 
