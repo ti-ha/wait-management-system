@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, session
 from flask_cors import CORS
-import uuid
+import uuid, os
 
 # import the API routes
 from routes import *
@@ -8,7 +8,8 @@ from routes import *
 app = Flask(__name__)
 CORS(app)
 
-SECRET_KEY = "RomanticCheese"
+SECRET_KEY = os.urandom(24)
+
 app.config['SECRET_KEY'] = SECRET_KEY
 app.json.sort_keys = False
 
