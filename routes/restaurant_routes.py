@@ -1,11 +1,10 @@
 from flask import Blueprint
 from wms import *
-from globals import backend, token_optional, token_required, call
-from flask import request, jsonify
+from globals import backend, token_required, call
+from flask import jsonify
 
 restaurant_blueprint = Blueprint("restaurant", __name__)
 
-### Your routes here
 @restaurant_blueprint.route('/restaurant/table/size', methods=['GET'], endpoint='sort_table_size')
 @token_required
 def sort_table_size(current_user):
@@ -52,4 +51,52 @@ def sort_staff_status(current_user):
     return call(
         None,
         backend.restaurant_manager_handler.staff_sort_status
+    )
+
+@restaurant_blueprint.route('/restaurant/menu/stats', methods=['GET'], endpoint='get_menu_stats')
+@token_required
+def get_menu_stats(current_user):
+    """ Prints out menu item order frequency statistics """
+    if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+    
+    return call(
+        None,
+        backend.restaurant_manager_handler.get_menu_stats
+    )
+
+@restaurant_blueprint.route('/restaurant/menu/stats/reversed', methods=['GET'], endpoint='get_menu_stats_reversed')
+@token_required
+def get_menu_stats_reversed(current_user):
+    """ Prints out menu item order frequency statistics in reverse order """
+    if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+    
+    return call(
+        None,
+        backend.restaurant_manager_handler.get_menu_stats_reversed
+    )
+
+@restaurant_blueprint.route('/restaurant/menu/stats/full', methods=['GET'], endpoint='get_menu_stats_full')
+@token_required
+def get_menu_stats_full(current_user):
+    """ Prints out full 2D structure of menu statistics """
+    if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+    
+    return call(
+        None,
+        backend.restaurant_manager_handler.get_menu_stats_full
+    )
+
+@restaurant_blueprint.route('/restaurant/menu/stats/pairs', methods=['GET'], endpoint='get_menu_stats_pairs')
+@token_required
+def get_menu_stats_pairs(current_user):
+    """ Prints out most frequently ordered item for each menu item """
+    if current_user.__class__ is not Manager:
+            return jsonify({"error": "Must be Manager to make this request"}), 401
+    
+    return call(
+        None,
+        backend.restaurant_manager_handler.get_menu_stats_pairs
     )

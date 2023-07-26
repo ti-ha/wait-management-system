@@ -1,4 +1,4 @@
-from wms import OrderManager, TableHandler, MenuHandler, Order
+from wms import OrderManager, TableHandler, MenuHandler, Order, RestaurantManagerHandler
 from .PersonalisedDeal import PersonalisedDeal
 
 class OrderManagerHandler():
@@ -9,6 +9,16 @@ class OrderManagerHandler():
         self.__order_manager = order_manager
         self.__table_handler = table_handler
         self.__menu_handler = menu_handler
+        self.__observers = []
+
+    def attach(self, observer: RestaurantManagerHandler):
+        """ Attach observer to order manager handler """
+        self.__observers.append(observer)
+
+    def notify(self, menu_items: list[int]):
+        """ Notify observers of a new order """
+        for observer in self.__observers:
+            observer.order_update(menu_items)
 
     @property
     def order_manager(self):
@@ -152,6 +162,7 @@ class OrderManagerHandler():
                 self.menu_handler.menu.remove_deal(deal)
 
         self.order_manager.add_order(Order(menu_items, deals, user), table)
+        self.notify(menu_items_ids)
 
     def change_order_state(self, order_id: int):
         """ Changes the state of an order

@@ -1,26 +1,25 @@
 from wms import (
-    RestaurantManager, MenuHandler, TableHandler, UserHandler, Table, User, 
-    WaitStaff, KitchenStaff, Manager
+    RestaurantManager, TableHandler, MenuHandler, OrderManagerHandler, 
+    UserHandler, Table, User, WaitStaff, KitchenStaff, Manager
 )
 from functools import cmp_to_key
 
 class RestaurantManagerHandler():
-    def __init__(self, restaurant_manager, menu_handler, table_handler, user_handler):
+    def __init__(self, restaurant_manager, menu_handler, order_handler, table_handler, user_handler):
         """ Constructor for the RestaurantManagerHandler Class """
         self.__rm = restaurant_manager
-        self.__menu_handler = menu_handler
         self.__table_handler = table_handler
         self.__user_handler = user_handler
+
+        self.__menu_handler = menu_handler
+        self.__order_handler = order_handler
+        self.__menu_handler.attach(self)
+        self.__order_handler.attach(self)
 
     @property
     def rm(self) -> RestaurantManager:
         """ Returns the ServiceRequestManager object """
         return self.__rm
-    
-    @property
-    def menu_handler(self) -> MenuHandler:
-        """ Returns the User Handler object """
-        return self.__menu_handler
     
     @property
     def table_handler(self) -> TableHandler:
@@ -32,6 +31,44 @@ class RestaurantManagerHandler():
         """ Returns the User Handler object """
         return self.__user_handler
     
+    @property
+    def menu_handler(self) -> MenuHandler:
+        """ Returns the Menu Handler object """
+        return self.__menu_handler
+    
+    @property
+    def order_handler(self) -> OrderManagerHandler:
+        """ Returns the Order Manager Handler object """
+        return self.__order_handler
+
+    def menu_add(self, menu_item_id: int):
+        """ Adds a statistic dictionary key """
+        self.rm.add_menu_item(menu_item_id)
+
+    def menu_delete(self, menu_item_id: int):
+        """ Removes a statistic dictionary key """
+        self.rm.delete_menu_item(menu_item_id)
+
+    def order_update(self, menu_items: list[int]):
+        """ Update statistic dictionary values """
+        self.rm.increase_count(menu_items)
+
+    def get_menu_stats(self):
+        """ Gets menu statistics with menu item names as keys """
+        return self.menu_handler.jsonify_stats(self.rm.jsonify())
+    
+    def get_menu_stats_reversed(self):
+        """ Gets menu statistics but with unpopular first """
+        return self.menu_handler.jsonify_stats(self.rm.jsonify(reverse=False))
+    
+    def get_menu_stats_full(self):
+        """ Gets full 2D menu statistics """
+        return self.menu_handler.jsonify_stats_full(self.rm.jsonify_full())
+    
+    def get_menu_stats_pairs(self):
+        """ Gets most paired item for each menu item """
+        return self.menu_handler.jsonify_frequent_pairs(self.rm.jsonify_frequent_pair())
+
     def tables_sort_size(self) -> dict:
         """ Sorts the tables by their table size
 

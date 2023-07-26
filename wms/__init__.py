@@ -12,7 +12,6 @@ from .OrderManager import OrderManager
 from .RestaurantManager import RestaurantManager
 from .ServiceRequest import ServiceRequest
 from .ServiceRequestManager import ServiceRequestManager
-from .Statistic import Statistic
 from .Table import Table
 from .User import User
 from .WaitStaff import WaitStaff
