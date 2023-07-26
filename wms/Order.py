@@ -116,10 +116,14 @@ class Order:
         if menu_items == None:
             self.__menu_items = []
         elif isinstance(menu_items, MenuItem):
+            if menu_items.visible == False:
+                raise ValueError("Order(): One or more menu_items is currently hidden")
             self.__menu_items = [{"menu_item": menu_items,
                                   "state": State(),
                                   "order_specific_id": next(self.__menu_items_ids)}]
         else:
+            if next((i for i in menu_items if i.visible == False), None) != None:
+                raise ValueError("Order(): One or more menu_items is currently hidden")
             self.__menu_items = [{"menu_item": m,
                                   "state": State(),
                                   "order_specific_id": next(self.__menu_items_ids)}
@@ -224,6 +228,8 @@ class Order:
                 raise ValueError("Order: add_deal(): Deal has expired")
             elif deal.user != self.customer:
                 raise ValueError("Order: add_deal(): That is not your deal")
+            elif next((i for i in deal.menu_items if i.visible == False) != None):
+                raise ValueError("Order: add_deal(): One or more menu_items is hidden")
 
         self.deals.append(deal)
 
@@ -260,6 +266,10 @@ class Order:
 
         if menu_item in self.__menu_items:
             raise ValueError("Order: add_menu_item(): MenuItem already exists")
+        
+        if menu_item.visible == False:
+            raise ValueError("Order: add_menu_item(): MenuItem is not visible")
+        
         self.__menu_items.append(menu_item)
 
     def get_menu_item_by_id(self, id) -> MenuItem:
@@ -292,10 +302,14 @@ class Order:
         Returns:
             Dict: New dictionary after deal discount is applied to menu items
         """
+        if deal.visible == False:
+            discount = 0
+        else:
+            discount = deal.discount
         for i in deal.menu_items:
             item = i.name
             if item in pricedict.keys():
-                pricedict[item] = pricedict[item] - (deal.discount*pricedict[item])
+                pricedict[item] = pricedict[item] - (discount*pricedict[item])
         return pricedict
 
     def calculate_bill(self) -> Bill:

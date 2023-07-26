@@ -138,7 +138,7 @@ class Menu():
 
         for i in self.deals:
             if isinstance(i, PersonalisedDeal):
-                if i.user == user:
+                if i.user == user and i.visible:
                     return True
                 
         return False

@@ -61,11 +61,12 @@ class PersonalisedDealEngine():
                 users.append(order.customer)
         
         # Generate a list of how many times each user has ordered each menu_item
-        user_frequencies = { user: {} for user in users }
+        user_frequencies = { user: { } for user in users }
         for user in users:
             for order in self.order_manager_handler.order_manager.history:
                 if order.customer == user:
-                    for menu_item in order.menu_items:
+                    menu_items = [i for i in order.menu_items if i.visible == True]
+                    for menu_item in menu_items:
                         if menu_item.id not in user_frequencies[user].keys():
                             user_frequencies[user][menu_item.id] = 1
                         else:
@@ -121,18 +122,21 @@ class PersonalisedDealEngine():
         
         return prediction.est
     
-    def generate_top_predictions(self, user):
+    def generate_top_predictions(self, user, coeff):
         # make sure the data is up to date
         self.reload_data()
 
         # sort by top N
-        if len(self.menu_handler.menu.menu_items()) >= MAX_DEALS + 1:
-            n = MAX_DEALS
+        if len(self.menu_handler.menu.menu_items()) >= MAX_DEALS:
+            n = MAX_DEALS - coeff
         else:
-            n = len(self.menu_handler.menu.menu_items()) + 1
+            n = len(self.menu_handler.menu.menu_items()) - coeff
+
+        if n == 0: return []
+        else: n += 1
 
         predictions = sorted([(i.id, self.generate_prediction(user, i.id)) 
-                       for i in self.menu_handler.menu.menu_items()], 
+                       for i in self.menu_handler.menu.menu_items() if i.visible], 
                        reverse=True,
                        key = lambda x: x[1])[:n]
         
@@ -140,8 +144,13 @@ class PersonalisedDealEngine():
     
     def make_deals(self, user):
         if self.menu_handler.menu.user_has_personalised(user):
-            return [i.jsonify() for i in self.menu_handler.menu.deals 
-                    if isinstance(i, PersonalisedDeal) and i.user == user]
+            preexisting = [i for i in self.menu_handler.menu.deals 
+                           if isinstance(i, PersonalisedDeal) and i.user == user]
+        else:
+            preexisting = []
+
+        if len(preexisting) == len([i for i in self.menu_handler.menu.menu_items() if i.visible]):
+            return [i.jsonify() for i in preexisting if i.visible]
 
         deals = [
             PersonalisedDeal(
@@ -149,13 +158,15 @@ class PersonalisedDealEngine():
                 self.menu_handler.menu.menu_item_lookup(i[0]),
                 user
                 )
-                for i in self.generate_top_predictions(user)
+                for i in self.generate_top_predictions(user, len(preexisting))
         ]
 
         for i in deals:
             self.menu_handler.menu.add_deal(i)
 
-        return [i.jsonify() for i in deals]
+        deals += preexisting
+
+        return [i.jsonify() for i in deals if i.visible]
     
 
 
