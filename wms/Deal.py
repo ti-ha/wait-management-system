@@ -56,6 +56,8 @@ class Deal():
     
     @property
     def visible(self) -> bool:
+        """ Returns if the deal should be visible based on the menu-items in the
+        deal"""
         return next((i for i in self.menu_items if i.visible == False), None) == None
     
     def add_menu_item(self, menu_item):
