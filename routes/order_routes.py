@@ -17,6 +17,29 @@ def get_order_manager(current_user):
         backend.om_handler.jsonify
     )
 
+@order_blueprint.route('/ordermanager/history', methods=['GET'], endpoint='get_history')
+@token_required
+def get_history(current_user):
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"})
+    
+    return call(
+        None,
+        backend.om_handler.jsonify_history
+    )
+
+@order_blueprint.route('/ordermanager/history/<order_id>', methods=['GET'], endpoint='get_order_from_history')
+@token_required
+def get_order_from_history(current_user, order_id):
+    if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
+        return jsonify({"error": "Must be a staff member to make this request"})
+    
+    return call(
+        None,
+        backend.om_handler.get_order_json_from_history,
+        int(order_id)
+    )
+
 @order_blueprint.route('/ordermanager/orders', methods=['GET'], endpoint='get_orders')
 @token_required
 def get_orders(current_user):

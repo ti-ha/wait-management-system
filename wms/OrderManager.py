@@ -29,7 +29,7 @@ class OrderManager:
         """ Returns dictionary linking tables to list of orders """
         return self.__map
     
-    def get_order(self, order_ID) -> Order:
+    def get_order(self, order_id) -> Order:
         """ Returns a specific order based off provided order ID
 
         Args:
@@ -38,7 +38,18 @@ class OrderManager:
         Returns:
             Order: Item of type Order based off provided ID
         """
-        return next((i for i in self.orders if i.id == order_ID), None)
+        return next((i for i in self.orders if i.id == order_id), None)
+    
+    def get_order_from_history(self, order_id) -> Order:
+        """Returns a specific order based off provided order ID from the history
+
+        Args:
+            order_id (int): ID number of order to be obtained
+
+        Returns:
+            Order: Item of type Order based off provided ID
+        """
+        return next((i for i in self.history if i.id == order_id), None)
     
     def get_table_from_order(self, order_ID) -> Table:
         """ Given an order ID, finds the table that the order belongs to

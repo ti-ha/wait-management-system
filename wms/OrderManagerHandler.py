@@ -177,6 +177,8 @@ class OrderManagerHandler():
         if order is None:
             raise ValueError("Not a valid order_id")
         self.order_manager.change_state(order_id)
+        if self.order_manager.get_order(order_id).state == "completed":
+            self.order_manager.orders.remove(self.order_manager.get_order(order_id))
 
     def change_menu_item_state(self, order_id: int, menu_item_id: int):
         """ Changes the state of a menu_item within an order
@@ -332,3 +334,19 @@ class OrderManagerHandler():
             dict: Dictionary containing a list of all the current orders
         """
         return self.order_manager.orders_json()
+    
+    def jsonify_history(self) -> dict:
+        """ Creates a dictionary with a list containing all orders in the
+        history
+
+        Returns:
+            dict: Dictionary containing a list of all orders in the history
+        """
+        return self.order_manager.history_json()
+    
+    def get_order_json_from_history(self, order_id):
+        json = self.order_manager.get_order_from_history(order_id).jsonify()
+        if json:
+            return json
+        else:
+            raise ValueError("OrderManagerHandler(): Order does not exist in history")
