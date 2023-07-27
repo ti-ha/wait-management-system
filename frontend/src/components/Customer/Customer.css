@@ -41,6 +41,29 @@
     background-color: #808080;
 }
 
+.personalisedDealBox {
+    border: 1px solid black;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    background-color: #ffcc00;  
+    max-width: 200px;
+}
+
+.personalisedDealBox:hover {
+    cursor: pointer;
+    background-color: #ffe066; 
+}
+
+.selectedPersonalisedDealBox {
+    border: 1px solid black;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    background-color: #808080; 
+    max-width: 200px;
+}
+
 .items {
     width: 50%;
     display: flex;

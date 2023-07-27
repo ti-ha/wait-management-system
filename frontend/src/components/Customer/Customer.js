@@ -20,6 +20,8 @@ export default function Customer() {
     const [orders, setOrders] = useState([]);
     const [billOrders, setBillOrders] = useState([]);
     const [isBillOpen, setIsBillOpen] = useState(false);
+    const [personalisedDeals, setPersonalisedDeals] = useState([]);
+
 
     const [searchInput, setSearchInput] = useState("");
     const [searchResults, setSearchResults] = useState(null);
@@ -81,10 +83,40 @@ export default function Customer() {
         fetchCategories();
     }, []);
 
+    useEffect(() => {
+        const fetchPersonalisedDeals = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/personalised/deals`);
+                if (!response.ok) { 
+                    const responseBody = await response.json();
+                    console.error('Server response:', responseBody); 
+                    throw new Error(`HTTP Error with status: ${response.status}`);
+                }
+                const data = await response.json();
+                setPersonalisedDeals(data);
+            } catch (error) {
+                console.error("Error fetching personalised deals:", error);
+            }
+        }
+        fetchPersonalisedDeals();
+    }, []);
+    
+
     const fetchItems = async (category) => {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
-        const data = await response.json();
-        setCurrentItems(data.menu_items);
+        let data;
+        if (category === 'Personalised Deals') {
+            data = personalisedDeals;
+            
+            // Extract all menu items from each deal
+            let allMenuItems = data.flatMap(deal => deal.menu_items);
+            console.log(`the personalised deals are:`, allMenuItems)
+            setCurrentItems(allMenuItems);
+        } else {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
+            data = await response.json();
+            console.log(' the normal items are: ', data)
+            setCurrentItems(data.menu_items);
+        }
     }
 
     const handleCategoryClick = (category) => {
@@ -200,6 +232,8 @@ export default function Customer() {
             console.error('Error sending assistance request:', error);
         }
     }
+
+
     
 
     return (
@@ -234,6 +268,12 @@ export default function Customer() {
                             <p>{category.name}</p>   
                         </div>
                     ))}
+                    <div 
+                        className={`${'Personalised Deals' === currentCategory ? "selectedPersonalisedDealBox" : "personalisedDealBox"}`}
+                        onClick={() => handleCategoryClick('Personalised Deals')}
+                    >
+                        <p>Personalised Deals</p>
+                    </div>
                 </div>
 
                 <div className="items">
