@@ -7,3 +7,4 @@ wms/__pycache__/MenuItem.cpython-311.pyc
 venv/Lib/
 venv/Scripts/*.exe
 frontend/.env
+routes/__pycache__

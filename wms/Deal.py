@@ -54,6 +54,12 @@ class Deal():
         """ Returns all menu items associated with the deal """
         return self.__menu_items
     
+    @property
+    def visible(self) -> bool:
+        """ Returns if the deal should be visible based on the menu-items in the
+        deal"""
+        return next((i for i in self.menu_items if i.visible == False), None) == None
+    
     def add_menu_item(self, menu_item):
         """ Adds a menu item to the deal.
 

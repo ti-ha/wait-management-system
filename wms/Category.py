@@ -153,7 +153,7 @@ class Category():
             session.execute(add_menu_item)
             session.commit()
 
-    def remove_menu_item(self, name) -> None:
+    def remove_menu_item(self, name) -> int:
         """ Removes a menu_item from the category
 
         Args:
@@ -161,20 +161,18 @@ class Category():
 
         Raises:
             ValueError: Raised if menu item does not exist in the category
+
+        Returns:
+            Integer: Id of the menu item that was removed
         """
-        if self.menu_item_by_name(name) is None:
+        removed_item = self.menu_item_by_name(name)
+        if removed_item is None:
             raise ValueError("Category: category.remove_menu_item(): not an existing menu item")
         
+        self.menu_items.remove(removed_item)
         self.remove_from_db(name)
-        self.menu_items.remove(self.menu_item_by_name(name))
 
-    def remove_from_db(self, name):
-        delete_menu_item = text(
-            f"""DELETE FROM menu_item WHERE _name = '{name}'""")
-           
-        with Session(self.__db_engine) as session:
-            session.execute(delete_menu_item)
-            session.commit()
+        return removed_item.id
         
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the id, name and list of menu items 

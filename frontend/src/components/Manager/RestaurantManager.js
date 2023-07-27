@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-
 import './RestaurantManager.css'
-import { Link } from 'react-router-dom';
-import { Button } from "@mui/material";
+import { useIsManager } from '../Hooks/useIsAuthorised.js';
+import AccessDenied from '../Common/AccessDenied.js';
+import Header from '../Common/Header.js';
 
 export default function RestaurantManager() {
 
@@ -30,35 +30,21 @@ export default function RestaurantManager() {
     const occupiedTables = tables.filter(table => table["is occupied"]);
     const availableTables = tables.filter(table => !table["is occupied"]);
 
+    // Ensure the user is authorised to access this page
+    const { isAuthorised, isLoading } = useIsManager();
+    const userType = localStorage.getItem('user_type');
+
+    if (isLoading) {
+        return null;
+    }
+
+    if (!isAuthorised) {
+        return <AccessDenied userType={userType}/>
+    }
+
     return (
         <>
-            <header className="restaurantManagerPageHeader">
-                    <div>
-                        <Link to="/menu-editor">
-                            <Button variant="contained">
-                                Menu Editor
-                            </Button>
-                        </Link>
-                        <Link to="/restaurant-manager">
-                            <Button variant="contained" disabled>
-                                Restaurant Manager
-                            </Button>
-                        </Link>
-                    </div>
-                    <div>
-                        <Link to="/staff">
-                            <Button variant="contained">
-                                Staff View
-                            </Button>
-                        </Link>
-                        <Link to="/">
-                            <Button variant="contained">
-                                Landing Page
-                            </Button>
-                        </Link>
-                    </div>
-            </header>
-
+            <Header userType={userType} currentPage="restaurant-manager" />
             <div className="restaurantManagerContainer">
                 <div className="restaurantManagerColumn">
                     <h2>Kitchen Staff</h2>

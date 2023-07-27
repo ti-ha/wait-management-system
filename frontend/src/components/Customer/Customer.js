@@ -3,8 +3,9 @@ import { Link, useParams } from 'react-router-dom';
 import ItemModal from "./ItemModal.js";
 import BillModal from "./BillModal.js";
 import './Customer.css'
-import { Button, Icon, IconButton } from "@mui/material";
+import { Button, IconButton, TextField } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material"
+import useDebounce from "../Hooks/useDebounce.js";
 
 
 export default function Customer() {
@@ -19,6 +20,42 @@ export default function Customer() {
     const [orders, setOrders] = useState([]);
     const [billOrders, setBillOrders] = useState([]);
     const [isBillOpen, setIsBillOpen] = useState(false);
+    const [personalisedDeals, setPersonalisedDeals] = useState([]);
+
+
+    const [searchInput, setSearchInput] = useState("");
+    const [searchResults, setSearchResults] = useState(null);
+    const debouncedSearchTerm = useDebounce(searchInput, 500);
+
+    useEffect(() => {
+        if (debouncedSearchTerm) {
+            fetchSearchResults(debouncedSearchTerm);
+        } else {
+            setSearchResults(null);
+        }
+    }, [debouncedSearchTerm]);
+
+    const fetchSearchResults = async (query) => {
+        console.log(`The query is ${query}`)
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/search?query=${query}`);
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log(`The search results are`, data)
+            setSearchResults(data);
+        } catch (error) {
+            console.error("Error searching menu:", error);
+        }
+    }
+
+    const handleSearchChange = (event) => {
+        setSearchInput(event.target.value);
+    }
+
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -31,8 +68,14 @@ export default function Customer() {
                 }
                 const data = await response.json();
                 setCategories(data);
-                setCurrentCategory(data[0].name);
-                fetchItems(data[0].name);
+                
+                // Find the first visible category
+                const firstVisibleCategory = data.find(category => category.visible);
+                if (firstVisibleCategory) {
+                    setCurrentCategory(firstVisibleCategory.name);
+                    fetchItems(firstVisibleCategory.name);
+                }
+
             } catch (error) {
                 console.error("Error fetching categories:", error);
             }
@@ -40,13 +83,45 @@ export default function Customer() {
         fetchCategories();
     }, []);
 
+    useEffect(() => {
+        const fetchPersonalisedDeals = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/personalised/deals`);
+                if (!response.ok) { 
+                    const responseBody = await response.json();
+                    console.error('Server response:', responseBody); 
+                    throw new Error(`HTTP Error with status: ${response.status}`);
+                }
+                const data = await response.json();
+                setPersonalisedDeals(data);
+            } catch (error) {
+                console.error("Error fetching personalised deals:", error);
+            }
+        }
+        fetchPersonalisedDeals();
+    }, []);
+    
+
     const fetchItems = async (category) => {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
-        const data = await response.json();
-        setCurrentItems(data.menu_items);
+        let data;
+        if (category === 'Personalised Deals') {
+            data = personalisedDeals;
+            
+            // Extract all menu items from each deal
+            let allMenuItems = data.flatMap(deal => deal.menu_items);
+            console.log(`the personalised deals are:`, allMenuItems)
+            setCurrentItems(allMenuItems);
+        } else {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
+            data = await response.json();
+            console.log(' the normal items are: ', data)
+            setCurrentItems(data.menu_items);
+        }
     }
 
     const handleCategoryClick = (category) => {
+        setSearchResults(null);
+        setSearchInput("");
         setCurrentCategory(category);
         fetchItems(category);
     };
@@ -58,11 +133,28 @@ export default function Customer() {
 
     const handleCloseModal = () => {
         setSelectedItem(null);
+        setQuantity(1);
     }
 
     const handleAddToOrder = () => {
-        const newOrder = { tableNumber, ...selectedItem, quantity };
-        setCurrentOrder(prevOrder => [...prevOrder, newOrder])
+        setCurrentOrder(prevOrder => {
+            // Check if the item already exists in the order
+            const existingOrderItem = prevOrder.find(order => order.id === selectedItem.id);
+            
+            // If the item exists, increment its quantity
+            if (existingOrderItem) {
+                return prevOrder.map(order => {
+                    if (order.id === selectedItem.id) {
+                        return { ...order, quantity: order.quantity + quantity };
+                    }
+                    return order;
+                });
+            }
+            
+            // If the item does not exist, add a new order item
+            const newOrder = { tableNumber, ...selectedItem, quantity };
+            return [...prevOrder, newOrder];
+        });
         handleCloseModal();
     }
 
@@ -117,6 +209,33 @@ export default function Customer() {
         }).filter(order => order.quantity > 0));
     };
 
+    const sendAssistanceRequest = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/servicerequests/queue`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    subject: "",
+                    summary: "",
+                    table_id: tableNumber - 1 
+                })
+            });
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            console.log('Assistance request sent successfully');
+        } catch (error) {
+            console.error('Error sending assistance request:', error);
+        }
+    }
+
+
+    
+
     return (
         <div className="customerPage">
             <header className="customerPageHeader">
@@ -130,8 +249,17 @@ export default function Customer() {
 
             <div className="customerContainer">
                 <div className="categories">
+                    <TextField
+                        value={searchInput}
+                        onChange={handleSearchChange}
+                        label="Search"
+                        variant="outlined"
+                        sx={{marginBottom: '50px'}}
+                    />
                     <h2>Menu</h2>
-                    {categories.map((category, index) => (
+                    {categories
+                        .filter(category => category.visible)
+                        .map((category, index) => (
                         <div 
                             key={index} 
                             className={`${category.name === currentCategory ? "selectedCategoryBox" : "categoryBox"}`}
@@ -140,23 +268,57 @@ export default function Customer() {
                             <p>{category.name}</p>   
                         </div>
                     ))}
+                    <div 
+                        className={`${'Personalised Deals' === currentCategory ? "selectedPersonalisedDealBox" : "personalisedDealBox"}`}
+                        onClick={() => handleCategoryClick('Personalised Deals')}
+                    >
+                        <p>Personalised Deals</p>
+                    </div>
                 </div>
 
                 <div className="items">
-                    <h2 className="itemsTitle">{currentCategory}</h2>
-                    <div className="itemContainer">
-                        {currentItems.map((item, index) => (
-                            <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
-                                <div className="imageContainer">
-                                    <img src={item.imageURL} alt={item.name}/> 
-                                </div>
-                                <div className="itemInfo">
-                                    <p>{item.name}</p>
-                                    <p>${item.price}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    {(currentItems.length > 0 && (!searchResults)) &&
+                        <h2 className="itemsTitle">{currentCategory}</h2>
+                    }
+                    {(searchResults && Object.keys(searchResults).length !== 0) &&
+                        <h2 className="itemsTitle">Search Results</h2>
+                    }
+                        <div className="itemContainer">
+                            {searchResults ? 
+                                (
+                                Object.keys(searchResults).length !== 0 ? 
+                                <>
+                                    {Object.values(searchResults).flat().map((item, index) => (
+                                        <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
+                                            <div className="imageContainer">
+                                                <img src={item.imageURL} alt={item.name}/> 
+                                            </div>
+                                            <div className="itemInfo">
+                                                <p>{item.name}</p>
+                                                <p>${item.price}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                                :
+                           
+                                <h2>No Results Found</h2>
+                         
+                            )   
+                            :
+                                currentItems.map((item, index) => (
+                                    <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
+                                        <div className="imageContainer">
+                                            <img src={item.imageURL} alt={item.name}/> 
+                                        </div>
+                                        <div className="itemInfo">
+                                            <p>{item.name}</p>
+                                            <p>${item.price}</p>
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                        </div>
                 </div>
 
                 <div className="orderContainer">
@@ -191,8 +353,12 @@ export default function Customer() {
                         </Button>
                     </div>
 
-                    <Button variant="contained" onClick={fetchBill}>
+                    <Button style={{ marginTop: "10px" }} variant="contained" onClick={fetchBill}>
                         View Bill
+                    </Button>
+
+                    <Button style={{ marginTop: "10px" }} variant="contained" onClick={sendAssistanceRequest}>
+                        Request Assistance
                     </Button>
                 </div>
             </div>

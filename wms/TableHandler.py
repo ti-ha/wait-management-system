@@ -38,11 +38,7 @@ class TableHandler():
             Dict: A dictionary containing the id, availability string, table
         limit and occupied boolean of the table  
         """
-        return {"tables": [{"id": table.id,
-                            "availability": table.get_open_seats(),
-                            "table limit": table.table_limit,
-                            "is occupied": table.occupied}
-                            for table in self.tables]}
+        return {"tables": [table.jsonify() for table in self.tables]}
 
     def id_to_table(self, id) -> Table:
         """ Converts a given id to a table object

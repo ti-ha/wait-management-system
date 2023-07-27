@@ -17,21 +17,45 @@ class UserHandler():
             firstname (String): First name of the user
             lastname (String): Last name of the user
             user_type (String): Class type of the user. Must be one of Customer,
-            Kitchen Staff, Wait Staff or Manager 
+            KitchenStaff, WaitStaff or Manager 
 
         Returns:
             None: Returns None if an invalid user_type was provided
         """
-        match user_type:
-            case "Customer":      new_user = Customer(firstname, lastname)
-            case "Kitchen Staff": new_user = KitchenStaff(firstname, lastname, password)
-            case "Wait Staff":    new_user = WaitStaff(firstname, lastname, password)
-            case "Manager":       new_user = Manager(firstname, lastname, password)
-            case _:               return None
+        user_lookup = next((i for i in self.users if 
+                       i.firstname == firstname and 
+                       i.lastname == lastname and 
+                       i.__class__.__name__ == user_type and 
+                       i.check_password(password) == True), None)
+        
+        if user_lookup:
+            raise ValueError("UserHandler: add_user(): User with exact credentials already exists")
+        
+        if user_type == "Customer": 
+            new_user = Customer(firstname, lastname, password)
+        elif user_type == "KitchenStaff":
+            new_user = KitchenStaff(firstname, lastname, password)
+        elif user_type == "WaitStaff":
+            new_user = WaitStaff(firstname, lastname, password)
+        elif user_type == "Manager":
+            new_user = Manager(firstname, lastname, password)
+        else: 
+            return None
         
         self.__users.append(new_user)
 
-    def login(self, firstname, lastname, password):
+    def login(self, firstname, lastname, password) -> User:
+        """ Attempts to log in the user
+
+        Args:
+            firstname (String): First name of the user
+            lastname (String): Last name of the user
+            password (String): Password of the user
+
+        Returns:
+            User: Returns the user if log in was successful, otherwise 
+            returns None
+        """
         usermatch = next((i for i in self.users 
                      if i.firstname == firstname and i.lastname == lastname), None)
         
@@ -39,14 +63,28 @@ class UserHandler():
             success = usermatch.check_password(password)
         else:
             return None
-        
-        if success:
-            return usermatch
-        
-        else:
-            return None
-        
     
+        usermatch.status = True
+        return usermatch if success else None
+        
+    def logout(self, firstname, lastname) -> bool:
+        """ Attempts to log out the user
+
+        Args:
+            firstname (String): First name of the user
+            lastname (String): Last name of the user
+
+        Returns:
+            Bool: Returns true if logout was successful, false otherwise
+        """
+        usermatch = next((i for i in self.users 
+                     if i.firstname == firstname and i.lastname == lastname), None)
+        
+        if usermatch is not None:
+            usermatch.status = False
+            return True
+        return False
+
     def jsonify(self) -> dict:
         """ Creates a dictionary of all the users and their first name, last 
         name and class type. 
