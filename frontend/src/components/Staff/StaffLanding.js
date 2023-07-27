@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import './StaffLanding.css'
 import { useIsStaffMember } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
@@ -22,18 +22,18 @@ export default function StaffLanding() {
     return (
         <>
             <Header userType={userType} currentPage="" />
-            <Box sx={{ m: 4, textAlign: 'center' }}>
-                <Typography variant="h4" gutterBottom>
-                    Welcome to the Staff Dashboard
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                   <br />Use the navigation bar at the top of the page to switch between the different staff views.
-                </Typography>
-                <Typography variant="body1">
-                    The <strong>Kitchen View</strong> shows current orders being prepared. <br /> 
-                    The <strong>Wait Staff View</strong> shows orders served and tables requiring assistance.
-                </Typography>
-            </Box>
+                <Grid container direction="column" justifyContent="center" alignItems="center">
+                    <Typography variant="h4" gutterBottom>
+                        Welcome to the Staff Dashboard
+                    </Typography>
+                    <Typography variant="body1" gutterBottom>
+                    <br />Use the navigation bar at the top of the page to switch between the different staff views.
+                    </Typography>
+                    <Typography variant="body1">
+                        The <strong>Kitchen View</strong> shows current orders being prepared. <br /> 
+                        The <strong>Wait Staff View</strong> shows orders served and tables requiring assistance.
+                    </Typography>
+                </Grid>
 
         </>
     )

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { useIsManager } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
 import Header from '../Common/Header.js';
@@ -20,13 +20,13 @@ export default function ManagerLanding() {
 
     return (
         <>
-            <Header userType={userType} currentPage="" />
-            <Box sx={{ m: 4, textAlign: 'center' }}>
+        <Header userType={userType} currentPage="" />
+            <Grid container direction="column" justifyContent="center" alignItems="center">
                 <Typography variant="h4" gutterBottom>
                     Welcome to the Manager Dashboard
                 </Typography>
                 <Typography variant="body1" gutterBottom>
-                   <br />Use the navigation bar at the top of the page to switch between the different management views.
+                    Use the navigation bar at the top of the page to switch between the different management views.
                 </Typography>
                 <Typography variant="body1">
                     The <strong>Menu Editor</strong> lets you update the restaurant menu.<br /> 
@@ -34,7 +34,7 @@ export default function ManagerLanding() {
                     The <strong>Kitchen View</strong> shows current orders being prepared. <br /> 
                     The <strong>Wait Staff View</strong> shows orders served and tables requiring assistance.
                 </Typography>
-            </Box>
+            </Grid>
         </>
     )
 }
