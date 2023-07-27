@@ -3,6 +3,31 @@ import { config } from 'dotenv';
 
 config();
 
+/*                              MOCK DATA DEFINITIONS               */
+
+// Create mock users
+// Define your users
+const users = [
+    {
+        first_name: "WaitStaff",
+        last_name: "One",
+        user_type: "WaitStaff",
+        password: "waitstaff"
+    },
+    {
+        first_name: "KitchenStaff",
+        last_name: "One",
+        user_type: "KitchenStaff",
+        password: "kitchenstaff"
+    },
+    {
+        first_name: "Manager",
+        last_name: "One",
+        user_type: "Manager",
+        password: "manager"
+    }
+]
+
 const imageLinks = {
     "Meatloaf": "https://www.spendwithpennies.com/wp-content/uploads/2022/12/1200-The-Best-Meatloaf-Recipe-SpendWithPennies.jpg",
     "Arancini Balls": "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/arancini_balls-db2b1df.jpg?quality=90&webp=true&resize=440,400",
@@ -50,59 +75,136 @@ const menuItems = [
     }
 ]
 
-let categoryPromises = categories.map((category) => {
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({ name: category })
-    }
-
-    return fetch(`${process.env.REACT_APP_API_URL}/menu/categories`, requestOptions)
-        .then(response => response.text())
-        .then(data => console.log('Response from server:', data))
-        .catch(error => console.error('Error:', error))
-});
-
-Promise.all(categoryPromises).then(() => {
-    menuItems.forEach(({category, items}) => {
-        items.forEach((item) => {
-            console.log(`Creating item: ${item.name} in category: ${category}`);
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json'},
-                body: JSON.stringify(item)
-            };
-        
-            fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`, requestOptions)
-                .then(response => response.text())
-                .then(data => console.log(data))
-                .catch(error => console.log('Error:', error));
-        });
-    });
-});
 
 
-const tables = [1, 2, 3];
 
-tables.forEach(async () => {
+
+/*                              API CALLS TO CREATE DUMMY DATA              */
+
+let authToken;
+
+const loginAsManager = async () => {
+    // your code here
     try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/table/add`, {
+        const manager = users.find(user => user.user_type === "Manager");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/user/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ table_limit: 3, orders: [] })
+            body: JSON.stringify(manager)
         });
-
+  
         if (!response.ok) { 
             const responseBody = await response.json();
             console.error('Server response:', responseBody); 
             throw new Error(`HTTP Error with status: ${response.status}`);
         }
-
+  
         const data = await response.json();
-        console.log("Successfully added table", data);
+        authToken = data.auth_token;
+        console.log(`Logged in as Manager: ${data.message}`);
     } catch (error) {
-        console.error("Error adding table:", error);
+        console.error("Error logging in as Manager:", error);
     }
-});
+};
+
+const main = async () => {
+    // Create users using the API endpoint
+    const userPromises = users.map(user => fetch(`${process.env.REACT_APP_API_URL}/user/add`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    }));
+
+    try {
+        const responses = await Promise.all(userPromises);
+        const jsonResponses = await Promise.all(responses.map(response => {
+            if (!response.ok) {
+                console.error('Server response:', response); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            return response.json();
+        }));
+        jsonResponses.forEach((data, index) => console.log(`Successfully added user ${users[index].first_name} ${users[index].last_name}`, data));
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+
+    await loginAsManager();
+
+    
+    let categoryPromises = categories.map((category) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `${authToken}`
+            },
+            body: JSON.stringify({ name: category })
+        }
+    
+        return fetch(`${process.env.REACT_APP_API_URL}/menu/categories`, requestOptions)
+            .then(response => response.text())
+            .then(data => console.log('Response from server:', data))
+            .catch(error => console.error('Error:', error))
+    });
+    
+    Promise.all(categoryPromises).then(() => {
+        menuItems.forEach(({category, items}) => {
+            items.forEach((item) => {
+                console.log(`Creating item: ${item.name} in category: ${category}`);
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `${authToken}`
+                    },
+                    body: JSON.stringify(item)
+                };
+            
+                fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`, requestOptions)
+                    .then(response => response.text())
+                    .then(data => console.log(data))
+                    .catch(error => console.log('Error:', error));
+            });
+        });
+    });
+    
+    
+    const tables = [1, 2, 3];
+    
+    tables.forEach(async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/table/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${authToken}`
+                },
+                body: JSON.stringify({ table_limit: 3, orders: [] })
+            });
+    
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+            console.log("Successfully added table", data);
+        } catch (error) {
+            console.error("Error adding table:", error);
+        }
+    });
+};
+
+
+
+
+
+main().catch(error => console.error(error));
+
+

@@ -1,56 +1,147 @@
 Week 1: 
 
 We had an initial meeting to discuss the assignment. We selected the Wait
-Management System as our topic. We began writing the proposal. I was assigned
-to elaborate on two of the existing systems. We had a discussion a few days after our 
-initial meeting to discuss who would work on which user stories. I did the ones pertaining to 
-Restaurant Management.
+Management System as our topic. We began writing the proposal. I was assigned to
+elaborate on two of the existing systems. We had a discussion a few days after
+our initial meeting to discuss who would work on which user stories. I did the
+ones pertaining to Restaurant Management.
 
 Week 2: 
-In our tutorial, we finished the writeup of the user stories, including 8 epic stories and their
-sub-stories. We have not given any thought to programming just yet but have assigned different people
-different tasks within the design of the program. I was assigned to work on the backend.
+
+In our tutorial, we finished the writeup of the user stories, including 8 epic
+stories and their sub-stories. We have not given any thought to programming just
+yet but have assigned different people different tasks within the design of the
+program. I was assigned to work on the backend.
 
 Week 3: 
-We finished the proposal in our Wednesday tutorial. I drew a rudimentary UML diagram which will serve as
-basic design of the backend.
-On Saturday, we met up to initialise the environments of the frontend, backend, data and REST API layer.
-I initialised and configured the Python virtual environment while Sami set up and walked the team through running
-the React.js frontend layer. As a team, we discussed how best to implement a Postgres data layer into our project.
+
+We finished the proposal in our Wednesday tutorial. I drew a rudimentary UML
+diagram which will serve as basic design of the backend. On Saturday, we met up
+to initialise the environments of the frontend, backend, data and REST API
+layer. I initialised and configured the Python virtual environment while Sami
+set up and walked the team through running the React.js frontend layer. As a
+team, we discussed how best to implement a Postgres data layer into our project.
 
 Week 4:
-Coding has begun! We split the team up (loosely) into 2 frontend and 3 backend developers.
-I am a backend developer for the project until I am needed elsewhere. Together with Gordon and Ravi, I wrote the
-basic class structure skeleton, including class files (one for each class), establishing inheritance where
-appropriate, and constructors. We don't really have a plan as to who is coding what part of the backend
-following a first-come-first-serve system. I coded the Menu subsystem and fixed some bugs that made their way in 
-when I was setting up. I also implemented the rest api for the menu classes, leaving only the database connection 
-functionality to be completed for that subsystem.
+
+Coding has begun! We split the team up (loosely) into 2 frontend and 3 backend
+developers. I am a backend developer for the project until I am needed
+elsewhere. Together with Gordon and Ravi, I wrote the basic class structure
+skeleton, including class files (one for each class), establishing inheritance
+where appropriate, and constructors. We don't really have a plan as to who is
+coding what part of the backend following a first-come-first-serve system. I
+coded the Menu subsystem and fixed some bugs that made their way in when I was
+setting up. I also implemented the rest api for the menu classes, leaving only
+the database connection functionality to be completed for that subsystem.
 
 Week 5:
-The team has been further split into 1 frontend developer, 2 backend developers and 2 data/testing developers.
-I am still a backend developer together with Gordon. My main task for this week was to write the Order Management stories,
-which I completed. There were a lot of bugs to fix which I spent most of Wednesday ironing out. On Wednesday we had our demo
-which went well I think - our code ran and performed well. There's a lot of tech debt caused by the time crunch which we'll spend
-next week resolving, thankfully with no deadline.
 
-After wednesday we were all exhausted so we took the rest of the week off. I think in the next sprint we'll take full advantage
-of having double the amount of time we had for this sprint, not so much to get double the work done, but to stave off burnout a 
-bit better.
+The team has been further split into 1 frontend developer, 2 backend developers
+and 2 data/testing developers. I am still a backend developer together with
+Gordon. My main task for this week was to write the Order Management stories,
+which I completed. There were a lot of bugs to fix which I spent most of
+Wednesday ironing out. On Wednesday we had our demo which went well I think -
+our code ran and performed well. There's a lot of tech debt caused by the time
+crunch which we'll spend next week resolving, thankfully with no deadline.
+
+After wednesday we were all exhausted so we took the rest of the week off. I
+think in the next sprint we'll take full advantage of having double the amount
+of time we had for this sprint, not so much to get double the work done, but to
+stave off burnout a bit better.
 
 Week 6 (flex week):
-We had a meeting on Monday about what to get done this week. The consensus was that we don't want to do anything extensive this week.
-So, to compromise and still keep progress moving, we're going to pay off the tech debt accumulated in the code,
-but we're not going to add any new functionality into the backend specifically. This gives time for the database
-team to catch up. The frontend will work on implementing a few outstanding API calls and then UX. Database team will
-aim to have database persistence implemented by the end of the week.
 
-We had another meeting on Sunday just to catch up, but we're making steady progress through the Jira board so no news is good news.
+We had a meeting on Monday about what to get done this week. The consensus was
+that we don't want to do anything extensive this week. So, to compromise and
+still keep progress moving, we're going to pay off the tech debt accumulated in
+the code, but we're not going to add any new functionality into the backend
+specifically. This gives time for the database team to catch up. The frontend
+will work on implementing a few outstanding API calls and then UX. Database team
+will aim to have database persistence implemented by the end of the week.
+
+We had another meeting on Sunday just to catch up, but we're making steady
+progress through the Jira board so no news is good news.
 
 Week 7:
-We had a meeting on Wednesday to catch up. Backend team is mostly completed with all of the board items,
-so just waiting on the frontend to reflect data passed from the backend. Testing is done for the menu objects.
-This week, by Wednesday, I was responsible for coding the core authentication functionality and the search 
-functionality. I learned a lot while coding them both as I have never had to code them before. Still to do before
-Saturday meeting at 6pm is the reordering functionality of the menu, then backend team is free to get an early start 
-to Sprint 3.
+
+We had a meeting on Wednesday to catch up. Backend team is mostly completed with
+all of the board items, so just waiting on the frontend to reflect data passed
+from the backend. Testing is done for the menu objects. This week, by Wednesday,
+I was responsible for coding the core authentication functionality and the
+search functionality. I learned a lot while coding them both as I have never had
+to code them before. Still to do before Saturday meeting at 6pm is the
+reordering functionality of the menu, then backend team is free to get an early
+start to Sprint 3.
+
+At our Saturday meeting we discussed what still needed to be implemented before
+the demo on Wednesday. The conclusion is that frontend still has a bit to do,
+and database/testing will continue with their tests, while backend is finished
+with all their work items for Sprint 2 and will mainly focus on being available
+in case frontend/database-testing teams run into any bugs during their
+outstanding work and in the remaining time commencing work on sprint 3.
+Regarding that, I will be responsible for implementing Personalised Deals and
+Gordon will be responsible for implementing Restaurant Management. We discussed
+some of the engineering challenges associated with personalised deals - I don't
+think we have the flexibility to go full-machine-learning with the
+implementation and instead we will go with more of a recommendation-style
+algorithm using a more deterministic algorithm based on what is popular.
+
+Week 8:
+
+Prior to the commencement of sprint 3, I worked on debugging some latent issues
+still bothering me about the codebase. One of which was the communication of
+menuitem states with order states within the menu. Previously menu item states
+and order states operated independently, with both requiring the frontend to
+manually update eachother irrespective of what each state was. Now, the order
+state defaults to the lowest menu item state in the order, acting as a summary
+of sorts of the menu item states. The second was search - I had neglected to
+provide a critical argument in a sorting function, so python would occasionally
+attempt to sort it by an object that wasn't designed to be sorted. 
+
+Once those
+bugs had been squished, I made some necessary upgrades to the program
+infrastructure that would be crucial for some things we plan to implement in
+sprint 3, such as the ability to make authentication optional - we want users to
+be able to order food without logging in but have the option to do so to take
+advantage of user-specific functionality. I then helped out the frontend/data
+teams with any relevant issues that came up as they presented themselves.
+
+On Tuesday we had a pre-demo meeting to discuss strategy going into the
+Wednesday Demo B. The plan is as it was for demo A: Sami will solo-present the
+demo as he alone understands how the frontend flows, and as the demo is 100%
+frontend it still makes the most sense. By Tuesday we had completed all that was
+necessary for Sprint 2 (nothing outstanding, woohoo!), so I just focused on getting
+some rest before sprint 3 begins. I also pre-formatted our Retrospective B
+document so that we can blitz through that with relative ease.
+
+In the tailend of the week I started on ServiceRequests, getting close to
+completion.
+I also found out that Flask uses cookies for its sessions by default, meaning
+that what we'd learned earlier in the week about optional authentication was now
+redundant - We can remember who users are because we can make those cookies
+persist permanently, meaning that if someone goes away and comes back to the
+app, their cookie uuid remains the same.
+
+Week 9:
+This week our first meeting is on Wednesday at our tutorial, so there is little
+to do but get on with things. My primary tasks this week are ServiceRequests and
+PersonalisedDeals. I finished Service Requests on Sunday then fixed some
+requests made by the frontend to make it work better, then began doing some
+research on what would be required for Personalised Deals.
+
+As we were fairly ahead of schedule, I opted to go in a more challenging
+direction than I had initially told the team I would be prepared to go - at our
+Week 7 Saturday meeting I'd told them I didn't want to do a highly algorithmic
+approach cause I thought it'd be pretty daunting, but some research from earlier
+in the week revealed that an algorithm using item-based collaborative filtering
+would actually be very achievable due to tools readily available in python.
+
+By wednesday I had completed the algorithm and spent a day cleaning it up and
+improving efficiency - I'm really proud of the approach I took, definitely
+pushed me out of my comfort zone. In the meantime, Gordon has completed his work
+on Restaurant Manager, the database team is hard at work, and Sami is steadily
+implementing all the methods we provide in the frontend. No doubt, because
+we'reclose to being done, everyone is working overtime to reach the finish line
+quicker. The backend team is now mostly done with Sprint 3 leading into Week 9
+Wednesday. We may actually have enough time to do the report and do it well!
+Phew.

@@ -1,6 +1,7 @@
 from __future__ import annotations
 from difflib import SequenceMatcher as sm
 from wms import Category, MenuItem, Deal
+from .PersonalisedDeal import PersonalisedDeal
 
 class Menu():
 
@@ -129,6 +130,19 @@ class Menu():
         self.__deals.remove(deal)
         return deal
     
+    def user_has_personalised(self, user):
+        for i in self.deals:
+            if isinstance(i, PersonalisedDeal):
+                if i.user == user and i.is_expired():
+                    self.remove_deal(i)
+
+        for i in self.deals:
+            if isinstance(i, PersonalisedDeal):
+                if i.user == user and i.visible:
+                    return True
+                
+        return False
+    
     def menu_items(self) -> list[MenuItem]:
         """ Returns a list of menu items
 
@@ -209,20 +223,25 @@ class Menu():
         # Good luck deciphering all this
         # Generate levenschtein distances for each menu item in all categories against the query argument
         levenschtein = [[sm(None, j.name, query).ratio() 
-                         for j in i.menu_items] 
-                         for i in self.categories]
+                         for j in i.menu_items if j.visible == True] 
+                         for i in self.categories if i.visible == True]
 
+        #if len(levenschtein) == 0:
+        #    return {"message": "No matches"}
+        #if max([i for sublist in levenschtein for i in sublist]) < STRENGTH_COEFFICIENT:
+        #    return {"message": "No matches"}
         # Get the normal dictionary of menu_items in self.categories
         normal = [[j 
-                   for j in i.menu_items] 
-                   for i in self.categories]
-        
+                   for j in i.menu_items if j.visible == True] 
+                   for i in self.categories if i.visible == True]
         # Sort the normal list by the levenschtein one, zipping them together and removing bad matches
         sorted_by_levenschtein = [
             sorted(
-            list(zip((i for i in levenschtein[k]), 
-                     (j.jsonify() for j in normal[k]))), reverse=True)
-                      for k, _ in enumerate(normal)
+            list(zip(
+                    (i for i in levenschtein[k]), 
+                    (j.jsonify() for j in normal[k]))), 
+                    key = lambda x: x[0], reverse=True) 
+                    for k, _ in enumerate(normal)
         ]
         # Remove values with low ratios
         cropped_output = [[i 
@@ -231,7 +250,7 @@ class Menu():
 
         # Add the categories back in and remove the levenschtein value from the output
         with_categories = {category.name: [i[1] for i in cropped_output[k]] 
-                           for k, category in enumerate(self.categories)}
+                           for k, category in enumerate(i for i in self.categories if i.visible == True)}
         
         # Clean up the data and return. Automatically omits empty categories
         return {key: with_categories[key] 

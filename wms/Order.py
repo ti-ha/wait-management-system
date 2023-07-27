@@ -3,6 +3,7 @@ import itertools
 from enum import Enum
 from .Bill import Bill
 from .Deal import Deal
+from .PersonalisedDeal import PersonalisedDeal
 from .MenuItem import MenuItem
 
 class States(Enum):
@@ -49,28 +50,52 @@ class State:
         Returns:
             str: Current state as a string
         """
-        match self.__state:
-            case States.DELETED:
-                return "deleted"
-            case States.ORDERED:
-                return "ordered"
-            case States.COOKING:
-                return "cooking"
-            case States.READY:
-                return "ready"
-            case States.SERVED:
-                return "served"
-            case States.COMPLETED:
-                return "completed"
-            case _:
-                raise ValueError("State outside bounds")
+        if self.__state   == States.DELETED:
+            return "deleted"
+        elif self.__state == States.ORDERED:
+            return "ordered"
+        elif self.__state == States.COOKING:
+            return "cooking"
+        elif self.__state == States.READY:
+            return "ready"
+        elif self.__state == States.SERVED:
+            return "served"
+        elif self.__state == States.COMPLETED:
+            return "completed"
+        else:
+            raise ValueError("State outside bounds")
+            
+    @property
+    def value(self) -> int:
+        """ Converts state to int
+
+        Raises:
+            ValueError: Current state out of bounds somehow
+
+        Returns:
+            int: The state value
+        """
+        if self.__state   == States.DELETED:
+            return -1
+        elif self.__state == States.ORDERED:
+            return 0
+        elif self.__state == States.COOKING:
+            return 1
+        elif self.__state == States.READY:
+            return 2
+        elif self.__state == States.SERVED:
+            return 3
+        elif self.__state == States.COMPLETED:
+            return 4
+        else:
+            raise ValueError("State outside bounds")
 
 class Order:
 
     # Unique identifier starting from 0
     __id_iter = itertools.count()
 
-    def __init__(self, menu_items=None, deals=None):
+    def __init__(self, menu_items=None, deals=None, customer=None):
         """ Constructor for the Order class
 
         Args:
@@ -78,21 +103,27 @@ class Order:
             order. Defaults to None.
             deals (List[Deal], optional): Deals to be added to the order.
             Defaults to None.
+            customer (User, optional): The customer to be assigned to the order.
         """
         self.__id = next(Order.__id_iter)
         self.__bill = None
         self.__state = State()
         self.__deals = [deals] if isinstance(deals, Deal) else deals
         self.__menu_items_ids = itertools.count()
+        self.__customer = customer if customer else None
 
         # Perhaps there is a more pythonic way to do this
         if menu_items == None:
             self.__menu_items = []
         elif isinstance(menu_items, MenuItem):
+            if menu_items.visible == False:
+                raise ValueError("Order(): One or more menu_items is currently hidden")
             self.__menu_items = [{"menu_item": menu_items,
                                   "state": State(),
                                   "order_specific_id": next(self.__menu_items_ids)}]
         else:
+            if next((i for i in menu_items if i.visible == False), None) != None:
+                raise ValueError("Order(): One or more menu_items is currently hidden")
             self.__menu_items = [{"menu_item": m,
                                   "state": State(),
                                   "order_specific_id": next(self.__menu_items_ids)}
@@ -118,7 +149,12 @@ class Order:
     def deals(self) -> list[Deal]:
         """ Returns list of deals in the order """
         return self.__deals
-
+    
+    @property
+    def customer(self) -> int:
+        """ Returns the customer id assigned to the order"""
+        return self.__customer
+    
     @property
     def menu_items(self) -> list[MenuItem]:
         """ Returns list of menu items in the order """
@@ -132,12 +168,16 @@ class Order:
     def state(self) -> str:
         """ Returns current state of the order """
         return self.__state.state
+    
+    @property
+    def state_value(self) -> int:
+        return self.__state.value
 
-    def get_menu_item_state_obj(self, menu_item: MenuItem) -> State:
+    def get_menu_item_state_obj(self, id: int) -> State:
         """Gets the state of a menu_item within the order
 
         Args:
-            menu_item (MenuItem): The menu_item whose state is to be fetched
+            id (int): The order_specific_id of the menu_item whose state is to be fetched
 
         Raises:
             ValueError: Raised if the menu_item does not exist in the order
@@ -145,45 +185,23 @@ class Order:
         Returns:
             string: The state of the menu_item
         """
-        if menu_item == None:
+        menu_item_state = next((i["state"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
+        if menu_item_state == None:
             raise ValueError("Order: get_menu_item_state(): menu_item does not exist in order")
+        
+        return menu_item_state
 
-        return next((i["state"] for i in self.menu_item_states if i["menu_item"] == menu_item))
-
-    def get_menu_item_state_by_id(self, id):
-        """Gets the state of a menu_item within the order, searching by order-native id
-
-        Args:
-            id (int): The id of the menu_item whose state is to be fetched
-
-        Returns:
-            string: The state of the menu_item
-        """
-        menu_item = next((i["menu_item"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
-        return self.get_menu_item_state_obj(menu_item)
-
-    def change_menu_item_state(self, menu_item: MenuItem):
-        """Transitions the state of a menu item based upon the menu_item itself
-
-        Args:
-            menu_item (MenuItem): the menu item whose state is to be transitioned
-
-        Raises:
-            ValueError: Raised if the menu_item does not exist in the order
-        """
-        if menu_item is None:
-            raise ValueError("Order: change_menu_item_state(): menu_item does not exist in order")
-
-        self.get_menu_item_state_obj(menu_item).transition_state()
 
     def change_menu_item_state_by_id(self, id):
-        """Transitions the state of a menu item to the next state, looking up by id
+        """Transitions the state of a menu item to the next state, looking up by order_specific_id
 
         Args:
             id (int): The id of the menu_item in the order
         """
-        menu_item = self.get_menu_item_state_by_id(id)
-        self.change_menu_item_state(menu_item)
+        self.get_menu_item_state_obj(id).transition_state()
+
+        while min([i["state"].value for i in self.menu_item_states]) > self.state_value:
+            self.change_state()
 
     def change_state(self):
         """ Transitions state to the next one """
@@ -204,6 +222,14 @@ class Order:
 
         if deal in self.__deals:
             raise ValueError("Order: add_deal(): Deal already exists")
+        
+        if isinstance(deal, PersonalisedDeal):
+            if deal.is_expired():
+                raise ValueError("Order: add_deal(): Deal has expired")
+            elif deal.user != self.customer:
+                raise ValueError("Order: add_deal(): That is not your deal")
+            elif next((i for i in deal.menu_items if i.visible == False) != None):
+                raise ValueError("Order: add_deal(): One or more menu_items is hidden")
 
         self.deals.append(deal)
 
@@ -240,7 +266,14 @@ class Order:
 
         if menu_item in self.__menu_items:
             raise ValueError("Order: add_menu_item(): MenuItem already exists")
+        
+        if menu_item.visible == False:
+            raise ValueError("Order: add_menu_item(): MenuItem is not visible")
+        
         self.__menu_items.append(menu_item)
+
+    def get_menu_item_by_id(self, id) -> MenuItem:
+        return next((i["menu_item"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
 
     def remove_menu_item(self, menu_item):
         """ Removing a menu item from the order
@@ -269,10 +302,14 @@ class Order:
         Returns:
             Dict: New dictionary after deal discount is applied to menu items
         """
+        if deal.visible == False:
+            discount = 0
+        else:
+            discount = deal.discount
         for i in deal.menu_items:
             item = i.name
             if item in pricedict.keys():
-                pricedict[item] = pricedict[item] - (deal.discount*pricedict[item])
+                pricedict[item] = pricedict[item] - (discount*pricedict[item])
         return pricedict
 
     def calculate_bill(self) -> Bill:
@@ -366,7 +403,8 @@ class Order:
             "bill": bill,
             "state": self.state,
             "menu_items": self.jsonify_menu_item_states(),
-            "deals": [i.jsonify() for i in self.deals]
+            "deals": [i.jsonify() for i in self.deals],
+            "user": self.customer
         }
 
         if table_id is not None:

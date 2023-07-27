@@ -1,10 +1,14 @@
 from __future__ import annotations
-from wms import Order, Table, Bill, States
+from wms import Table, Bill, States
+from .Order import Order
 
 class OrderManager:
     def __init__(self):
         """ Constructor for the Order Manager class """
         self.__orders = []
+
+        # Contains all previous orders including those completed and deleted
+        self.__history = []
 
         # maps table: [orders]
         self.__map = {}
@@ -16,11 +20,16 @@ class OrderManager:
         return self.__orders
     
     @property
+    def history(self) -> list[Order]:
+        """ Returns order history"""
+        return self.__history
+    
+    @property
     def map(self) -> dict:
         """ Returns dictionary linking tables to list of orders """
         return self.__map
     
-    def get_order(self, order_ID) -> Order:
+    def get_order(self, order_id) -> Order:
         """ Returns a specific order based off provided order ID
 
         Args:
@@ -29,10 +38,18 @@ class OrderManager:
         Returns:
             Order: Item of type Order based off provided ID
         """
-        for order in self.orders:
-            if (order.id == order_ID):
-                return order
-        return None
+        return next((i for i in self.orders if i.id == order_id), None)
+    
+    def get_order_from_history(self, order_id) -> Order:
+        """Returns a specific order based off provided order ID from the history
+
+        Args:
+            order_id (int): ID number of order to be obtained
+
+        Returns:
+            Order: Item of type Order based off provided ID
+        """
+        return next((i for i in self.history if i.id == order_id), None)
     
     def get_table_from_order(self, order_ID) -> Table:
         """ Given an order ID, finds the table that the order belongs to
@@ -82,7 +99,9 @@ class OrderManager:
         """
         if order in self.__orders:
             raise ValueError("OrderManager: add_order(): Order already exists")
-        self.__orders.append(order)
+        self.orders.append(order)
+        self.history.append(order)
+
         if table.id in self.__map.keys():
             self.__map[table.id] += [order.id]
         else:
@@ -105,7 +124,7 @@ class OrderManager:
         if table.id in self.map.keys():
             self.__map[table.id].remove(order.id)
             table.remove_order(order)
-            self.__orders.remove(order)
+            self.orders.remove(order)
         else:
             raise ValueError("OrderManager: remove_order(): Table does not have supplied order")
         
@@ -211,6 +230,18 @@ class OrderManager:
         return {
             "orders": [i.jsonify() for i in self.orders]
             }
+    
+    def history_json(self) -> dict:
+        """ Creates a dictionary with a list containing all of the current and
+        previous orders
+
+        Returns:
+            dict: Dictionary containing a list of all current and previous
+            orders
+        """
+        return {
+            "history": [i.jsonify() for i in self.history]
+        }
     
     def jsonify(self) -> dict:
         """ Creates a dictionary with a list containing all of the orders of 

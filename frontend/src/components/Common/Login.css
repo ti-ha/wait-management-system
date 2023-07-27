@@ -1,0 +1,21 @@
+.diner-message {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0px 3px 6px #00000023;
+}
+
+.header-buttons {
+    display: flex;
+}
+

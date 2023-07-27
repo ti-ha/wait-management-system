@@ -37,7 +37,7 @@ export default function EditItemModal({ open, onClose, onSave, oldItem }) {
             return;
         }
 
-        onSave({name: itemName, price: itemPrice, imageUrl: itemImageUrl});
+        onSave({name: itemName, price: itemPrice, imageUrl: itemImageUrl, visibility: true});
         setItemName("");
         setItemPrice("");
         setItemImageUrl("");
