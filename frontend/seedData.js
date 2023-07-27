@@ -81,31 +81,6 @@ const menuItems = [
 
 /*                              API CALLS TO CREATE DUMMY DATA              */
 
-
-
-// Create users using the API endpoint
-const userPromises = users.map(user => fetch(`${process.env.REACT_APP_API_URL}/user/add`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(user)
-}));
-
-try {
-    const responses = await Promise.all(userPromises);
-    const jsonResponses = await Promise.all(responses.map(response => {
-        if (!response.ok) {
-            console.error('Server response:', response); 
-            throw new Error(`HTTP Error with status: ${response.status}`);
-        }
-        return response.json();
-    }));
-    jsonResponses.forEach((data, index) => console.log(`Successfully added user ${users[index].first_name} ${users[index].last_name}`, data));
-} catch (error) {
-    console.error("Error adding user:", error);
-}
-
 let authToken;
 
 const loginAsManager = async () => {
@@ -134,7 +109,33 @@ const loginAsManager = async () => {
     }
 };
 
-loginAsManager().then(() => {
+const main = async () => {
+    // Create users using the API endpoint
+    const userPromises = users.map(user => fetch(`${process.env.REACT_APP_API_URL}/user/add`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    }));
+
+    try {
+        const responses = await Promise.all(userPromises);
+        const jsonResponses = await Promise.all(responses.map(response => {
+            if (!response.ok) {
+                console.error('Server response:', response); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            return response.json();
+        }));
+        jsonResponses.forEach((data, index) => console.log(`Successfully added user ${users[index].first_name} ${users[index].last_name}`, data));
+    } catch (error) {
+        console.error("Error adding user:", error);
+    }
+
+    await loginAsManager();
+
+    
     let categoryPromises = categories.map((category) => {
         const requestOptions = {
             method: 'POST',
@@ -198,5 +199,12 @@ loginAsManager().then(() => {
             console.error("Error adding table:", error);
         }
     });
-    
-});
+};
+
+
+
+
+
+main().catch(error => console.error(error));
+
+
