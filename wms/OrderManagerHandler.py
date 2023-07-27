@@ -258,15 +258,21 @@ class OrderManagerHandler():
             Dict: A dictionary of the bill's price and whether or not it has
             been paid
         """
-        if self.table_handler.id_to_table(table_id).bill == None:
-            try:
-                bill = self.order_manager.calculate_table_bill(table_id)
-            except Exception as exc:
-                raise exc
+
+        try:
+            bill = self.order_manager.calculate_table_bill(table_id)
+        except Exception as e:
+            raise e
+        
+        table = self.table_handler.id_to_table(table_id)
+
+        if table.bill == None or table.bill != bill:
+            table.bill = bill
+            return bill.jsonify()
         else:
             return self.table_handler.id_to_table(table_id).bill.jsonify()
 
-        self.table_handler.id_to_table(table_id).bill = bill
+        
         return {"price": bill.price, "paid": bill.paid}
 
     def pay_table_bill(self, table_id: int):

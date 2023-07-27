@@ -8,6 +8,17 @@ class Bill:
         self.__price = price
         self.__paid = False
 
+    def __eq__(self, bill):
+        """ Checks if the price of another bill object is the same, if so
+        returns True. if the other non-boolean attribute is not equal, or its
+        the wrong class type, return false.
+        """
+        if not isinstance(bill, Bill):      return False
+        if self.price is not bill.price:    return False
+        
+        return True
+
+
     # Getters for price and paid status
     @property
     def price(self) -> float:
@@ -33,3 +44,4 @@ class Bill:
         bill
         """
         return {"price": self.__price, "paid": self.__paid}
+    
