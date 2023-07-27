@@ -4,6 +4,30 @@ import './BillModal.css'
 
 export default function BillModal({ orders, onClose }) {
 
+    console.log(orders)
+
+    function aggregateOrders(orders) {
+        let itemsMap = {};
+    
+        orders.forEach(order => {
+            order.menu_items.forEach(item => {
+                if (itemsMap[item.name]) {
+                    itemsMap[item.name].quantity += 1;
+                } else {
+                    itemsMap[item.name] = {
+                        ...item,
+                        quantity: 1
+                    };
+                }
+            });
+        });
+    
+        return Object.values(itemsMap);
+    }
+
+    const aggregatedOrders = aggregateOrders(orders);
+
+
     const style = {
         position: 'absolute',
         top: '50%',
@@ -16,8 +40,12 @@ export default function BillModal({ orders, onClose }) {
         p: 4,
     };
 
-    const total = orders.reduce((sum, order) => {
-        return sum + order.menu_items.reduce((itemSum, item) => itemSum + item.price, 0);
+    // const total = orders.reduce((sum, order) => {
+    //     return sum + order.menu_items.reduce((itemSum, item) => itemSum + item.price, 0);
+    // }, 0);
+
+    const total = aggregatedOrders.reduce((sum, item) => {
+        return sum + (item.quantity * item.price);
     }, 0);
 
     return (
@@ -26,18 +54,18 @@ export default function BillModal({ orders, onClose }) {
             onClose={onClose}
         >
             <Box sx={style}>
-                <h2>Bill</h2>
+                <h2 >Bill</h2>
                 <div className="billOrder">
                     <strong>Item Name</strong>
+                    <strong>Quantity</strong>
                     <strong>Price</strong>
                 </div>
-                {orders.map((order, index) => (
-                    order.menu_items.map((item, index) => (
-                        <div key={index} className="billOrder">
-                            <p>{item.name}</p>
-                            <p>${item.price.toFixed(2)}</p>
-                        </div>
-                    ))
+                {aggregatedOrders.map((item, index) => (
+                    <div key={index} className="billOrder">
+                        <p>{item.name}</p>
+                        <p>{item.quantity}</p>
+                        <p>${item.price.toFixed(2)}</p>
+                    </div>
                 ))}
                 <div className="billOrder">
                     <strong>Total:</strong>
