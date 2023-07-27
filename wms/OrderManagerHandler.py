@@ -272,9 +272,6 @@ class OrderManagerHandler():
         else:
             return self.table_handler.id_to_table(table_id).bill.jsonify()
 
-        
-        return {"price": bill.price, "paid": bill.paid}
-
     def pay_table_bill(self, table_id: int):
         """ A function to simulate the payment of the table bill
 
