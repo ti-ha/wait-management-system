@@ -1,6 +1,6 @@
 from flask import Blueprint
 from wms import *
-from middlewares import backend, token_optional, token_required, call
+from middlewares import backend, token_required, call
 from flask import request, jsonify
 
 service_blueprint = Blueprint("service", __name__)
