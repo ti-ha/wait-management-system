@@ -1,9 +1,10 @@
 from __future__ import annotations
 import itertools
-# from sqlalchemy import Column, Integer, String
 from wms import MenuItem
+from sqlalchemy import insert
 
-# from db import session
+# from sqlalchemy import Column, Integer, String
+# from middlewares import db
 
 class Category():
 
@@ -25,6 +26,14 @@ class Category():
         self.__name = name
         self.__menu_items = [] if menu_items is None else menu_items
         self.__visible = True
+        # with db.engine.connect() as conn:
+            # conn.execute(db.category_table.insert(), {
+                # "id": self.id,
+                # "name": self.name
+            # })
+            # conn.commit()
+
+
 
 
     @property

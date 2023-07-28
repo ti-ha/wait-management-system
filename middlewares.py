@@ -1,10 +1,14 @@
 from wms import *
+# from wms import Application
 from flask import Flask, jsonify, request, current_app
 import jwt
 from functools import wraps
-from db import db
+from db_handler import DatabaseHandler
 
 backend = Application()
+# db = DatabaseHandler()
+# db.create_tables()
+
 
 def token_required(f):
     """Performs authentication for methods that REQUIRE authentication.
@@ -110,5 +114,3 @@ def call(msg, func, *args):
     else:
         return jsonify(msg), 200
 
-db = db()
-db.create_db()

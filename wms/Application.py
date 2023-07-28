@@ -1,6 +1,6 @@
 from __future__ import annotations
-from wms import *
-import init_db
+from wms import UserHandler, TableHandler, MenuHandler, Menu, SRMHandler, ServiceRequestManager, OrderManagerHandler, OrderManager, RestaurantManagerHandler, RestaurantManager, PersonalisedDealEngine
+from db_handler import DatabaseHandler
 
 class Application():
     def __init__(self):
@@ -10,16 +10,27 @@ class Application():
         self.__user_handler = UserHandler()
         self.__table_handler = TableHandler()
         self.__menu_handler = MenuHandler(Menu())
-        self.__srm_handler = SRMHandler(ServiceRequestManager(), self.user_handler)
-        self.__om_handler = OrderManagerHandler(OrderManager(), self.table_handler, self.menu_handler)
+        self.__db_handler = DatabaseHandler()
+        self.__srm_handler = SRMHandler(
+            ServiceRequestManager(), 
+            self.user_handler
+        )
+        self.__om_handler = OrderManagerHandler(
+            OrderManager(), 
+            self.table_handler, 
+            self.menu_handler
+        )
         self.__restaurant_manager_handler = RestaurantManagerHandler(
             RestaurantManager(), 
             self.menu_handler, 
             self.om_handler, 
             self.table_handler, 
-            self.user_handler)
-        self.__pd_engine = PersonalisedDealEngine(self.user_handler, self.om_handler)
-        
+            self.user_handler
+        )
+        self.__pd_engine = PersonalisedDealEngine(
+            self.user_handler, 
+            self.om_handler
+        )
 
     @property
     def menu_handler(self) -> MenuHandler:
@@ -55,3 +66,8 @@ class Application():
     def pd_engine(self) -> PersonalisedDealEngine:
         """ Returns the Personalised Deal Engine """
         return self.__pd_engine
+
+    @property
+    def db_handler(self) -> DatabaseHandler:
+        """ Returns the MenuHandler object."""
+        return self.__db_handler
