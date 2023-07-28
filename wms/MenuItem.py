@@ -1,9 +1,19 @@
 import itertools
+from sqlalchemy import Column, Integer, Double, String, ForeignKey
+from db import Base
 
-class MenuItem():
+class MenuItem(Base):
 
     # Unique id
     __id_iter = itertools.count()
+
+    __tablename__ = 'menu_item'
+
+    # _id = Column(Integer, primary_key=True, autoincrement='auto')
+    # _name = Column(String(40), nullable=False)
+    # _price = Column(Double(2), nullable=False)
+    # _category = Column(Integer, ForeignKey('category.categoryId'))
+    # _image_url = Column(String(256))
 
     def __init__(self, name, price, image_url = "None"):
         """ Constructor for the MenuItem class

@@ -1,12 +1,18 @@
 from __future__ import annotations
-from wms import MenuItem
 import itertools
-from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String
+from wms import MenuItem
+from db import Base
 
-class Category():
+from db import session
+
+class Category(Base):
 
     __id_iter = itertools.count()
+
+    # __tablename__ = 'category'
+    # c_id = Column(Integer, primary_key=True)
+    # c_name = Column(String(40), nullable=False)
 
     def __init__(self, name, menu_items=None):
         """ Constructor (no menu items by default)
@@ -20,6 +26,7 @@ class Category():
         self.__name = name
         self.__menu_items = [] if menu_items is None else menu_items
         self.__visible = True
+
 
     @property
     def id(self) -> int:
