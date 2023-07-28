@@ -1,7 +1,10 @@
 from __future__ import annotations
 from wms import *
 
+
 class Application():
+
+
     def __init__(self):
         """ Constructor for the Application class. A decorator class for 
         managing the app

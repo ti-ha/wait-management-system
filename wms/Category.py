@@ -1,7 +1,8 @@
 from __future__ import annotations
 from wms import MenuItem
 import itertools
-
+from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Integer, String
 
 class Category():
 
