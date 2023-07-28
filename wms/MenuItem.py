@@ -1,8 +1,7 @@
 import itertools
-from sqlalchemy import Column, Integer, Double, String, ForeignKey
-from db import Base
+# from sqlalchemy import Column, Integer, Double, String, ForeignKey
 
-class MenuItem(Base):
+class MenuItem():
 
     # Unique id
     __id_iter = itertools.count()

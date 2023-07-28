@@ -1,12 +1,11 @@
 from __future__ import annotations
 import itertools
-from sqlalchemy import Column, Integer, String
+# from sqlalchemy import Column, Integer, String
 from wms import MenuItem
-from db import Base
 
-from db import session
+# from db import session
 
-class Category(Base):
+class Category():
 
     __id_iter = itertools.count()
 

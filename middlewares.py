@@ -2,6 +2,7 @@ from wms import *
 from flask import Flask, jsonify, request, current_app
 import jwt
 from functools import wraps
+from db import db
 
 backend = Application()
 
@@ -108,3 +109,6 @@ def call(msg, func, *args):
 
     else:
         return jsonify(msg), 200
+
+db = db()
+db.create_db()
