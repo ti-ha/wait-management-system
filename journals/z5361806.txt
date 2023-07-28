@@ -53,5 +53,8 @@ Week 6
 Flexi week, just relaxed
 
 Week 7
+Completed the menu and user testing phase and have now initiated testing for orders, tables, and other components. 
+Utilized SQLalchemy to implement the database for menu items and categories, with further implementation for the rest 
+of the components planned in the near future.
 
-
+Week 8 
