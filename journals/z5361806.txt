@@ -28,8 +28,33 @@ Next week we will conitnue with the diagrams required for the proposal.
 Everything seems to be on track to be completed for the proposal due date.
 
 Week 3
+In our Wednesday tutorial, we completed the proposal. 
+I helped complete the write-up and wireframing.
+On Saturday, we gathered to set up the environments for the frontend, backend, data, and REST API layer.
+During the meeting we managed to set up the Python virtual environment, as well as the React.js frontend layer.
+Together, we deliberated on the optimal approach to incorporate a Postgres data layer into our project.
 
+Week 4
+Coding has commenced! We divided the team into two frontend developers and three backend developers. The seperation of work has not been strict. 
+Currently, I am working on the backend for the project writing tests and setting up the database. Alongside Ravi and Tim, I created the necessary 
+ framework for the class structure by designing individual class files for each class, establishing inheritance where necessary, and developing 
+ tests. We haven't devised a specific plan for assigning backend tasks yet, so we're following a first-come-first-serve approach. 
+I am mostly looking at the testing, debugging and database.
 
+Week 5
+The team has a more solid structure, with one frontend developer, two backend developers, and two data/testing developers.
+ I am working as a data/testing developer alongside Ravi. My primary focus this week was to write testing and debug before the demo. 
+ Wednesday was predominantly dedicated to fixing numerous bugs that had arisen. On that same day,
+we conducted a successful demo where our code ran smoothly and performed well. 
 
+The plan for next week is to chill out after a hectic sprint.
 
+Week 6
+Flexi week, just relaxed
 
+Week 7
+Completed the menu and user testing phase and have now initiated testing for orders, tables, and other components. 
+Utilized SQLalchemy to implement the database for menu items and categories, with further implementation for the rest 
+of the components planned in the near future.
+
+Week 8 
