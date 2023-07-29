@@ -223,7 +223,8 @@ class OrderManager:
     
     def orders_json(self) -> dict:
         """ Creates a dictionary with a list containing all of the current orders
-
+        without table ids
+        
         Returns:
             dict: Dictionary containing a list of all the current orders
         """
@@ -240,7 +241,7 @@ class OrderManager:
             orders
         """
         return {
-            "history": [i.jsonify() for i in self.history]
+            "history": [i.jsonify(self.get_table_from_order(i.id)) for i in self.history]
         }
     
     def jsonify(self) -> dict:
