@@ -1,8 +1,11 @@
 from __future__ import annotations
 import itertools
 from wms import MenuItem
-from sqlalchemy import engine, Table, MetaData, Column, Integer, String, ForeignKey, text
+import db_handler
 from sqlalchemy.orm import Session
+from sqlalchemy import text
+
+
 
 class Category():
 
@@ -193,7 +196,7 @@ class Category():
             f"""INSERT INTO menu_item (_id, _name, _price, _category, _image_url) 
             VALUES ({menu_item.id}, '{menu_item.name}', {menu_item.price}, {self.id}, '{menu_item.image_url}')"""
         )
-        with Session(self.__db_engine) as session:
+        with Session(db_handler.load_session()) as session:
             session.execute(add_menu_item)
             session.commit()   
     

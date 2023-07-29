@@ -1,6 +1,6 @@
 from __future__ import annotations
 from wms import UserHandler, TableHandler, MenuHandler, Menu, SRMHandler, ServiceRequestManager, OrderManagerHandler, OrderManager, RestaurantManagerHandler, RestaurantManager, PersonalisedDealEngine
-from db_handler import DatabaseHandler
+import db_handler
 
 
 class Application():
@@ -11,7 +11,6 @@ class Application():
         self.__user_handler = UserHandler()
         self.__table_handler = TableHandler()
         self.__menu_handler = MenuHandler(Menu())
-        self.__db_handler = DatabaseHandler()
         self.__srm_handler = SRMHandler(
             ServiceRequestManager(), 
             self.user_handler
@@ -32,6 +31,7 @@ class Application():
             self.user_handler, 
             self.om_handler
         )
+        db_handler.create_engine()
 
     @property
     def menu_handler(self) -> MenuHandler:
