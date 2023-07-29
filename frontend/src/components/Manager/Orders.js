@@ -3,9 +3,8 @@ import { useIsStaffMember } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
 import Header from "../Common/Header.js";
 import BillModal from '../Customer/BillModal.js';
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box } from '@mui/material';
-
-
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, IconButton, Tooltip } from '@mui/material';
+import { Refresh } from "@mui/icons-material"
 
 export default function Orders() {
 
@@ -25,7 +24,6 @@ export default function Orders() {
     const handleCloseModal = () => {
         setCurrentOrder(null);
     }
-
 
     const fetchAllOrders = async () => {
         try {
@@ -96,6 +94,13 @@ export default function Orders() {
 
             <h1 style={{textAlign: 'center'}}>Current Orders</h1>
             <div style={{maxWidth: '1600px', margin: 'auto'}}>
+                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <Tooltip title="Refresh Orders">
+                        <IconButton onClick={fetchAllOrders}>
+                            <Refresh />
+                        </IconButton>
+                    </Tooltip>
+                </div>
 
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
