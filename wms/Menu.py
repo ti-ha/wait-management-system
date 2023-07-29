@@ -1,6 +1,6 @@
 from __future__ import annotations
 from difflib import SequenceMatcher as sm
-from wms import Category, MenuItem, Deal
+from wms import Category, MenuItem, Deal, DbHandler
 from .PersonalisedDeal import PersonalisedDeal
 
 class Menu():
@@ -50,7 +50,7 @@ class Menu():
         # return None
         return next((it for it in self.categories if it.name == name), None)
 
-    def add_category(self, category: Category) -> None:
+    def add_category(self, category: Category, db: DbHandler) -> None:
         """ Adds a new category to the menu
 
         Args:
@@ -65,8 +65,10 @@ class Menu():
         
         if self.get_category(category.name) is not None:
             raise ValueError("Menu: add_category(): Category already exists")
-       
+        
         self.__categories.append(category)
+        db.DbHandler.category_table.insert().values(id=1, name=category.name)
+
 
     def remove_category(self, name) -> None:
         """ Removes a category, if that category exists, from the menu.
@@ -131,6 +133,14 @@ class Menu():
         return deal
     
     def user_has_personalised(self, user):
+        """_summary_
+
+        Args:
+            user (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         for i in self.deals:
             if isinstance(i, PersonalisedDeal):
                 if i.user == user and i.is_expired():

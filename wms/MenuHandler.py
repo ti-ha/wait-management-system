@@ -1,15 +1,20 @@
-from wms import Menu, Category, MenuItem, Deal, RestaurantManagerHandler
+from wms import DbHandler, Menu, Category, MenuItem, Deal, RestaurantManagerHandler
 from collections import OrderedDict
 
 class MenuHandler():
-    def __init__(self, menu: Menu):
+    def __init__(self, menu: Menu, db: DbHandler):
         """ Constructor for the MenuHandler Class """
         self.__menu = menu
         self.__observers = []
+        self.__db = db
     
     @property
     def menu(self) -> Menu:
         return self.__menu
+    
+    @property
+    def db(self) -> DbHandler:
+        return self.__db
 
     def attach(self, observer: RestaurantManagerHandler):
         """ Attach observer to menu handler """
@@ -83,7 +88,8 @@ class MenuHandler():
         Args:
             category (String): Category to be added to the menu
         """
-        self.__menu.add_category(Category(category))
+        self.__menu.add_category(Category(category), self.db)
+
 
     def add_menu_item(self, category, name, price, imageurl) -> None:
         """ Adds a menu item to the menu

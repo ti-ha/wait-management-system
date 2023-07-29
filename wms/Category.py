@@ -1,18 +1,13 @@
 from __future__ import annotations
 import itertools
 from wms import MenuItem
-from sqlalchemy import insert
-
+# from sqlalchemy import insert
 # from sqlalchemy import Column, Integer, String
 # from middlewares import db
 
 class Category():
 
     __id_iter = itertools.count()
-
-    # __tablename__ = 'category'
-    # c_id = Column(Integer, primary_key=True)
-    # c_name = Column(String(40), nullable=False)
 
     def __init__(self, name, menu_items=None):
         """ Constructor (no menu items by default)
@@ -26,15 +21,6 @@ class Category():
         self.__name = name
         self.__menu_items = [] if menu_items is None else menu_items
         self.__visible = True
-        # with db.engine.connect() as conn:
-            # conn.execute(db.category_table.insert(), {
-                # "id": self.id,
-                # "name": self.name
-            # })
-            # conn.commit()
-
-
-
 
     @property
     def id(self) -> int:
