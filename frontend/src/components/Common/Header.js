@@ -85,14 +85,19 @@ export default function Header ({ userType, currentPage }) {
                                     Menu Editor
                                 </div>
                             </MenuItem>
+                            <MenuItem onClick={() => handleClose("/insights")}>
+                                <div className="no-underline">
+                                    Insights
+                                </div>
+                            </MenuItem>
                             <MenuItem onClick={() => handleClose("/restaurant-manager")}>
                                 <div className="no-underline">
                                     Restaurant Manager
                                 </div>
                             </MenuItem>
-                            <MenuItem onClick={() => handleClose("/insights")}>
+                            <MenuItem onClick={() => handleClose("/manage-staff")}>
                                 <div className="no-underline">
-                                    Insights
+                                    Manage Staff
                                 </div>
                             </MenuItem>
                         </Menu>

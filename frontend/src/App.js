@@ -12,6 +12,8 @@ import RestaurantManager from './components/Manager/RestaurantManager.js';
 import Login from './components/Common/Login.js'
 import Orders from './components/Manager/Orders.js';
 import Insights from './components/Manager/Insights.js';
+import StaffRegistation from './components/Manager/StaffRegistration.js';
+
 
 function App() {
   return (
@@ -29,6 +31,7 @@ function App() {
           <Route path="/restaurant-manager" element={<RestaurantManager />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/insights" element={<Insights />} />
+          <Route path="/manage-staff" element={<StaffRegistation />} />
         </Routes>
       </BrowserRouter>
   );
