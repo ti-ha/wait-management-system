@@ -1,10 +1,8 @@
 from __future__ import annotations
 import itertools
 from wms import MenuItem
-# from sqlalchemy import insert
+from sqlalchemy import Session, Column, Integer, String, text
 
-# from sqlalchemy import Column, Integer, String
-# import db_initialise
 
 class Category():
 
@@ -189,4 +187,13 @@ class Category():
             "menu_items": [it.jsonify() for it in self.menu_items],
             "visible": self.visible
         }
+
+    def add_to_db(self, menu_item: MenuItem):
+        add_menu_item = text(
+            f"""INSERT INTO menu_item (_id, _name, _price, _category, _image_url) 
+            VALUES ({menu_item.id}, '{menu_item.name}', {menu_item.price}, {self.id}, '{menu_item.image_url}')"""
+        )
+        with Session(self.__db_engine) as session:
+            session.execute(add_menu_item)
+            session.commit()   
     
