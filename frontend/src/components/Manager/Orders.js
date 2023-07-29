@@ -3,7 +3,7 @@ import { useIsStaffMember } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
 import Header from "../Common/Header.js";
 import BillModal from '../Customer/BillModal.js';
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, IconButton, Tooltip } from '@mui/material';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Box, IconButton, Tooltip, Grid} from '@mui/material';
 import { Refresh } from "@mui/icons-material"
 
 export default function Orders() {
@@ -122,8 +122,18 @@ export default function Orders() {
                             <TableCell sx={{ width: '25%' }}>{order.table_id + 1}</TableCell>
                             <TableCell sx={{ width: '25%' }}>${order.bill?.price.toFixed(2)}</TableCell>
                             <TableCell sx={{ width: '25%' }} align="right">
-                            <Button variant="contained" color="secondary" onClick={() => handleViewBill(order)}>View Bill</Button>
-                            <Button variant="contained" color="primary" onClick={() => payBill(order.table_id)}>Mark as Paid</Button>
+                                <Grid container spacing={2}>
+                                    <Grid item xs={6}>
+                                        <Button variant="contained" color="secondary" fullWidth onClick={() => handleViewBill(order)}>View Bill</Button>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        {order.state === 'served' ? (
+                                            <Button variant="contained" color="primary" fullWidth onClick={() => payBill(order.table_id)}>Mark as Paid</Button>
+                                        ) : (
+                                            <Button variant="contained" disabled fullWidth>Order Pending</Button>
+                                        )}
+                                    </Grid>
+                                </Grid>
                             </TableCell>
                             </TableRow>
                         ))}
@@ -138,12 +148,12 @@ export default function Orders() {
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }} aria-label="simple table">
                             <TableHead>
-                            <TableRow>
-                                <TableCell>Order Id</TableCell>
-                                <TableCell>Table Number</TableCell>
-                                <TableCell>Total</TableCell>
-                                <TableCell align="right">Actions</TableCell>
-                            </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ width: '25%' }}>Order Id</TableCell>
+                                    <TableCell sx={{ width: '25%' }}>Table Number</TableCell>
+                                    <TableCell sx={{ width: '25%' }}>Total</TableCell>
+                                    <TableCell sx={{ width: '25%' }} align="right">Actions</TableCell>
+                                </TableRow>
                             </TableHead>
                             <TableBody>
                             {completedOrders.map((order) => (
@@ -151,12 +161,12 @@ export default function Orders() {
                                 key={order.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
-                                <TableCell>{order.id}</TableCell>
-                                <TableCell>{order.table_id + 1}</TableCell>
-                                <TableCell>${order.bill.price.toFixed(2)}</TableCell>
-                                <TableCell align="right">
-                                    <Button variant="contained" color="secondary" onClick={() => handleViewBill(order)}>View Bill</Button>
-                                </TableCell>
+                                    <TableCell>{order.id}</TableCell>
+                                    <TableCell>{order.table_id + 1}</TableCell>
+                                    <TableCell>${order.bill.price.toFixed(2)}</TableCell>
+                                    <TableCell align="right">
+                                        <Button variant="contained" color="secondary" onClick={() => handleViewBill(order)}>View Bill</Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                             </TableBody>
