@@ -34,6 +34,11 @@ export default function Header ({ userType, currentPage }) {
                         Wait Staff View
                     </Button>
                 </Link>
+                <Link to="/orders">
+                    <Button variant="contained" disabled={currentPage === 'orders'}>
+                        Orders
+                    </Button>
+                </Link>
             </div>
             <div className="headerButtonsRight">
                 <Link to="/">

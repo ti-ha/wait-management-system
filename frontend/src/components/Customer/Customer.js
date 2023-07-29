@@ -231,10 +231,7 @@ export default function Customer() {
         } catch (error) {
             console.error('Error sending assistance request:', error);
         }
-    }
-
-
-    
+    }    
 
     return (
         <div className="customerPage">
@@ -377,6 +374,7 @@ export default function Customer() {
                 <BillModal 
                     orders={billOrders}
                     onClose={() => setIsBillOpen(false)}
+                    table_id={tableNumber - 1}
                 />
             }
 
