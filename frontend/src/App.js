@@ -11,6 +11,7 @@ import MenuEditor from './components/Manager/MenuEditor.js';
 import RestaurantManager from './components/Manager/RestaurantManager.js';
 import Login from './components/Common/Login.js'
 import Orders from './components/Manager/Orders.js';
+import Insights from './components/Manager/Insights.js';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/menu-editor/:categoryName?" element={<MenuEditor />} />
           <Route path="/restaurant-manager" element={<RestaurantManager />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/insights" element={<Insights />} />
         </Routes>
       </BrowserRouter>
   );
