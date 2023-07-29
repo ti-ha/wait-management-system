@@ -233,6 +233,25 @@ export default function Customer() {
         }
     }
 
+    const payBill = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${tableNumber - 1}/bill`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            console.log('Bill paid successfully');
+        } catch (error) {
+            console.error('Error paying bill:', error);
+        }
+    }
+
 
     
 
@@ -357,6 +376,10 @@ export default function Customer() {
                         View Bill
                     </Button>
 
+                    <Button style={{ marginTop: "10px" }} variant="contained" onClick={payBill}>
+                    Pay Bill
+                    </Button>
+
                     <Button style={{ marginTop: "10px" }} variant="contained" onClick={sendAssistanceRequest}>
                         Request Assistance
                     </Button>
@@ -377,6 +400,7 @@ export default function Customer() {
                 <BillModal 
                     orders={billOrders}
                     onClose={() => setIsBillOpen(false)}
+                    table_id={tableNumber - 1}
                 />
             }
 

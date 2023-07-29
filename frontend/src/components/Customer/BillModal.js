@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Box, Button } from '@mui/material';
 import './BillModal.css'
 
-export default function BillModal({ orders, onClose }) {
+export default function BillModal({ orders, onClose, table_id }) {
 
-    console.log(orders)
+    const [total, setTotal] = useState(0);
 
     function aggregateOrders(orders) {
         let itemsMap = {};
@@ -27,6 +27,24 @@ export default function BillModal({ orders, onClose }) {
 
     const aggregatedOrders = aggregateOrders(orders);
 
+    useEffect(() => {
+        const fetchTotalBill = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${table_id}/bill`);
+                if (!response.ok) { 
+                    const responseBody = await response.json();
+                    console.error('Server response:', responseBody); 
+                    throw new Error(`HTTP Error with status: ${response.status}`);
+                }
+                const data = await response.json();
+                setTotal(data.price);
+            } catch (error) {
+                console.error("Error fetching total bill:", error);
+            }
+        };
+        fetchTotalBill();
+    }, [orders]);
+
 
     const style = {
         position: 'absolute',
@@ -39,14 +57,6 @@ export default function BillModal({ orders, onClose }) {
         boxShadow: 24,
         p: 4,
     };
-
-    // const total = orders.reduce((sum, order) => {
-    //     return sum + order.menu_items.reduce((itemSum, item) => itemSum + item.price, 0);
-    // }, 0);
-
-    const total = aggregatedOrders.reduce((sum, item) => {
-        return sum + (item.quantity * item.price);
-    }, 0);
 
     return (
         <Modal

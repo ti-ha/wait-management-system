@@ -1,4 +1,5 @@
 frontend/node_modules/
+/node_modules
 __pycache__/*
 wms/__pycache__/
 wms/__pycache__/Category.cpython-311.pyc
