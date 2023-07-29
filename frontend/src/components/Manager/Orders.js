@@ -90,7 +90,7 @@ export default function Orders() {
 
     return (
         <>
-            <Header userType={userType} currentPage="order-history" />
+            <Header userType={userType} currentPage="orders" />
 
             <h1 style={{textAlign: 'center'}}>Current Orders</h1>
             <div style={{maxWidth: '1600px', margin: 'auto'}}>
