@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from "@mui/material";
+import { Button, Menu, MenuItem } from "@mui/material";
 import ProfileDropdown from './ProfileDropdown.js';
 import './Header.css'
 
@@ -12,6 +12,19 @@ export default function Header ({ userType, currentPage }) {
 
     const auth_token = localStorage.getItem('token'); 
     const [user, setUser] = useState({});
+
+    const [anchorEl, setAnchorEl] = useState(null); 
+
+    const handleOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = (path) => {
+        setAnchorEl(null);
+        if(typeof path === 'string') {
+            navigate(path);
+        }
+    };
 
     useEffect(() => {
         const me = async () => {
@@ -57,16 +70,32 @@ export default function Header ({ userType, currentPage }) {
             <div className="headerButtonsLeft">
                 {isManager &&
                     <>
-                        <Link to="/menu-editor">
-                            <Button variant="contained" disabled={currentPage === 'menu-editor'}>
-                                Menu Editor
-                            </Button>
-                        </Link>
-                        <Link to="/restaurant-manager">
-                            <Button variant="contained" disabled={currentPage === 'restaurant-manager'}>
-                                Restaurant Manager
-                            </Button>
-                        </Link>
+                        <Button variant="contained" onClick={handleOpen}>
+                            Manager
+                        </Button>
+                        <Menu
+                            id="manager-menu"
+                            anchorEl={anchorEl}
+                            keepMounted
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                        >
+                            <MenuItem onClick={() => handleClose("/menu-editor")}>
+                                <div className="no-underline">
+                                    Menu Editor
+                                </div>
+                            </MenuItem>
+                            <MenuItem onClick={() => handleClose("/restaurant-manager")}>
+                                <div className="no-underline">
+                                    Restaurant Manager
+                                </div>
+                            </MenuItem>
+                            <MenuItem onClick={() => handleClose("/insights")}>
+                                <div className="no-underline">
+                                    Insights
+                                </div>
+                            </MenuItem>
+                        </Menu>
                     </>
                 }
                 <Link to="/kitchen">
