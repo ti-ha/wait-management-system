@@ -1,11 +1,56 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@mui/material";
+import ProfileDropdown from './ProfileDropdown.js';
 import './Header.css'
 
 export default function Header ({ userType, currentPage }) {
 
+    const navigate = useNavigate();
+
     const isManager = userType === 'Manager';
+
+    const auth_token = localStorage.getItem('token'); 
+    const [user, setUser] = useState({});
+
+    useEffect(() => {
+        const me = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/me`, {
+                    headers: { 'Authorization': `${auth_token}` }
+                });
+                if (!response.ok) { 
+                    const responseBody = await response.json();
+                    console.error('Server response:', responseBody); 
+                    throw new Error(`HTTP Error with status: ${response.status}`);
+                }    
+                const data = await response.json();
+                setUser(data);
+            } catch (error) {
+                console.error("Error fetching my profile:", error);
+            }
+        }
+        me()
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/logout`, {
+                method: 'POST',
+                headers: { 'Authorization': `${auth_token}` }
+            });
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }    
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
+
+        localStorage.clear();
+        navigate("/login");
+    };
 
     return (
         <header className="headerContainer">
@@ -46,6 +91,7 @@ export default function Header ({ userType, currentPage }) {
                         Landing Page
                     </Button>
                 </Link>
+                <ProfileDropdown user={user} handleLogout={handleLogout} />
             </div>
         </header>
     );
