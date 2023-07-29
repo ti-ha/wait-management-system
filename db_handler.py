@@ -1,15 +1,12 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Table, Engine
+from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey, Table, engine
 from sqlalchemy.orm import sessionmaker, Session
-# from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import MetaData
 
 class DatabaseHandler():
     def __init__(self):
         self.__engine = create_engine("sqlite+pysqlite:///wms_db.db", echo=True)
-        # Session = sessionmaker(self.db_engine)
         self.__session = sessionmaker(self.engine)
         self.__metadata_obj = MetaData()
-        # self.Base = declarative_base()
 
         self.category_table = Table(
             "category",
@@ -30,7 +27,7 @@ class DatabaseHandler():
         self.create_tables()
 
     @property
-    def engine(self) -> Engine:
+    def engine(self) -> engine:
         """ Returns the engine"""
         return self.__engine
     

@@ -6,7 +6,7 @@ class MenuItem():
     # Unique id
     __id_iter = itertools.count()
 
-    __tablename__ = 'menu_item'
+    # __tablename__ = 'menu_item'
 
     # _id = Column(Integer, primary_key=True, autoincrement='auto')
     # _name = Column(String(40), nullable=False)

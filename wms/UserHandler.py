@@ -67,7 +67,7 @@ class UserHandler():
         usermatch.status = True
         return usermatch if success else None
         
-    def logout(self, firstname, lastname) -> bool:
+    def logout(self, user: User) -> bool:
         """ Attempts to log out the user
 
         Args:
@@ -77,13 +77,12 @@ class UserHandler():
         Returns:
             Bool: Returns true if logout was successful, false otherwise
         """
-        usermatch = next((i for i in self.users 
-                     if i.firstname == firstname and i.lastname == lastname), None)
-        
-        if usermatch is not None:
-            usermatch.status = False
-            return True
-        return False
+        if not isinstance(user, User):
+            raise TypeError("UserHandler: logout(): argument is of invalid type (expected User)")
+        elif user is not None:
+            user.status = False
+            return None
+        raise ValueError("UserHandler: logout(): token did not match a user")
 
     def jsonify(self) -> dict:
         """ Creates a dictionary of all the users and their first name, last 
