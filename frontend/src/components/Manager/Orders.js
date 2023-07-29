@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useIsManager } from '../Hooks/useIsAuthorised.js';
+import { useIsStaffMember } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
 import Header from "../Common/Header.js";
 import BillModal from '../Customer/BillModal.js';
@@ -12,7 +12,7 @@ export default function Orders() {
     const auth_token = localStorage.getItem('token'); 
 
     // Ensure the user is authorised to access this page
-    const { isAuthorised, isLoading } = useIsManager();
+    const { isAuthorised, isLoading } = useIsStaffMember();
     const userType = localStorage.getItem('user_type');
 
     const [orders, setOrders] = useState([]);
@@ -38,6 +38,13 @@ export default function Orders() {
                 throw new Error(`HTTP Error with status: ${response.status}`);
             }
             const data = await response.json();
+
+            // Initialise bill for every table in orders
+            const tableIds = [...new Set(data.history.map(order => order.table_id))];
+            for(let tableId of tableIds) {
+                await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${tableId}/bill`)
+            }
+
             setOrders(data.history);
         } catch (error) {
             console.error("Error fetching orders:", error);
@@ -45,7 +52,6 @@ export default function Orders() {
     }
 
     const payBill = async (table_id) => {
-        table_id = 0
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${table_id}/bill`, {
                 method: 'POST'
@@ -57,6 +63,9 @@ export default function Orders() {
             }
             const data = await response.json();
             console.log(data.message);
+
+            // Fetch all orders again to update the page state
+            await fetchAllOrders();
         } catch (error) {
             console.error("Error paying bill:", error);
         }
@@ -76,8 +85,8 @@ export default function Orders() {
         return <AccessDenied userType={userType}/>
     }
 
-    const currentOrders = orders.filter(order => order.bill.paid === false);
-    const completedOrders = orders.filter(order => order.bill.paid === true);
+    const currentOrders = orders.filter(order => order.bill?.paid === false);
+    const completedOrders = orders.filter(order => order.bill?.paid === true);
 
 
 
@@ -105,8 +114,8 @@ export default function Orders() {
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                             <TableCell sx={{ width: '25%' }}>{order.id}</TableCell>
-                            <TableCell sx={{ width: '25%' }}>{order.table_number}</TableCell>
-                            <TableCell sx={{ width: '25%' }}>${order.bill.price.toFixed(2)}</TableCell>
+                            <TableCell sx={{ width: '25%' }}>{order.table_id + 1}</TableCell>
+                            <TableCell sx={{ width: '25%' }}>${order.bill?.price.toFixed(2)}</TableCell>
                             <TableCell sx={{ width: '25%' }} align="right">
                             <Button variant="contained" color="secondary" onClick={() => handleViewBill(order)}>View Bill</Button>
                             <Button variant="contained" color="primary" onClick={() => payBill(order.table_id)}>Mark as Paid</Button>
@@ -138,10 +147,10 @@ export default function Orders() {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                 <TableCell>{order.id}</TableCell>
-                                <TableCell>{order.table_number}</TableCell>
+                                <TableCell>{order.table_id + 1}</TableCell>
                                 <TableCell>${order.bill.price.toFixed(2)}</TableCell>
                                 <TableCell align="right">
-                                    <Button variant="contained" color="secondary">View Bill</Button>
+                                    <Button variant="contained" color="secondary" onClick={() => handleViewBill(order)}>View Bill</Button>
                                 </TableCell>
                                 </TableRow>
                             ))}
@@ -150,7 +159,7 @@ export default function Orders() {
                     </TableContainer>
                 </div>
             </Box>
-            {currentOrder && <BillModal orders={[currentOrder]} onClose={handleCloseModal} table_id={currentOrder.id}/>}
+            {currentOrder && <BillModal orders={[currentOrder]} onClose={handleCloseModal} table_id={currentOrder.table_id}/>}
         </>
     )
 }
