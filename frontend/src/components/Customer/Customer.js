@@ -191,8 +191,10 @@ export default function Customer() {
                 throw new Error(`HTTP Error with status: ${response.status}`);
             }
             const data = await response.json();
-            setBillOrders(data.orders);
-            console.log('The bill orders are:', billOrders);
+
+            // Don't include order in bill if it is paid
+            const filteredOrders = data.orders.filter(order => order.bill === null || order.bill.paid === false);
+            setBillOrders(filteredOrders);
             setIsBillOpen(true);
         } catch (error) {
             console.error("Error fetching bill orders:", error);
@@ -374,7 +376,6 @@ export default function Customer() {
                 <BillModal 
                     orders={billOrders}
                     onClose={() => setIsBillOpen(false)}
-                    table_id={tableNumber - 1}
                 />
             }
 

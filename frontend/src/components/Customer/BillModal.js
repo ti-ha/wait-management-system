@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Box, Button } from '@mui/material';
 import './BillModal.css'
 
-export default function BillModal({ orders, onClose, table_id }) {
+export default function BillModal({ orders, onClose }) {
 
     const [total, setTotal] = useState(0);
 
@@ -28,23 +28,12 @@ export default function BillModal({ orders, onClose, table_id }) {
     const aggregatedOrders = aggregateOrders(orders);
 
     useEffect(() => {
-        const fetchTotalBill = async () => {
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/tables/${table_id}/bill`);
-                if (!response.ok) { 
-                    const responseBody = await response.json();
-                    console.error('Server response:', responseBody); 
-                    throw new Error(`HTTP Error with status: ${response.status}`);
-                }
-                const data = await response.json();
-                setTotal(data.price);
-            } catch (error) {
-                console.error("Error fetching total bill:", error);
-            }
-        };
-        fetchTotalBill();
-    }, [orders]);
-
+        let totalCost = 0;
+        aggregatedOrders.forEach(item => {
+            totalCost += item.price * item.quantity;
+        });
+        setTotal(totalCost);
+    }, [aggregatedOrders]);
 
     const style = {
         position: 'absolute',
