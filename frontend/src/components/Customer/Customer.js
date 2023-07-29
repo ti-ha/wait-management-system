@@ -267,12 +267,14 @@ export default function Customer() {
                             <p>{category.name}</p>   
                         </div>
                     ))}
-                    <div 
-                        className={`${'Personalised Deals' === currentCategory ? "selectedPersonalisedDealBox" : "personalisedDealBox"}`}
-                        onClick={() => handleCategoryClick('Personalised Deals')}
-                    >
-                        <p>Personalised Deals</p>
-                    </div>
+                    {personalisedDeals.length > 0 && (
+                        <div 
+                            className={`${'Personalised Deals' === currentCategory ? "selectedPersonalisedDealBox" : "personalisedDealBox"}`}
+                            onClick={() => handleCategoryClick('Personalised Deals')}
+                        >
+                            <p>Personalised Deals</p>
+                        </div>
+                    )}
                 </div>
 
                 <div className="items">
