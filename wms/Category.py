@@ -1,8 +1,8 @@
 from __future__ import annotations
 import itertools
 from wms import MenuItem
-from sqlalchemy import Session, Column, Integer, String, text
-
+from sqlalchemy import engine, Table, MetaData, Column, Integer, String, ForeignKey, text
+from sqlalchemy.orm import Session
 
 class Category():
 

@@ -1,6 +1,4 @@
 import itertools
-from sqlalchemy import engine, Table, MetaData, Column, Integer, Double, String, ForeignKey, text
-from sqlalchemy.orm import Session
 
 
 class MenuItem():

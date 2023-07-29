@@ -2,6 +2,7 @@ from __future__ import annotations
 from wms import UserHandler, TableHandler, MenuHandler, Menu, SRMHandler, ServiceRequestManager, OrderManagerHandler, OrderManager, RestaurantManagerHandler, RestaurantManager, PersonalisedDealEngine
 from db_handler import DatabaseHandler
 
+
 class Application():
     def __init__(self):
         """ Constructor for the Application class. A decorator class for 
