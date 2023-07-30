@@ -3,7 +3,9 @@
     justify-content: space-between;
 }
 
-.billOrder > div, strong, p {
+.billOrder > div, 
+.billOrder > strong, 
+.billOrder > p {
     width: 33.33%; 
     text-align: center; 
 }
