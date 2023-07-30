@@ -97,7 +97,7 @@ export default function Header ({ userType, currentPage }) {
                             </MenuItem>
                             <MenuItem onClick={() => handleClose("/manage-staff")}>
                                 <div className="no-underline">
-                                    Manage Staff
+                                    Register Staff
                                 </div>
                             </MenuItem>
                         </Menu>
