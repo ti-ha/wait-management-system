@@ -6,7 +6,7 @@ class MenuItem():
     # Unique id
     __id_iter = itertools.count()
 
-    def __init__(self, db_engine, name, price, image_url = "None"):
+    def __init__(self, name, price, image_url = "None"):
         """ Constructor for the MenuItem class
 
         Args:
@@ -21,7 +21,6 @@ class MenuItem():
         self.__price = price
         self.__image_url = image_url
         self.__visible = True
-        self.__db_engine = db_engine
 
     @property
     def id(self) -> itertools.count:

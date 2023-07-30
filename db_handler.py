@@ -16,7 +16,7 @@ def create_engine():
     menu_table = Table(
         "menu_item",
         metadata_obj,
-        Column("id", Integer, primary_key=True, autoincrement='auto'),
+        Column("id", Integer, primary_key=True),
         Column("name", String(40), nullable=False),
         Column("price", Float(2), nullable=False),
         Column("category", Integer, ForeignKey('category.id')),
@@ -28,6 +28,5 @@ def create_engine():
 def create_tables(metadata_obj):
     metadata_obj.create_all(engine)
 
-def load_session():
-    session = sessionmaker(engine)
-    return session
+def load_engine():
+    return engine

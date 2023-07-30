@@ -155,6 +155,7 @@ class Category():
             raise ValueError("Category: add_menu_item(): MenuItem already in category")
         
         self.menu_items.append(menu_item)
+        self.add_to_db(menu_item)
 
     def remove_menu_item(self, name) -> int:
         """ Removes a menu_item from the category
@@ -192,11 +193,11 @@ class Category():
         }
 
     def add_to_db(self, menu_item: MenuItem):
+        print(f"menu item id: {menu_item.id}\n name: '{menu_item.name}'\n price: {menu_item.price} \n id:{self.id}\n url: '{menu_item.image_url}'")
         add_menu_item = text(
-            f"""INSERT INTO menu_item (_id, _name, _price, _category, _image_url) 
+            f"""INSERT OR REPLACE INTO menu_item (id, name, price, category, image_url) 
             VALUES ({menu_item.id}, '{menu_item.name}', {menu_item.price}, {self.id}, '{menu_item.image_url}')"""
         )
-        with Session(db_handler.load_session()) as session:
-            session.execute(add_menu_item)
-            session.commit()   
-    
+        e = db_handler.load_engine()
+        with e.connect() as conn:
+            conn.execute(add_menu_item)    
