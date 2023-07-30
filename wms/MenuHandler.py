@@ -346,6 +346,7 @@ class MenuHandler():
         """
         menu_item_stats = OrderedDict()
         for item in statistics:
-            menu_item_stats[self.get_menu_item_by_id(item[0]).name] = self.get_menu_item_by_id(item[1]).name
+            item_1_name = self.get_menu_item_by_id(item[1]).name if item[1] is not None else "None"
+            menu_item_stats[self.get_menu_item_by_id(item[0]).name] = item_1_name
 
         return menu_item_stats

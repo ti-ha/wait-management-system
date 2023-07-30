@@ -103,7 +103,10 @@ class RestaurantManager:
         for item in self.statistics.items():
             menu_item_frequencies = item[1].items()
             sorted_list = sorted(menu_item_frequencies, key=lambda num:num[1], reverse=True)
+            # Each item in sorted list is a tuple (x,y) where x is item id and y is frequency
             top_pairing = sorted_list[0] if sorted_list[0][0] != item[0] else sorted_list[1]
-            frequent_pairs.append((item[0], top_pairing[0]))
+            # Only add item if frequency is not 0 otherwise it hasn't been paired yet 
+            pair_to_add = (item[0], top_pairing[0]) if top_pairing[1] != 0 else (item[0], None)
+            frequent_pairs.append(pair_to_add)
         return frequent_pairs
             
