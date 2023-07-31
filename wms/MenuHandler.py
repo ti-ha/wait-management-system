@@ -5,25 +5,10 @@ class MenuHandler():
     def __init__(self, menu: Menu):
         """ Constructor for the MenuHandler Class """
         self.__menu = menu
-        self.__observers = []
     
     @property
     def menu(self) -> Menu:
         return self.__menu
-
-    def attach(self, observer: RestaurantManagerHandler):
-        """ Attach observer to menu handler """
-        self.__observers.append(observer)
-
-    def notify_add(self, menu_item_id: int):
-        """ Notify observers of a new addition to the menu """
-        for observer in self.__observers:
-            observer.menu_add(menu_item_id)
-
-    def notify_delete(self, menu_item_id: int):
-        """ Notify observers of an item deletion to the menu """
-        for observer in self.__observers:
-            observer.menu_delete(menu_item_id)
     
     def get_category(self, category) -> Category:
         """ Gets a given category from the menu
@@ -101,7 +86,6 @@ class MenuHandler():
             raise ValueError("Menu item with this name already exists")
         item = MenuItem(name, price, imageurl)
         self.__menu.get_category(category).add_menu_item(item)
-        self.notify_add(item.id)
 
     def add_deal(self, discount, menu_items) -> None:
         """ Adds a deal to the menu
@@ -145,7 +129,6 @@ class MenuHandler():
             name (String): Name of the menu item
         """
         removed_id = self.__menu.get_category(category).remove_menu_item(name)
-        self.notify_delete(removed_id)
 
     def update_category(self, category, name, visible):
         """ Updates category name and/or visibility
