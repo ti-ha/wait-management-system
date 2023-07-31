@@ -9,6 +9,7 @@ export default function Header ({ userType, currentPage }) {
     const navigate = useNavigate();
 
     const isManager = userType === 'Manager';
+    const isCustomerPage = currentPage.startsWith("/customer");
 
     const auth_token = localStorage.getItem('token'); 
     const [user, setUser] = useState({});
@@ -67,65 +68,66 @@ export default function Header ({ userType, currentPage }) {
 
     return (
         <header className="headerContainer">
-            <div className="headerButtonsLeft">
-                {isManager &&
-                    <>
-                        <Button variant="contained" onClick={handleOpen}>
-                            Manager
+            {!isCustomerPage ? (
+                <div className="headerButtonsLeft">
+                    {isManager &&
+                        <>
+                            <Button variant="contained" onClick={handleOpen}>
+                                Manager
+                            </Button>
+                            <Menu
+                                id="manager-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                            >
+                                <MenuItem onClick={() => handleClose("/menu-editor")}>
+                                    <div className="no-underline">
+                                        Menu Editor
+                                    </div>
+                                </MenuItem>
+                                <MenuItem onClick={() => handleClose("/insights")}>
+                                    <div className="no-underline">
+                                        Insights
+                                    </div>
+                                </MenuItem>
+                                <MenuItem onClick={() => handleClose("/restaurant-manager")}>
+                                    <div className="no-underline">
+                                        Restaurant Manager
+                                    </div>
+                                </MenuItem>
+                                <MenuItem onClick={() => handleClose("/register-staff")}>
+                                    <div className="no-underline">
+                                        Register Staff
+                                    </div>
+                                </MenuItem>
+                            </Menu>
+                        </>
+                    }
+                    <Link to="/kitchen">
+                        <Button variant="contained" disabled={currentPage === 'kitchen'}>
+                            Kitchen View
                         </Button>
-                        <Menu
-                            id="manager-menu"
-                            anchorEl={anchorEl}
-                            keepMounted
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                        >
-                            <MenuItem onClick={() => handleClose("/menu-editor")}>
-                                <div className="no-underline">
-                                    Menu Editor
-                                </div>
-                            </MenuItem>
-                            <MenuItem onClick={() => handleClose("/insights")}>
-                                <div className="no-underline">
-                                    Insights
-                                </div>
-                            </MenuItem>
-                            <MenuItem onClick={() => handleClose("/restaurant-manager")}>
-                                <div className="no-underline">
-                                    Restaurant Manager
-                                </div>
-                            </MenuItem>
-                            <MenuItem onClick={() => handleClose("/register-staff")}>
-                                <div className="no-underline">
-                                    Register Staff
-                                </div>
-                            </MenuItem>
-                        </Menu>
-                    </>
-                }
-                <Link to="/kitchen">
-                    <Button variant="contained" disabled={currentPage === 'kitchen'}>
-                        Kitchen View
-                    </Button>
-                </Link>
-                <Link to="/wait-staff">
-                    <Button variant="contained" disabled={currentPage === 'wait-staff'}>
-                        Wait Staff View
-                    </Button>
-                </Link>
-                <Link to="/orders">
-                    <Button variant="contained" disabled={currentPage === 'orders'}>
-                        Orders
-                    </Button>
-                </Link>
-            </div>
+                    </Link>
+                    <Link to="/wait-staff">
+                        <Button variant="contained" disabled={currentPage === 'wait-staff'}>
+                            Wait Staff View
+                        </Button>
+                    </Link>
+                    <Link to="/orders">
+                        <Button variant="contained" disabled={currentPage === 'orders'}>
+                            Orders
+                        </Button>
+                    </Link>
+                </div>) : <div></div>}
             <div className="headerButtonsRight">
                 <Link to="/">
                     <Button variant="contained" disabled={currentPage === '/'}>
                         Landing Page
                     </Button>
                 </Link>
-                <ProfileDropdown user={user} handleLogout={handleLogout} />
+                {!isCustomerPage && <ProfileDropdown user={user} handleLogout={handleLogout} />}
             </div>
         </header>
     );

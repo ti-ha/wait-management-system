@@ -2,10 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from 'react-router-dom';
 import ItemModal from "./ItemModal.js";
 import BillModal from "./BillModal.js";
-import './Customer.css'
-import { Button, IconButton, TextField } from "@mui/material";
+import { IconButton, TextField, Button, Grid, Card, CardContent, Typography, Box, CardMedia, CardActions } from '@mui/material';
 import { Add, Remove } from "@mui/icons-material"
 import useDebounce from "../Hooks/useDebounce.js";
+import Header from "../Common/Header.js";
 
 
 export default function Customer() {
@@ -107,8 +107,13 @@ export default function Customer() {
         if (category === 'Personalised Deals') {
             data = personalisedDeals;
             
-            // Extract all menu items from each deal
-            let allMenuItems = data.flatMap(deal => deal.menu_items);
+            // Extract all menu items from each deal and apply discount
+            let allMenuItems = data.flatMap(deal => {
+                return deal.menu_items.map(item => ({
+                    ...item, 
+                    price: (item.price * (1 - deal.discount)).toFixed(2) // Apply the discount
+                }));
+            });
             console.log(`the personalised deals are:`, allMenuItems)
             setCurrentItems(allMenuItems);
         } else {
@@ -236,133 +241,182 @@ export default function Customer() {
     }    
 
     return (
-        <div className="customerPage">
-            <header className="customerPageHeader">
-                <div></div>
-                <Link to="/">
-                        <Button variant="contained">
-                            Landing Page
-                        </Button>
-                </Link>
-            </header>
+        <>
+            <Header userType='customer' currentPage="/customer" />
+            <Box 
+                sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    justifyContent: 'flex-start', 
+                    alignItems: 'center',
+                    minHeight: '100vh',
+                    maxWidth: '1600px', 
+                    margin: 'auto',
+                    pt: 10
+                }}
+            >
 
-            <div className="customerContainer">
-                <div className="categories">
-                    <TextField
-                        value={searchInput}
-                        onChange={handleSearchChange}
-                        label="Search"
-                        variant="outlined"
-                        sx={{marginBottom: '50px'}}
-                    />
-                    <h2>Menu</h2>
-                    {categories
-                        .filter(category => category.visible)
-                        .map((category, index) => (
-                        <div 
-                            key={index} 
-                            className={`${category.name === currentCategory ? "selectedCategoryBox" : "categoryBox"}`}
-                            onClick={() => handleCategoryClick(category.name)}
-                        >
-                            <p>{category.name}</p>   
-                        </div>
-                    ))}
-                    {personalisedDeals.length > 0 && (
-                        <div 
-                            className={`${'Personalised Deals' === currentCategory ? "selectedPersonalisedDealBox" : "personalisedDealBox"}`}
-                            onClick={() => handleCategoryClick('Personalised Deals')}
-                        >
-                            <p>Personalised Deals</p>
-                        </div>
-                    )}
-                </div>
 
-                <div className="items">
-                    {(currentItems.length > 0 && (!searchResults)) &&
-                        <h2 className="itemsTitle">{currentCategory}</h2>
-                    }
-                    {(searchResults && Object.keys(searchResults).length !== 0) &&
-                        <h2 className="itemsTitle">Search Results</h2>
-                    }
-                        <div className="itemContainer">
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={3}>
+                        <Box sx={{ marginLeft: '20px', marginRight: '20px' }}>
+                            <TextField
+                                value={searchInput}
+                                onChange={handleSearchChange}
+                                label="Search"
+                                variant="outlined"
+                                sx={{marginBottom: '50px', display: 'flex', marginLeft: 'auto', marginRight: 'auto'}}
+                            />
+
+                            {categories
+                                .filter(category => category.visible)
+                                .map((category, index) => (
+                                <Card 
+                                    key={index} 
+                                    onClick={() => handleCategoryClick(category.name)}
+                                    sx={{ marginBottom: '10px', cursor: 'pointer', background: category.name === currentCategory ? '#808080' : '#f0f0f0' }}
+                                >
+                                    <CardContent>
+                                        <Typography align="center">{category.name}</Typography>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                            {personalisedDeals.length > 0 && (
+                                <Card 
+                                    onClick={() => handleCategoryClick('Personalised Deals')}
+                                    sx={{ marginBottom: '10px', cursor: 'pointer', background: 'Personalised Deals' === currentCategory ? '#808080' : '#ffcc00' }}
+                                >
+                                    <CardContent>
+                                        <Typography align="center">Personalised Deals</Typography>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </Box>
+                    </Grid>
+
+                    <Grid item xs={12} md={5}>
+                        {(currentItems.length > 0 && (!searchResults)) &&
+                            <Typography variant="h4" align="center" gutterBottom>{currentCategory}</Typography>
+                        }
+                        {(searchResults && Object.keys(searchResults).length !== 0) &&
+                            <Typography variant="h4" align="center" gutterBottom>Search Results</Typography>
+                        }
+                        <Grid container spacing={3}>
                             {searchResults ? 
                                 (
                                 Object.keys(searchResults).length !== 0 ? 
-                                <>
-                                    {Object.values(searchResults).flat().map((item, index) => (
-                                        <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
-                                            <div className="imageContainer">
-                                                <img src={item.imageURL} alt={item.name}/> 
-                                            </div>
-                                            <div className="itemInfo">
-                                                <p>{item.name}</p>
-                                                <p>${item.price}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </>
+                                    Object.values(searchResults).flat().map((item, index) => (
+                                        <Grid item xs={12} sm={6} key={index}>
+                                            <Card onClick={() => handleOpenModal(item)}>
+                                                <CardMedia
+                                                    component="img"
+                                                    alt={item.name}
+                                                    height="140"
+                                                    image={item.imageURL}
+                                                    title={item.name}
+                                                />
+                                                <CardContent>
+                                                    <Typography gutterBottom variant="h5" component="div">
+                                                        {item.name}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        ${item.price}
+                                                    </Typography>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    ))
                                 :
-                           
-                                <h2>No Results Found</h2>
-                         
-                            )   
-                            :
-                                currentItems.map((item, index) => (
-                                    <div className="itemBox" key={index} onClick={() => handleOpenModal(item)}>
-                                        <div className="imageContainer">
-                                            <img src={item.imageURL} alt={item.name}/> 
-                                        </div>
-                                        <div className="itemInfo">
-                                            <p>{item.name}</p>
-                                            <p>${item.price}</p>
-                                        </div>
-                                    </div>
-                                ))
+                                    <Typography variant="h5" align="center" gutterBottom>No Results Found</Typography>
+                                )   
+                                :
+                                    currentItems.map((item, index) => (
+                                        <Grid item xs={12} sm={6} key={index}>
+                                            <Card onClick={() => handleOpenModal(item)}>
+                                                <CardMedia
+                                                    component="img"
+                                                    alt={item.name}
+                                                    height="140"
+                                                    image={item.imageURL}
+                                                    title={item.name}
+                                                />
+                                                <CardContent>
+                                                    <Typography gutterBottom variant="h5" component="div">
+                                                        {item.name}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        ${item.price}
+                                                    </Typography>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    ))
                             }
-                        </div>
-                </div>
+                        </Grid>
+                    </Grid>
 
-                <div className="orderContainer">
-                    <div>
-                        <h2 className="tableNumber">
-                            Table Number: {tableNumber}
-                        </h2>
-                    </div>
+                    <Grid item xs={12} md={4}>
+                        <Typography variant="h4" align="center" gutterBottom>
+                            Table {tableNumber}
+                        </Typography>
+                        <Card sx={{ mb: 3, minHeight: '500px' }}>
+                            <CardContent>
+                                <Typography variant="h5" textAlign="center" gutterBottom>
+                                    Current Order
+                                </Typography>
+                                {currentOrder.map((order, index) => (
+                                    <Card key={index} sx={{ mb: 1 }}>
+                                        <CardContent sx={{ py: 1 }}>
+                                            <Grid container justifyContent="space-between" alignItems="center">
+                                                <Grid item>
+                                                    <Typography variant="body1">{order.name}</Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Grid container alignItems="center" spacing={1}>
+                                                        <Grid item>
+                                                            <IconButton size="small" onClick={() => updateQuantity(order.id, -1)}>
+                                                                <Remove />
+                                                            </IconButton>
+                                                        </Grid>
+                                                        <Grid item>
+                                                            <Typography variant="body1">{order.quantity}</Typography>
+                                                        </Grid>
+                                                        <Grid item>
+                                                            <IconButton size="small" onClick={() => updateQuantity(order.id, 1)}>
+                                                                <Add />
+                                                            </IconButton>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Typography variant="body1">${order.price}</Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </CardContent>
+                            <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                                {currentOrder.length >0 &&
+                                    <Button variant="contained" sx={{ width: 200 }} onClick={sendOrderToKitchen}>
+                                        Send Order
+                                    </Button> 
+                                }
+                            </CardActions>
+                        </Card>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <Button variant="contained" sx={{ mb: 1, width: 200 }} onClick={fetchBill}>
+                                View Bill
+                            </Button>
+                            <Button variant="contained" sx={{ width: 200 }} onClick={sendAssistanceRequest}>
+                                Request Assistance
+                            </Button>
+                        </Box>
+                    </Grid>
 
-                    <div className="orders">
-                        <div className="ordersList">
-                            <h2 className="ordersHeader">Current Order</h2>
-                            {currentOrder.map((order, index) => (
-                                <div key={index} className="orderItem">
-                                    <p>{order.name}</p>
-                                    <div style={{display: 'flex', alignItems: 'center'}}>
-                                        <IconButton onClick={() => updateQuantity(order.id, -1)}>
-                                            <Remove />
-                                        </IconButton>
-                                            {order.quantity}
-                                        <IconButton onClick={() => updateQuantity(order.id, 1)}>
-                                            <Add />
-                                        </IconButton>
-                                    </div>
-                                    <p>${order.price}</p>
-                                </div>
-                            ))}
-                        </div>
-                        
-                        <Button variant="contained" onClick={sendOrderToKitchen}>
-                            Send Order
-                        </Button>
-                    </div>
 
-                    <Button style={{ marginTop: "10px" }} variant="contained" onClick={fetchBill}>
-                        View Bill
-                    </Button>
-
-                    <Button style={{ marginTop: "10px" }} variant="contained" onClick={sendAssistanceRequest}>
-                        Request Assistance
-                    </Button>
-                </div>
-            </div>
+                </Grid>
+            </Box>
 
             {selectedItem && 
                 <ItemModal 
@@ -380,7 +434,6 @@ export default function Customer() {
                     onClose={() => setIsBillOpen(false)}
                 />
             }
-
-        </div>
+        </>
     )
 };
