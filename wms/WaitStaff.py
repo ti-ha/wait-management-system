@@ -1,5 +1,4 @@
-from __future__ import annotations
-from wms import User, ServiceRequest
+from .User import User
 
 class WaitStaff(User):
     def __init__(self, firstname, lastname, password):
