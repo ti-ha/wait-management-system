@@ -43,7 +43,7 @@ class Deal():
     @discount.setter
     def discount(self, discount):
         """ Sets the discount for the deal """
-        if Deal.isfloat(discount):
+        if Deal.is_float(discount):
             self.__discount = float(discount)
             return
         else:
@@ -121,7 +121,7 @@ class Deal():
         
         return False
     
-    def isfloat(num) -> bool:
+    def is_float(num) -> bool:
         """ Helper function for parsing input
 
         Args:
