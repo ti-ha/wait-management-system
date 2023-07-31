@@ -1,7 +1,9 @@
 from __future__ import annotations
 from difflib import SequenceMatcher as sm
+from wms.DbHandler import Category as DbCategory
 from wms import Category, MenuItem, Deal, DbHandler
 from .PersonalisedDeal import PersonalisedDeal
+from sqlalchemy.orm import Session
 
 class Menu():
 
@@ -67,11 +69,19 @@ class Menu():
             raise ValueError("Menu: add_category(): Category already exists")
         
         self.__categories.append(category)
-        with db.engine.connect() as conn:
-            conn.execute(
-                db.category_table.insert().values(name=category.name)
-            )
-            conn.commit()
+        with Session(db.engine) as session:
+            session.add(DbCategory(name=category.name))
+            session.commit()
+        # session = db.session()
+        # session
+        # session.add(db.Category(name=category.name))
+        # session.commit()
+
+        # with db.engine.connect() as conn:
+        #     conn.execute(
+        #         db.category_table.insert().values(name=category.name)
+        #     )
+        #     conn.commit()
 
     def remove_category(self, name) -> None:
         """ Removes a category, if that category exists, from the menu.

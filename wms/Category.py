@@ -1,6 +1,9 @@
 from __future__ import annotations
 import itertools
 from wms import MenuItem, DbHandler
+from sqlalchemy.orm import Session
+from wms.DbHandler import MenuItem as DbMenuItem
+
 # from sqlalchemy import insert
 # from sqlalchemy import Column, Integer, String
 # from middlewares import db
@@ -141,16 +144,33 @@ class Category():
             raise ValueError("Category: add_menu_item(): MenuItem already in category")
         
         self.menu_items.append(menu_item)
-        with db.engine.connect() as conn:
-            conn.execute(
-                db.menu_table.insert().values(
-                    name=menu_item.name,
-                    price=menu_item.price,
-                    category=self.id,
-                    image_url=menu_item.image_url
-                )
-            )
-            conn.commit()
+        with Session(db.engine) as session:
+            session.add(DbMenuItem(
+                name=menu_item.name,
+                price=menu_item.price,
+                category_id=self.id,
+                image_url=menu_item.image_url
+            ))
+            session.commit()
+
+        # session = db.session()
+        # session.add(db.MenuItem(
+        #     name=menu_item.name,
+        #     price=menu_item.price,
+        #     category=self.id,
+        #     image_url=menu_item.image_url
+        # ))
+        # session.commit()
+        # with db.engine.connect() as conn:
+        #     conn.execute(
+        #         db.menu_table.insert().values(
+        #             name=menu_item.name,
+        #             price=menu_item.price,
+        #             category=self.id,
+        #             image_url=menu_item.image_url
+        #         )
+        #     )
+        #     conn.commit()
     def remove_menu_item(self, name) -> int:
         """ Removes a menu_item from the category
 
