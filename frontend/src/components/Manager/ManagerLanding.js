@@ -29,10 +29,10 @@ export default function ManagerLanding() {
                     Use the navigation bar at the top of the page to switch between the different management views.
                 </Typography>
                 <Typography variant="body1">
-                    The <strong>Menu Editor</strong> lets you update the restaurant menu.<br /> 
-                    The <strong>Restaurant Manager</strong> gives you insights into the restaurant's performance.<br /> 
+                    The <strong>Manager</strong> button gives you access to the Menu Editor, Insights, Restaurant Manager and Staff Registration page.<br /> 
                     The <strong>Kitchen View</strong> shows current orders being prepared. <br /> 
-                    The <strong>Wait Staff View</strong> shows orders served and tables requiring assistance.
+                    The <strong>Wait Staff View</strong> shows orders served and tables requiring assistance.<br />
+                    The <strong>Orders</strong> page gives you access to all the current and past orders.<br /> 
                 </Typography>
             </Grid>
         </>
