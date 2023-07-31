@@ -377,7 +377,7 @@ export default function MenuEditor() {
                     flexDirection: 'column', 
                     justifyContent: 'flex-start',
                     alignItems: 'center',
-                    minHeight: '100vh',
+                    minHeight: '90vh',
                     maxWidth: '1600px', 
                     margin: 'auto',
                     pt: 10

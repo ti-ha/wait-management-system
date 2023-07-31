@@ -263,14 +263,12 @@ export default function Customer() {
                     flexDirection: 'column', 
                     justifyContent: 'flex-start', 
                     alignItems: 'center',
-                    minHeight: '100vh',
+                    minHeight: '90vh',
                     maxWidth: '1600px', 
                     margin: 'auto',
                     pt: 10
                 }}
             >
-
-
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={3}>
                         <Box sx={{ marginLeft: '20px', marginRight: '20px' }}>
