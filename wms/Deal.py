@@ -43,7 +43,7 @@ class Deal():
     @discount.setter
     def discount(self, discount):
         """ Sets the discount for the deal """
-        if Deal.isfloat(discount):
+        if Deal.is_float(discount):
             self.__discount = float(discount)
             return
         else:
@@ -121,7 +121,7 @@ class Deal():
         
         return False
     
-    def isfloat(num) -> bool:
+    def is_float(num) -> bool:
         """ Helper function for parsing input
 
         Args:
@@ -146,5 +146,9 @@ class Deal():
         return {
             "id": self.id, 
             "discount": self.discount, 
-            "menu_items": [i.jsonify() for i in self.menu_items]
+            "menu_items": [{"id": i.jsonify()["id"], 
+                            "name": i.jsonify()["name"], 
+                            "price": round(i.jsonify()["price"] - i.jsonify()["price"]*self.discount, 2),
+                            "imageURL": i.jsonify()["imageURL"],
+                            "visible": i.jsonify()["visible"]} for i in self.menu_items]
             }
