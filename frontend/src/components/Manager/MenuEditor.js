@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { IconButton, Button, Grid, Card, CardContent, Typography, Box, CardMedia, CardActions } from '@mui/material';
+import { IconButton, Button, Grid, Card, CardContent, Typography, Box, CardMedia } from '@mui/material';
 import { Add, Edit, Delete, Visibility, VisibilityOff } from "@mui/icons-material";
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import AddCategoryModal from './AddCategoryModal.js';

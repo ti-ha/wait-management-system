@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Link, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom';
 import ItemModal from "./ItemModal.js";
 import BillModal from "./BillModal.js";
 import { IconButton, TextField, Button, Grid, Card, CardContent, Typography, Box, CardMedia, CardActions, Modal } from '@mui/material';
