@@ -101,8 +101,7 @@ class UserHandler():
                                                  "password": user.password_hash}
         return user_dict
     
-    
-    def id_to_user(self, id) -> User:
+    def id_to_user(self, id: int) -> User:
         """ Finds a particular user by their ID value
 
         Args:
