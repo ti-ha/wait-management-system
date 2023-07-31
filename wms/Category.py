@@ -1,6 +1,6 @@
 from __future__ import annotations
 import itertools
-from wms import MenuItem
+from wms import MenuItem, DbHandler
 # from sqlalchemy import insert
 # from sqlalchemy import Column, Integer, String
 # from middlewares import db
@@ -21,6 +21,7 @@ class Category():
         self.__name = name
         self.__menu_items = [] if menu_items is None else menu_items
         self.__visible = True
+        # self.__db_engine = db_engine
 
     @property
     def id(self) -> int:
@@ -115,7 +116,7 @@ class Category():
         #         return i
         # return None
         return next((it for it in self.menu_items if it.is_equal(menu_item)), None)
-    
+
     def menu_item_by_name(self, name) -> (MenuItem | None):
         """ Returns menu item by name
 
@@ -127,7 +128,7 @@ class Category():
         """
         return next((it for it in self.menu_items if it.name == name), None)
 
-    def add_menu_item(self, menu_item: MenuItem) -> None:
+    def add_menu_item(self, menu_item: MenuItem, db: DbHandler) -> None:
         """ Adds a menu_item to the category
 
         Args:
@@ -140,7 +141,16 @@ class Category():
             raise ValueError("Category: add_menu_item(): MenuItem already in category")
         
         self.menu_items.append(menu_item)
-
+        with db.engine.connect() as conn:
+            conn.execute(
+                db.menu_table.insert().values(
+                    name=menu_item.name,
+                    price=menu_item.price,
+                    category=self.id,
+                    image_url=menu_item.image_url
+                )
+            )
+            conn.commit()
     def remove_menu_item(self, name) -> int:
         """ Removes a menu_item from the category
 

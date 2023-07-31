@@ -106,7 +106,7 @@ class MenuHandler():
         if self.__menu.get_category(category).menu_item_by_name(name) is not None:
             raise ValueError("Menu item with this name already exists")
         item = MenuItem(name, price, imageurl)
-        self.__menu.get_category(category).add_menu_item(item)
+        self.__menu.get_category(category).add_menu_item(item, self.db)
         self.notify_add(item.id)
 
     def add_deal(self, discount, menu_items) -> None:

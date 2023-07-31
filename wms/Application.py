@@ -1,6 +1,6 @@
 from __future__ import annotations
 from wms import UserHandler, TableHandler, MenuHandler, Menu, SRMHandler, ServiceRequestManager, OrderManagerHandler, OrderManager, RestaurantManagerHandler, RestaurantManager, PersonalisedDealEngine
-from wms.DbHandler import DbHandler
+from wms import DbHandler
 
 class Application():
     def __init__(self):

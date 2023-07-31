@@ -67,8 +67,11 @@ class Menu():
             raise ValueError("Menu: add_category(): Category already exists")
         
         self.__categories.append(category)
-        db.DbHandler.category_table.insert().values(id=1, name=category.name)
-
+        with db.engine.connect() as conn:
+            conn.execute(
+                db.category_table.insert().values(name=category.name)
+            )
+            conn.commit()
 
     def remove_category(self, name) -> None:
         """ Removes a category, if that category exists, from the menu.
