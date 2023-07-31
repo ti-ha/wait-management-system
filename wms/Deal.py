@@ -146,5 +146,9 @@ class Deal():
         return {
             "id": self.id, 
             "discount": self.discount, 
-            "menu_items": [i.jsonify() for i in self.menu_items]
+            "menu_items": [{"id": i.jsonify()["id"], 
+                            "name": i.jsonify()["name"], 
+                            "price": round(i.jsonify()["price"] - i.jsonify()["price"]*self.discount, 2),
+                            "imageURL": i.jsonify()["imageURL"],
+                            "visible": i.jsonify()["visible"]} for i in self.menu_items]
             }
