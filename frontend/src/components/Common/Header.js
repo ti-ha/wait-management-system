@@ -95,7 +95,7 @@ export default function Header ({ userType, currentPage }) {
                                     Restaurant Manager
                                 </div>
                             </MenuItem>
-                            <MenuItem onClick={() => handleClose("/manage-staff")}>
+                            <MenuItem onClick={() => handleClose("/register-staff")}>
                                 <div className="no-underline">
                                     Register Staff
                                 </div>

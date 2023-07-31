@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useIsManager } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
 import Header from '../Common/Header.js';
-import { Box, Typography, Grid, Card, CardContent, Container, TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-
+import { Box, Typography, Grid, Card, CardContent, Container, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, DialogContentText } from '@mui/material';
+import { Add } from '@mui/icons-material'
+import { Link } from 'react-router-dom'
 
 export default function RestaurantManager() {
 
@@ -15,6 +17,8 @@ export default function RestaurantManager() {
 
     const [tables, setTables] = useState([]);
     const [users, setUsers] = useState({});
+    const [openModal, setOpenModal] = useState(false);
+    const [tableLimit, setTableLimit] = useState(1);
 
     const fetchTables = async () => {
         try {
@@ -56,6 +60,39 @@ export default function RestaurantManager() {
     const kitchenStaff = Object.values(users).filter(user => user.type === 'KitchenStaff');
     const waitStaff = Object.values(users).filter(user => user.type === 'WaitStaff');
 
+    const handleClickOpenModal = () => {
+        setOpenModal(true);
+    };
+    
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
+    
+    const handleAddTable = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/table/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${auth_token}`
+                },
+                body: JSON.stringify({ table_limit: Number(tableLimit), orders: [] })
+            });
+            if (!response.ok) {
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody);
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            const data = await response.json();
+            console.log("Successfully added table", data);
+            fetchTables(); 
+            setOpenModal(false);
+        } catch (error) {
+            console.error("Error adding table:", error);
+        }
+    };
+    
+
     if (isLoading) {
         return null;
     }
@@ -77,6 +114,22 @@ export default function RestaurantManager() {
                                 {kitchenStaff.map((staff, index) => (
                                     <Typography align="center" key={index}>{staff.first_name} {staff.last_name}</Typography>
                                 ))}
+                                <Button 
+                                    component={Link} 
+                                    to="/register-staff" 
+                                    variant="contained"
+                                    color="secondary" 
+                                    style={{
+                                        marginTop: '20px', 
+                                        width: '200px', 
+                                        marginLeft: 'auto', 
+                                        marginRight: 'auto',
+                                        display: 'flex'
+                                    }}
+                                    startIcon={<Add />}
+                                >
+                                    New Staff
+                                </Button>
                             </CardContent>
                         </Card>
                     </Grid>
@@ -87,6 +140,22 @@ export default function RestaurantManager() {
                                 {waitStaff.map((staff, index) => (
                                     <Typography align="center" key={index}>{staff.first_name} {staff.last_name}</Typography>
                                 ))}
+                                <Button 
+                                    component={Link} 
+                                    to="/register-staff" 
+                                    variant="contained"
+                                    color="secondary" 
+                                    style={{
+                                        marginTop: '20px', 
+                                        width: '200px', 
+                                        marginLeft: 'auto', 
+                                        marginRight: 'auto',
+                                        display: 'flex'
+                                    }}
+                                    startIcon={<Add />}
+                                >
+                                    New Staff
+                                </Button>
                             </CardContent>
                         </Card>
                     </Grid>
@@ -112,8 +181,51 @@ export default function RestaurantManager() {
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
+                                <Button 
+                                    variant="contained"
+                                    color="secondary" 
+                                    style={{
+                                        marginTop: '20px', 
+                                        width: '200px', 
+                                        marginLeft: 'auto', 
+                                        marginRight: 'auto',
+                                        display: 'flex'
+                                    }}
+                                    startIcon={<Add />}
+                                    onClick={handleClickOpenModal}
+                                >
+                                    New Table
+                                </Button>
                             </CardContent>
                         </Card>
+
+                        <Dialog open={openModal} onClose={handleCloseModal}>
+                            <DialogTitle>Add New Table</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Enter the table limit.
+                                </DialogContentText>
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="table_limit"
+                                    label="Table Limit"
+                                    type="number"
+                                    fullWidth
+                                    value={tableLimit}
+                                    onChange={event => setTableLimit(event.target.value)}
+                                />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={handleCloseModal} color="primary">
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleAddTable} color="primary">
+                                    Add
+                                </Button>
+                            </DialogActions>
+                        </Dialog>
+
                     </Grid>
                 </Grid>
                 </Box>
