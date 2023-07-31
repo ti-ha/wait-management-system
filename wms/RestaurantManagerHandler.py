@@ -53,19 +53,19 @@ class RestaurantManagerHandler():
         """ Update statistic dictionary values """
         self.rm.increase_count(menu_items)
 
-    def get_menu_stats(self):
+    def get_menu_stats(self) -> dict:
         """ Gets menu statistics with menu item names as keys """
         return self.menu_handler.jsonify_stats(self.rm.jsonify())
     
-    def get_menu_stats_reversed(self):
+    def get_menu_stats_reversed(self) -> dict:
         """ Gets menu statistics but with unpopular first """
         return self.menu_handler.jsonify_stats(self.rm.jsonify(reverse=False))
     
-    def get_menu_stats_full(self):
+    def get_menu_stats_full(self) -> dict:
         """ Gets full 2D menu statistics """
         return self.menu_handler.jsonify_stats_full(self.rm.jsonify_full())
     
-    def get_menu_stats_pairs(self):
+    def get_menu_stats_pairs(self) -> dict:
         """ Gets most paired item for each menu item """
         return self.menu_handler.jsonify_frequent_pairs(self.rm.jsonify_frequent_pair())
 
@@ -112,7 +112,7 @@ class RestaurantManagerHandler():
             table (Table): Table that contains the list of orders to go through
 
         Returns:
-            tuple: Contains the lowest order status and its corresponding order
+            list: Contains the lowest order status and its corresponding order
             id
         """
         order_states = [[i.state_value, i.state, i.id] for i in table.orders if i.state_value != -1]

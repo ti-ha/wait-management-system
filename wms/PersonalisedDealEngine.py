@@ -80,10 +80,12 @@ class PersonalisedDealEngine():
 
     @property
     def algorithm(self) -> KNNWithMeans:
+        """ Gets the algorithm used for personalised deals """
         return self.__algorithm
     
     @algorithm.setter
     def algorithm(self, algo: KNNWithMeans):
+        """ Sets the algorithm used for personalised deals """
         self.__algorithm = algo
     
     def reload_data(self):
@@ -93,7 +95,7 @@ class PersonalisedDealEngine():
         self.data = self.load_data()
         self.gen_algorithm()
     
-    def load_data(self):
+    def load_data(self) -> dict:
         """ Generates the dataset to be used by the collaborative filtering algorithm
 
         Returns:
@@ -129,7 +131,7 @@ class PersonalisedDealEngine():
 
         return ratings_dict
     
-    def dataset(self):
+    def dataset(self) -> Dataset:
         """Creates a Pandas Dataset for use with the Surprise library
 
         Returns:
@@ -141,7 +143,7 @@ class PersonalisedDealEngine():
 
         return data
     
-    def gen_algorithm(self):
+    def gen_algorithm(self) -> KNNWithMeans:
         """ Initialises the algorithm
 
         Returns:
@@ -164,7 +166,7 @@ class PersonalisedDealEngine():
             algo.fit(training_set)
             self.algorithm = algo
     
-    def generate_prediction(self, user, id):
+    def generate_prediction(self, user, id) -> int:
         """Generate a prediction for a user of their rating of an item with id <id>
 
         Args:
@@ -189,7 +191,7 @@ class PersonalisedDealEngine():
         
         return prediction.est
     
-    def generate_top_predictions(self, user, coeff):
+    def generate_top_predictions(self, user, coeff) -> list[int]:
         """ Generates the top menu item predictions for a user.
 
         Args:
@@ -220,7 +222,7 @@ class PersonalisedDealEngine():
         
         return predictions
     
-    def make_deals(self, user):
+    def make_deals(self, user) -> list[dict]:
         """ Parses the output from generate_predictions, performing necessary
         checks for item visibility and whether the user already has valid deals.
         Adds the generated deals to the system if all goes well so they can be
