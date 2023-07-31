@@ -2,12 +2,8 @@ from __future__ import annotations
 import itertools
 from wms import MenuItem, DbHandler
 from sqlalchemy.orm import Session
-from wms.DbHandler import MenuItem as DbMenuItem
-
-# from sqlalchemy import insert
-# from sqlalchemy import Column, Integer, String
-# from middlewares import db
-
+from wms.DbHandler import MenuItem as MenuTable
+from sqlalchemy import delete
 class Category():
 
     __id_iter = itertools.count()
@@ -67,8 +63,10 @@ class Category():
             name (String): Name of the category
             visible (String): Visibility of the category
         """
-        if name is not None: self.name = name 
-        if visible is not None: self.visible = (visible == "True")
+        if name is not None: 
+            self.name = name 
+        if visible is not None: 
+            self.visible = (visible == "True")
 
     def update_menu_items(self, new_order):
         """ Updates the order of the menu items given a list of menu item IDs
@@ -99,8 +97,8 @@ class Category():
             try:
                 id_index = curr_menu_item_ids.index(int(id))
                 new_menu_items.append(self.__menu_items[id_index])
-            except ValueError:
-                raise ValueError(f"Category: update_menu_items(): ID {id} is not a valid menu item ID")
+            except ValueError as exc:
+                raise ValueError(f"Category: update_menu_items(): ID {id} is not a valid menu item ID") from exc
 
         self.__menu_items = new_menu_items
 
@@ -114,10 +112,6 @@ class Category():
             MenuItem: The specific menu item from the category. None if no menu 
             item exists
         """
-        # for i in self.__menu_items:
-        #     if i.is_equal(menu_item):
-        #         return i
-        # return None
         return next((it for it in self.menu_items if it.is_equal(menu_item)), None)
 
     def menu_item_by_name(self, name) -> (MenuItem | None):
@@ -145,7 +139,7 @@ class Category():
         
         self.menu_items.append(menu_item)
         with Session(db.engine) as session:
-            session.add(DbMenuItem(
+            session.add(MenuTable(
                 name=menu_item.name,
                 price=menu_item.price,
                 category_id=self.id,
@@ -153,25 +147,7 @@ class Category():
             ))
             session.commit()
 
-        # session = db.session()
-        # session.add(db.MenuItem(
-        #     name=menu_item.name,
-        #     price=menu_item.price,
-        #     category=self.id,
-        #     image_url=menu_item.image_url
-        # ))
-        # session.commit()
-        # with db.engine.connect() as conn:
-        #     conn.execute(
-        #         db.menu_table.insert().values(
-        #             name=menu_item.name,
-        #             price=menu_item.price,
-        #             category=self.id,
-        #             image_url=menu_item.image_url
-        #         )
-        #     )
-        #     conn.commit()
-    def remove_menu_item(self, name) -> int:
+    def remove_menu_item(self, name, db: DbHandler) -> int:
         """ Removes a menu_item from the category
 
         Args:
@@ -188,6 +164,9 @@ class Category():
             raise ValueError("Category: category.remove_menu_item(): not an existing menu item")
         
         self.menu_items.remove(removed_item)
+        with Session(db.engine) as session:
+            session.execute(delete(MenuTable).where(MenuTable.name == name))
+            session.commit()
         return removed_item.id
         
     def jsonify(self) -> dict:

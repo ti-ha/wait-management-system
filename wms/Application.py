@@ -8,7 +8,7 @@ class Application():
         managing the app
         """
         self.__db_handler = DbHandler()
-        self.__user_handler = UserHandler()
+        self.__user_handler = UserHandler(self.db_handler)
         self.__table_handler = TableHandler()
         self.__menu_handler = MenuHandler(Menu(), self.db_handler)
         self.__srm_handler = SRMHandler(

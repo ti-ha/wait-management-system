@@ -31,3 +31,17 @@ if __name__ == '__main__':
     menu.get_category("Snacks").add_menu_item(MenuItem("Item 10", 10, PLACEHOLDER), menu.db)
     menu.get_category("Snacks").add_menu_item(MenuItem("Item 11", 10, PLACEHOLDER), menu.db)
 
+    user = app.user_handler
+
+    user.add_user("Manager", "A", "Manager", "12345")
+    user.add_user("Customer", "A", "Customer", "12345")
+    user.add_user("WaitStaff", "A", "WaitStaff", "12345")
+    user.add_user("KitchenStaff", "A", "KitchenStaff", "12345")
+
+    user.login("Manager", "A", "12345")
+    user.logout("Manager", "A")
+    user.login("Manager", "A", "12345")
+    user.logout("Manager", "A")
+
+
+

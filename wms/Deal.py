@@ -28,7 +28,7 @@ class Deal():
         else:
             self.__menu_items = menu_items
 
-        self.__menu_items = [] if menu_items == None else menu_items
+        self.__menu_items = [] if menu_items is None else menu_items
 
     @property
     def id(self):
@@ -58,7 +58,7 @@ class Deal():
     def visible(self) -> bool:
         """ Returns if the deal should be visible based on the menu-items in the
         deal"""
-        return next((i for i in self.menu_items if i.visible == False), None) == None
+        return next((i for i in self.menu_items if i.visible is False), None) is None
     
     def add_menu_item(self, menu_item):
         """ Adds a menu item to the deal.

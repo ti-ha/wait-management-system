@@ -1,14 +1,23 @@
 from wms import User, Customer, KitchenStaff, WaitStaff, Manager
-
+from wms.DbHandler import DbHandler
+from wms.DbHandler import User as UserTable
+from sqlalchemy.orm import Session
+from sqlalchemy import select, update
 class UserHandler():
-    def __init__(self) -> None:
+    def __init__(self, db: DbHandler) -> None:
         """ Constructor for the UserHandler Class """
         self.__users = []
+        self.__db = db
     
     @property
     def users(self) -> list[User]:
         """ Returns list of users"""
         return self.__users
+    
+    @property
+    def db(self) -> DbHandler:
+        """Returns db"""
+        return self.__db
     
     def add_user(self, firstname, lastname, user_type, password):
         """ Adds a user to the system
@@ -43,6 +52,15 @@ class UserHandler():
             return None
         
         self.__users.append(new_user)
+        self.__users.append(new_user)
+        with Session(self.db.engine) as session:
+            session.add(UserTable(
+                first_name = firstname,
+                last_name = lastname,
+                password_hash = new_user.password_hash,
+                logged_in = 0
+            ))
+            session.commit()
 
     def login(self, firstname, lastname, password) -> User:
         """ Attempts to log in the user
@@ -65,6 +83,13 @@ class UserHandler():
             return None
     
         usermatch.status = True
+        with Session(self.db.engine) as session:
+            session.execute(update(UserTable).where(
+                UserTable.first_name == firstname).where(
+                UserTable.last_name == lastname).values(
+                logged_in=1
+            ))
+            session.commit()
         return usermatch if success else None
         
     def logout(self, firstname, lastname) -> bool:
@@ -82,6 +107,13 @@ class UserHandler():
         
         if usermatch is not None:
             usermatch.status = False
+            with Session(self.db.engine) as session:
+                session.execute(update(UserTable).where(
+                    UserTable.first_name == firstname).where(
+                    UserTable.last_name == lastname).values(
+                    logged_in=0
+                ))
+                session.commit()
             return True
         return False
 

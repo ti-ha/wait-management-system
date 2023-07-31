@@ -1,9 +1,14 @@
 from __future__ import annotations
 from difflib import SequenceMatcher as sm
-from wms.DbHandler import Category as DbCategory
+from wms.DbHandler import Category as CategoryTable
+from wms.DbHandler import Deal as DealTable
+from wms.DbHandler import MenuItem as MenuTable
+
+
 from wms import Category, MenuItem, Deal, DbHandler
 from .PersonalisedDeal import PersonalisedDeal
 from sqlalchemy.orm import Session
+from sqlalchemy import delete
 
 class Menu():
 
@@ -46,10 +51,6 @@ class Menu():
             Category: Category to be acquired. If no category is found returns
             None
         """
-        # for i in self.categories:
-        #     if i.name == name:
-        #         return i
-        # return None
         return next((it for it in self.categories if it.name == name), None)
 
     def add_category(self, category: Category, db: DbHandler) -> None:
@@ -62,28 +63,19 @@ class Menu():
             TypeError: Raised if category argument is not of type category
             ValueError: Raised if category already exists in the menu
         """
-        # if not isinstance(category, Category):
-        #     raise TypeError("Menu: add_category(): Object is not of type Category")
+        if not isinstance(category, Category):
+            raise TypeError("Menu: add_category(): Object is not of type Category")
         
         if self.get_category(category.name) is not None:
             raise ValueError("Menu: add_category(): Category already exists")
         
         self.__categories.append(category)
         with Session(db.engine) as session:
-            session.add(DbCategory(name=category.name))
+            session.add(CategoryTable(name=category.name))
             session.commit()
-        # session = db.session()
-        # session
-        # session.add(db.Category(name=category.name))
-        # session.commit()
 
-        # with db.engine.connect() as conn:
-        #     conn.execute(
-        #         db.category_table.insert().values(name=category.name)
-        #     )
-        #     conn.commit()
 
-    def remove_category(self, name) -> None:
+    def remove_category(self, name, db: DbHandler) -> None:
         """ Removes a category, if that category exists, from the menu.
 
         Args:
@@ -101,11 +93,16 @@ class Menu():
         for i in self.categories:
             if i.name == name:
                 self.__categories.remove(i)
+                with Session(db.engine) as session:
+                    session.execute(delete(CategoryTable).where(
+                        CategoryTable.name == name)
+                    )
+                    session.commit()
                 return i
         
         raise ValueError("Menu: menu.remove_category(): not in categories")
     
-    def add_deal(self, deal) -> None:
+    def add_deal(self, deal, menu_items: list[String], db: DbHandler) -> None:
         """ Adds a new deal to the menu
 
         Args:
@@ -121,7 +118,17 @@ class Menu():
         if deal in self.__deals:
             raise ValueError("Menu: add_deal(): Deal already exists")
         
-        self.__deals.append(deal)
+
+
+        # with Session(db.engine) as session:
+        #     session.scalars(select(MenuTable).where(MenuTable.id).)
+        #     session.add(DealTable(
+        #         discount = deal.discount,
+        #         menu_items = items,
+        #         orders = []
+        #     ))
+        #     session.commit()
+
     
     def remove_deal(self, deal) -> None:
         """ Removes a deal from the menu.

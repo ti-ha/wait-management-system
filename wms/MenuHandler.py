@@ -132,7 +132,7 @@ class MenuHandler():
             raise ValueError("One or more items is not present in the menu")
         
         deal = Deal(discount, deal_items)
-        self.__menu.add_deal(deal)
+        self.__menu.add_deal(deal, menu_items, self.db)
         return None
      
     def remove_category(self, category) -> None:
@@ -141,7 +141,7 @@ class MenuHandler():
         Args:
             category (String): Category to be removed
         """
-        self.__menu.remove_category(category)
+        self.__menu.remove_category(category, self.db)
     
     def remove_menu_item(self, category, name) -> None:
         """ Removes a menu item from the menu
@@ -150,7 +150,7 @@ class MenuHandler():
             category (String): Category that menu item belongs to
             name (String): Name of the menu item
         """
-        removed_id = self.__menu.get_category(category).remove_menu_item(name)
+        removed_id = self.__menu.get_category(category).remove_menu_item(name, self.db)
         self.notify_delete(removed_id)
 
     def update_category(self, category, name, visible):
@@ -173,8 +173,8 @@ class MenuHandler():
         
         curr_category.update(name, visible)
 
-    def update_menu_item(self, category, old_name, 
-                         new_name, price, image_url, visible):
+    def update_menu_item(self, category, old_name, new_name, price, image_url, 
+                         visible):
         """ Updates menu item name, price, image_url and/or visibility
 
         Args:
