@@ -1,7 +1,7 @@
 from .User import User
 
 # Has no other attributes differentiating itself from a user
-# only important difference is type. Also can see OrderManager
+# only important difference is type.
 class Manager(User):
     def __init__(self, firstname, lastname, password):
         """ Constructor of the Manager class that inherits the User Class

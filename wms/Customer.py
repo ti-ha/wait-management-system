@@ -8,6 +8,7 @@ class Customer(User):
             "Guest".
             lastname (str, optional): Last Name of the User. Defaults to 
             "Customer".
+            password (str, optional): Password of the User. Defaults to "1234".
         """
         super().__init__(firstname, lastname, password)
         self.__table = None
