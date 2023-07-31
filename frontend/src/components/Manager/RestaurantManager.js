@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useIsManager } from '../Hooks/useIsAuthorised.js';
 import AccessDenied from '../Common/AccessDenied.js';
 import Header from '../Common/Header.js';
-import { Box, Typography, Grid, Card, CardContent, Container, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
+import { Box, IconButton, Typography, Grid, Card, CardContent, Container, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, DialogContentText } from '@mui/material';
-import { Add } from '@mui/icons-material'
+import { Add, ArrowUpward, ArrowDownward } from '@mui/icons-material'
 import { Link } from 'react-router-dom'
 
 export default function RestaurantManager() {
@@ -19,6 +19,8 @@ export default function RestaurantManager() {
     const [users, setUsers] = useState({});
     const [openModal, setOpenModal] = useState(false);
     const [tableLimit, setTableLimit] = useState(1);
+    const [sortOrder, setSortOrder] = useState('asc');
+
 
     const fetchTables = async () => {
         try {
@@ -89,6 +91,29 @@ export default function RestaurantManager() {
             setOpenModal(false);
         } catch (error) {
             console.error("Error adding table:", error);
+        }
+    };
+    
+    const fetchSortedTables = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/restaurant/table/size`, {
+                headers: { 'Authorization': `${auth_token}` }
+            });
+            if (!response.ok) {
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody);
+                throw new Error(`HTTP Error with status: ${response.status}`);
+            }
+            const data = await response.json();
+            if (sortOrder === 'asc') {
+                setTables(data.tables);
+                setSortOrder('desc');
+            } else {
+                setTables(data.tables.reverse());
+                setSortOrder('asc');
+            }
+        } catch (error) {
+            console.error("Error fetching sorted tables:", error);
         }
     };
     
@@ -168,7 +193,12 @@ export default function RestaurantManager() {
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell align="center">Table Number</TableCell>
-                                                <TableCell align="center">Max Occupants</TableCell>
+                                                <TableCell align="center">
+                                                    Max Occupants
+                                                    <IconButton onClick={fetchSortedTables}>
+                                                        {sortOrder === 'asc' ? <ArrowUpward /> : <ArrowDownward />}
+                                                    </IconButton>
+                                                </TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
