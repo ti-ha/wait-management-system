@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useParams } from 'react-router-dom';
 import ItemModal from "./ItemModal.js";
 import BillModal from "./BillModal.js";
-import { IconButton, TextField, Button, Grid, Card, CardContent, Typography, Box, CardMedia, CardActions } from '@mui/material';
+import { IconButton, TextField, Button, Grid, Card, CardContent, Typography, Box, CardMedia, CardActions, Modal } from '@mui/material';
 import { Add, Remove } from "@mui/icons-material"
 import useDebounce from "../Hooks/useDebounce.js";
 import Header from "../Common/Header.js";
@@ -21,6 +21,9 @@ export default function Customer() {
     const [billOrders, setBillOrders] = useState([]);
     const [isBillOpen, setIsBillOpen] = useState(false);
     const [personalisedDeals, setPersonalisedDeals] = useState([]);
+
+    const [assistanceModalOpen, setAssistanceModalOpen] = useState(false);
+
 
 
     const [searchInput, setSearchInput] = useState("");
@@ -83,21 +86,21 @@ export default function Customer() {
         fetchCategories();
     }, []);
 
-    useEffect(() => {
-        const fetchPersonalisedDeals = async () => {
-            try {
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/personalised/deals`);
-                if (!response.ok) { 
-                    const responseBody = await response.json();
-                    console.error('Server response:', responseBody); 
-                    throw new Error(`HTTP Error with status: ${response.status}`);
-                }
-                const data = await response.json();
-                setPersonalisedDeals(data);
-            } catch (error) {
-                console.error("Error fetching personalised deals:", error);
+    const fetchPersonalisedDeals = async () => {
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/personalised/deals`);
+            if (!response.ok) { 
+                const responseBody = await response.json();
+                console.error('Server response:', responseBody); 
+                throw new Error(`HTTP Error with status: ${response.status}`);
             }
+            const data = await response.json();
+            setPersonalisedDeals(data);
+        } catch (error) {
+            console.error("Error fetching personalised deals:", error);
         }
+    }
+    useEffect(() => {
         fetchPersonalisedDeals();
     }, []);
     
@@ -114,12 +117,10 @@ export default function Customer() {
                     price: (item.price * (1 - deal.discount)).toFixed(2) // Apply the discount
                 }));
             });
-            console.log(`the personalised deals are:`, allMenuItems)
             setCurrentItems(allMenuItems);
         } else {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
             data = await response.json();
-            console.log(' the normal items are: ', data)
             setCurrentItems(data.menu_items);
         }
     }
@@ -165,7 +166,7 @@ export default function Customer() {
 
     const sendOrderToKitchen = async () => {
         const menu_items = currentOrder.flatMap(order => Array(order.quantity).fill({ id: order.id }));
-        const deals = []
+        const deals = personalisedDeals.map(deal => ({ id: deal.id }));
 
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/ordermanager/orders/add/${tableNumber - 1}`, {
@@ -182,6 +183,8 @@ export default function Customer() {
             }
             setOrders(prevOrders => [...prevOrders, ...currentOrder]);
             setCurrentOrder([]);            
+            fetchPersonalisedDeals();
+            fetchItems(currentCategory);
         } catch (error) {
             console.error('Error sending order to kitchen:', error);
         }
@@ -217,6 +220,7 @@ export default function Customer() {
     };
 
     const sendAssistanceRequest = async () => {
+        setAssistanceModalOpen(true);
         try {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/servicerequests/queue`, {
                 method: 'POST',
@@ -239,6 +243,16 @@ export default function Customer() {
             console.error('Error sending assistance request:', error);
         }
     }    
+
+    useEffect(() => {
+        let timer;
+        if (assistanceModalOpen) {
+            timer = setTimeout(() => {
+                setAssistanceModalOpen(false);
+            }, 3000);
+        }
+        return () => clearTimeout(timer);
+    }, [assistanceModalOpen]);
 
     return (
         <>
@@ -411,6 +425,27 @@ export default function Customer() {
                             <Button variant="contained" sx={{ width: 200 }} onClick={sendAssistanceRequest}>
                                 Request Assistance
                             </Button>
+                            <Modal
+                                open={assistanceModalOpen}
+                                onClose={() => setAssistanceModalOpen(false)} 
+                            >
+                                <Box
+                                    sx={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        width: 200,
+                                        bgcolor: 'background.paper',
+                                        border: '2px solid #000',
+                                        boxShadow: 24,
+                                        p: 4,
+                                        textAlign: 'center'
+                                    }}
+                                >
+                                    <p>Assistance Requested!</p>
+                                </Box>
+                            </Modal>
                         </Box>
                     </Grid>
 
