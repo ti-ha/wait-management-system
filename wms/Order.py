@@ -162,6 +162,7 @@ class Order:
 
     @property
     def menu_item_states(self) -> list[dict]:
+        """ Returns the list of menu items, states and order specific ids """
         return self.__menu_items
 
     @property
@@ -171,6 +172,7 @@ class Order:
     
     @property
     def state_value(self) -> int:
+        """ Returns the current value of the state of the order """
         return self.__state.value
 
     def get_menu_item_state_obj(self, id: int) -> State:
@@ -272,7 +274,16 @@ class Order:
         
         self.__menu_items.append(menu_item)
 
-    def get_menu_item_by_id(self, id) -> MenuItem:
+    def get_menu_item_by_id(self, id: str) -> MenuItem:
+        """ Acquires a menu item by its order specific id
+
+        Args:
+            id (str): The order specific id to convert to a menu item
+
+        Returns:
+            MenuItem: Menu item with an order specific id corresponding to the 
+            provided argument id
+        """
         return next((i["menu_item"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
 
     def remove_menu_item(self, menu_item):

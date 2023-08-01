@@ -22,14 +22,17 @@ class OrderManagerHandler():
 
     @property
     def order_manager(self):
+        """ Returns order manager handler object """
         return self.__order_manager
     
     @property
     def table_handler(self):
+        """ Returns table handler object """
         return self.__table_handler
     
     @property
     def menu_handler(self):
+        """ Returns menu handler object """
         return self.__menu_handler
 
     def get_table_orders(self, table_id: int) -> dict:
@@ -92,6 +95,20 @@ class OrderManagerHandler():
         }
 
     def get_menu_item_state(self, order_id: int, menu_item_id: int) -> dict:
+        """ Creates a dictionary of the menu item's current state
+
+        Args:
+            order_id (int): Id of the menu order
+            menu_item_id (int): Id of the menu item within the specified order
+
+        Raises:
+            ValueError: Raised if the order_id does not correspond to an actual 
+            order
+
+        Returns:
+            dict: Dictionary containing information about the menu item's 
+            current state
+        """
         order = self.order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
@@ -347,7 +364,18 @@ class OrderManagerHandler():
         """
         return self.order_manager.history_json()
     
-    def get_order_json_from_history(self, order_id):
+    def get_order_json_from_history(self, order_id: str) -> dict:
+        """ Creates a dictionary of a specific order from the order history
+
+        Args:
+            order_id (str): Id of the order in the order history
+
+        Raises:
+            ValueError: Raised if no order in the order history has that id
+
+        Returns:
+            dict: A dictionary of a specific order from the order history
+        """
         json = self.order_manager.get_order_from_history(order_id).jsonify()
         if json:
             return json

@@ -82,14 +82,30 @@ class SRMHandler():
         
         request.assignee = None
 
-    def get_requests_of_user(self, user_id):
+    def get_requests_of_user(self, user_id: int) -> dict:
+        """ Returns all the service requests of a user provided by the user_id
+        argument
+
+        Args:
+            user_id (int): Id of the user to get the service requests of
+
+        Raises:
+            ValueError: Raised if user_id does not match any wait staff
+
+        Returns:
+            dict: A dictionary of all the service requests of the specified user
+        """
         assignee = self.id_to_waitstaff(user_id)
         if not assignee:
             raise ValueError("SRMHandler: get_requests_of_user(): No waitstaff found")
         
         return self.srm.get_staffmember_requests_json(user_id)
 
-        
+    def jsonify(self) -> dict:
+        """ Returns a JSON-style dictionary object with all the service requests
+        in the queue, sorted by timestamp.
 
-    def jsonify(self):
+        Returns:
+            dict: The dictionary containing all service requests in queue
+        """
         return self.srm.jsonify()

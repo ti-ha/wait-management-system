@@ -8,6 +8,7 @@ class TableHandler():
 
     @property
     def tables(self) -> list[Table]:
+        """ Returns the list of tables """
         return self.__tables
     
     def add_table(self, table_limit, orders):

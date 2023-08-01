@@ -123,7 +123,16 @@ class Menu():
         self.__deals.remove(deal)
         return deal
     
-    def user_has_personalised(self, user):
+    def user_has_personalised(self, user: str) -> bool:
+        """ A check for if a personalised deal applies to a particular user. 
+        Also removes any expired personalised deals for that user.
+
+        Args:
+            user (str): ID string of the user
+
+        Returns:
+            bool: Returns true if a personalised deal was found, false otherwise
+        """
         for i in self.deals:
             if isinstance(i, PersonalisedDeal):
                 if i.user == user and i.is_expired():

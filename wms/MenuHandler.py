@@ -9,6 +9,7 @@ class MenuHandler():
     
     @property
     def menu(self) -> Menu:
+        """ Returns the menu """
         return self.__menu
 
     def attach(self, observer: RestaurantManagerHandler):
@@ -226,7 +227,15 @@ class MenuHandler():
         
         self.__menu.get_category(category).update_menu_items(new_order)
         
-    def search(self, query):
+    def search(self, query: str) -> dict:
+        """ Function to perform a search with a given query string
+
+        Args:
+            query (str): Query string to use for the search
+
+        Returns:
+            dict: Dictionary filled with the search results
+        """
         return self.__menu.search_items(query)
 
     def jsonify(self) -> dict:
