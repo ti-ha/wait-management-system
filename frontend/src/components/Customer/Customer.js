@@ -24,8 +24,6 @@ export default function Customer() {
 
     const [assistanceModalOpen, setAssistanceModalOpen] = useState(false);
 
-
-
     const [searchInput, setSearchInput] = useState("");
     const [searchResults, setSearchResults] = useState(null);
     const debouncedSearchTerm = useDebounce(searchInput, 500);
@@ -380,8 +378,8 @@ export default function Customer() {
                                     <Card key={index} sx={{ mb: 1 }}>
                                         <CardContent sx={{ py: 1 }}>
                                             <Grid container justifyContent="space-between" alignItems="center">
-                                                <Grid item>
-                                                    <Typography variant="body1">{order.name}</Typography>
+                                                <Grid item xs={4}>
+                                                    <Typography variant="body1" >{order.name}</Typography>
                                                 </Grid>
                                                 <Grid item>
                                                     <Grid container alignItems="center" spacing={1}>
