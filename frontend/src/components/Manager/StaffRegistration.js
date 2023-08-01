@@ -59,7 +59,7 @@ export default function StaffRegistration() {
 
     return (
         <>
-            <Header userType={userType} currentPage="manage-staff" />
+            <Header userType={userType} currentPage="register-staff" />
             <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
                 <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px', border: '1px solid', borderRadius: 1, padding: 2 }}>
                     <Typography variant="h5" align="center" mb={2}>Register New Staff</Typography>

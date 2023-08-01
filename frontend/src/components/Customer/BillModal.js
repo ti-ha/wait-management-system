@@ -10,12 +10,24 @@ export default function BillModal({ orders, onClose }) {
         let itemsMap = {};
     
         orders.forEach(order => {
+            // Create a mapping of deals for easy lookup
+            let dealsMap = {};
+            order.deals.forEach(deal => {
+                deal.menu_items.forEach(item => {
+                    dealsMap[item.id] = item;
+                });
+            });
+
             order.menu_items.forEach(item => {
+                // Use the price from the deal if it exists, otherwise use the regular price
+                const price = dealsMap[item.id] ? dealsMap[item.id].price : item.price;
                 if (itemsMap[item.name]) {
                     itemsMap[item.name].quantity += 1;
+                    itemsMap[item.name].price = price; 
                 } else {
                     itemsMap[item.name] = {
                         ...item,
+                        price: price, 
                         quantity: 1
                     };
                 }
@@ -63,7 +75,7 @@ export default function BillModal({ orders, onClose }) {
                     <div key={index} className="billOrder">
                         <p>{item.name}</p>
                         <p>{item.quantity}</p>
-                        <p>${item.price.toFixed(2)}</p>
+                        <p>${(item.price * item.quantity).toFixed(2)}</p>
                     </div>
                 ))}
                 <div className="billOrder">

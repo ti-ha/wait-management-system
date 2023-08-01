@@ -31,7 +31,7 @@ function App() {
           <Route path="/restaurant-manager" element={<RestaurantManager />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/insights" element={<Insights />} />
-          <Route path="/manage-staff" element={<StaffRegistation />} />
+          <Route path="/register-staff" element={<StaffRegistation />} />
         </Routes>
       </BrowserRouter>
   );
