@@ -394,10 +394,6 @@ class Order:
             and deals of the order
         """
         bill = self.__bill.jsonify() if self.__bill is not None else None
-        # if self.__bill is not None:
-        #     bill = self.__bill.jsonify()
-        # else:
-        #     bill = None
         output = {
             "id": self.__id,
             "bill": bill,

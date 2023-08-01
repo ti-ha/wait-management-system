@@ -108,10 +108,6 @@ class Category():
             MenuItem: The specific menu item from the category. None if no menu 
             item exists
         """
-        # for i in self.__menu_items:
-        #     if i.is_equal(menu_item):
-        #         return i
-        # return None
         return next((it for it in self.menu_items if it.is_equal(menu_item)), None)
     
     def menu_item_by_name(self, name) -> (MenuItem | None):
@@ -166,7 +162,6 @@ class Category():
             dict: Dictionary containing the id, name and list of menu items 
         of the category
         """
-
         return {
             "id": self.id, 
             "name": self.name, 

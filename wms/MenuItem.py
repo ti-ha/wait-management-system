@@ -77,20 +77,6 @@ class MenuItem():
         """
         bool(isinstance(menu_item, MenuItem) and self.name == menu_item.name)
         
-        #     if self.__name == menu_item.name:
-        #         return True
-        #     else: 
-        #         return False
-        # else:
-        #     return False
-        
-    # def is_float(self, num):
-    #     try:
-    #         float(num)
-    #         return True
-    #     except ValueError:
-    #         return False
-        
     def update(self, name, price, image_url, visible):
         """ Updates menu item with new name, price or image_url
 

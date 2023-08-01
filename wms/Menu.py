@@ -44,10 +44,6 @@ class Menu():
             Category: Category to be acquired. If no category is found returns
             None
         """
-        # for i in self.categories:
-        #     if i.name == name:
-        #         return i
-        # return None
         return next((it for it in self.categories if it.name == name), None)
 
     def add_category(self, category: Category) -> None:
@@ -60,9 +56,6 @@ class Menu():
             TypeError: Raised if category argument is not of type category
             ValueError: Raised if category already exists in the menu
         """
-        # if not isinstance(category, Category):
-        #     raise TypeError("Menu: add_category(): Object is not of type Category")
-        
         if self.get_category(category.name) is not None:
             raise ValueError("Menu: add_category(): Category already exists")
        
