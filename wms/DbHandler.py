@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from sqlalchemy import UniqueConstraint, create_engine, Integer, String, Float, ForeignKey, Engine
 import enum
-from sqlalchemy import Enum
+from sqlalchemy import select
 from typing import List, Set
 
 from sqlalchemy.orm import relationship, DeclarativeBase, sessionmaker, Session, Mapped, mapped_column
@@ -30,7 +30,16 @@ class DbHandler():
 
     def initialise(self):
         """Create all tables"""
+        Base.metadata.reflect(self.engine)
+        # self.create_objects()
         Base.metadata.create_all(self.engine, checkfirst=True)
+
+    # def create_objects(self):
+    #     """Convert database schema to objects"""
+    #     with Session(self.engine) as session:
+    #         res = session.scalars(select(Category).order_by(Category.id))
+    #         for c in res:
+                
 
 class DealMenu(Base):
     """Association table for deal and menu items"""

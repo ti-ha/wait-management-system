@@ -1,6 +1,9 @@
 from __future__ import annotations
 from wms import UserHandler, TableHandler, MenuHandler, Menu, SRMHandler, ServiceRequestManager, OrderManagerHandler, OrderManager, RestaurantManagerHandler, RestaurantManager, PersonalisedDealEngine
-from wms.DbHandler import DbHandler
+from wms.DbHandler import *
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+
 
 class Application():
     def __init__(self):
@@ -33,7 +36,8 @@ class Application():
             self.om_handler
         )
 
-        self.db_handler.initialise()
+        # self.db_handler.initialise()
+        self.initialise_db()
 
     @property
     def menu_handler(self) -> MenuHandler:
@@ -74,3 +78,19 @@ class Application():
     def db_handler(self) -> DbHandler:
         """ Returns the DbHandler object."""
         return self.__db_handler
+
+    def initialise_db(self):
+        with Session(self.db_handler.engine) as session:
+            res = session.scalars(select(Category).order_by(Category.id)).fetchall()
+            for c in res:
+                print(f'\n\nCategories in database: {c}\n\n')
+                self.menu_handler.add_category(str(c.name))
+            print(f'\n\nCategories converted to objects: {self.menu_handler.menu.categories}\n\n')
+
+
+            res = session.execute(select(MenuItem, Category).join(MenuItem.category).order_by(MenuItem.id, Category.id))
+            # print(res)
+            for c in res:
+                self.menu_handler.add_menu_item(c.Category.name, c.MenuItem.name, c.MenuItem.price, c.MenuItem.image_url)
+            for m in self.menu_handler.menu.menu_items():
+                print(f'\n\nMenu Items converted to objects: {m.name}\n\n')

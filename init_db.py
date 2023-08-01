@@ -10,71 +10,71 @@ if __name__ == '__main__':
 
     app = Application()
 
-    menu = app.menu_handler
+    # menu = app.menu_handler
 
-    menu.add_category("Entrees")
-    menu.add_menu_item("Entrees", "Meatloaf", 3, MEATLOAF_URL)
-    menu.add_menu_item("Entrees", "Arancini Balls", 9, ARANCINI_BALLS_URL)
-    menu.add_menu_item("Entrees", "Greek Salad", 6.5, GREEK_SALAD_URL)
-    menu.add_menu_item("Entrees", "Salt and Pepper Squid", 8.5, SALT_AND_PEPPER_SQUID_URL)
+    # menu.add_category("Entrees")
+    # menu.add_menu_item("Entrees", "Meatloaf", 3, MEATLOAF_URL)
+    # menu.add_menu_item("Entrees", "Arancini Balls", 9, ARANCINI_BALLS_URL)
+    # menu.add_menu_item("Entrees", "Greek Salad", 6.5, GREEK_SALAD_URL)
+    # menu.add_menu_item("Entrees", "Salt and Pepper Squid", 8.5, SALT_AND_PEPPER_SQUID_URL)
 
-    menu.add_category("Mains")
-    menu.add_menu_item("Mains", "Burger", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 2", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 3", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 4", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 5", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 6", 12, PLACEHOLDER)
+    # menu.add_category("Mains")
+    # menu.add_menu_item("Mains", "Burger", 12, PLACEHOLDER)
+    # menu.add_menu_item("Mains", "Item 2", 12, PLACEHOLDER)
+    # menu.add_menu_item("Mains", "Item 3", 12, PLACEHOLDER)
+    # menu.add_menu_item("Mains", "Item 4", 12, PLACEHOLDER)
+    # menu.add_menu_item("Mains", "Item 5", 12, PLACEHOLDER)
+    # menu.add_menu_item("Mains", "Item 6", 12, PLACEHOLDER)
 
-    menu.add_category("Snacks")
-    menu.add_menu_item("Snacks", "Item 7", 10, PLACEHOLDER)
-    menu.add_menu_item("Snacks", "Item 8", 10, PLACEHOLDER)
-    menu.add_menu_item("Snacks", "Item 9", 10, PLACEHOLDER)
-    menu.add_menu_item("Snacks", "Item 10", 10, PLACEHOLDER)
-    menu.add_menu_item("Snacks", "Item 11", 10, PLACEHOLDER)
+    # menu.add_category("Snacks")
+    # menu.add_menu_item("Snacks", "Item 7", 10, PLACEHOLDER)
+    # menu.add_menu_item("Snacks", "Item 8", 10, PLACEHOLDER)
+    # menu.add_menu_item("Snacks", "Item 9", 10, PLACEHOLDER)
+    # menu.add_menu_item("Snacks", "Item 10", 10, PLACEHOLDER)
+    # menu.add_menu_item("Snacks", "Item 11", 10, PLACEHOLDER)
 
-    menu.add_deal(5.0, ["Meatloaf", "Burger"])          # Deal 0
-    menu.add_deal(5.0, ["Arancini Balls", "Burger"])    # Deal 1
-    menu.add_deal(10.0, ["Greek Salad", "Burger"])      # Deal 2
-    print(f'DEALS           : {menu.menu.deals}')
+    # menu.add_deal(5.0, ["Meatloaf", "Burger"])          # Deal 0
+    # menu.add_deal(5.0, ["Arancini Balls", "Burger"])    # Deal 1
+    # menu.add_deal(10.0, ["Greek Salad", "Burger"])      # Deal 2
+    # print(f'DEALS           : {menu.menu.deals}')
 
-    table = app.table_handler
-    table.add_table(5, None)                # Table 0
-    table.add_table(5, None)                # Table 1
-    table.add_table(5, None)                # Table 2
-    table.add_table(5, None)                # Table 3
-    table.add_table(5, None)                # Table 4
+    # table = app.table_handler
+    # table.add_table(5, None)                # Table 0
+    # table.add_table(5, None)                # Table 1
+    # table.add_table(5, None)                # Table 2
+    # table.add_table(5, None)                # Table 3
+    # table.add_table(5, None)                # Table 4
 
-    order = app.om_handler
+    # order = app.om_handler
     
-    order.add_order(0, [0, 1], [], None)
-    order.change_order_state(0)
-    order.change_order_state(0)
+    # order.add_order(0, [0, 1], [], None)
+    # order.change_order_state(0)
+    # order.change_order_state(0)
 
-    order.add_order(1, [], [1], None)
-    order.change_order_state(1)
-    order.change_order_state(1)
-    order.change_order_state(1)
+    # order.add_order(1, [], [1], None)
+    # order.change_order_state(1)
+    # order.change_order_state(1)
+    # order.change_order_state(1)
 
-    order.add_order(2, [5, 6], [0, 1, 2], None)
-    order.change_order_state(2)
-    order.change_order_state(2)
-    order.change_order_state(2)
+    # order.add_order(2, [5, 6], [0, 1, 2], None)
+    # order.change_order_state(2)
+    # order.change_order_state(2)
+    # order.change_order_state(2)
 
-    user = app.user_handler
+    # user = app.user_handler
 
-    user.add_user("Manager", "A", "Manager", "12345")
-    user.add_user("Customer", "A", "Customer", "12345")
-    user.add_user("WaitStaff", "A", "WaitStaff", "12345")
-    user.add_user("KitchenStaff", "A", "KitchenStaff", "12345")
+    # user.add_user("Manager", "A", "Manager", "12345")
+    # user.add_user("Customer", "A", "Customer", "12345")
+    # user.add_user("WaitStaff", "A", "WaitStaff", "12345")
+    # user.add_user("KitchenStaff", "A", "KitchenStaff", "12345")
 
-    user.login("Manager", "A", "12345")
-    user.logout("Manager", "A")
-    user.login("Manager", "A", "12345")
+    # user.login("Manager", "A", "12345")
+    # user.logout("Manager", "A")
+    # user.login("Manager", "A", "12345")
 
-    srm = app.srm_handler.srm
+    # srm = app.srm_handler.srm
 
-    srm.add_request(0, "Spoon", "I need an extra spoon")
+    # srm.add_request(0, "Spoon", "I need an extra spoon")
 
 
 
