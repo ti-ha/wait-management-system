@@ -134,7 +134,7 @@ export default function RestaurantManager() {
             <Container maxWidth="lg"> 
                 <Box py={4} px={2}> 
                 <Grid container spacing={2} justify="center">    
-                    <Grid item xs={12} md={3} lg={3}>
+                    <Grid item xs={12} md={3} lg={2.6}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h5" align="center">Managers</Typography>
@@ -155,12 +155,12 @@ export default function RestaurantManager() {
                                     }}
                                     startIcon={<Add />}
                                 >
-                                    New Manager
+                                    New Staff
                                 </Button>
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} md={3} lg={3}>
+                    <Grid item xs={12} md={3} lg={2.6}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h5" align="center">Kitchen Staff</Typography>
@@ -186,7 +186,7 @@ export default function RestaurantManager() {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} md={3} lg={3}>
+                    <Grid item xs={12} md={3} lg={2.6}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h5" align="center">Wait Staff</Typography>
@@ -212,10 +212,10 @@ export default function RestaurantManager() {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} md={3} lg={3}>
+                    <Grid item xs={12} md={3} lg={4}>
                         <Card>
                             <CardContent>
-                                <Typography variant="h5" align="center">Available Tables</Typography>
+                                <Typography variant="h5" align="center">Tables</Typography>
                                 <TableContainer>
                                     <Table>
                                         <TableHead>
