@@ -129,7 +129,7 @@ class ServiceRequest:
         return self.__assignee
     
     @property
-    def assignee_id(self) -> int | None:
+    def assignee_id(self) -> int:
         """ WaitStaff id if exist, else None """
         return self.assignee.id if self.assignee is not None else None
     
