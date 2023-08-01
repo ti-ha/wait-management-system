@@ -107,14 +107,9 @@ export default function Customer() {
         let data;
         if (category === 'Personalised Deals') {
             data = personalisedDeals;
-            
-            // Extract all menu items from each deal and apply discount
-            let allMenuItems = data.flatMap(deal => {
-                return deal.menu_items.map(item => ({
-                    ...item, 
-                    price: (item.price * (1 - deal.discount)).toFixed(2) // Apply the discount
-                }));
-            });
+    
+            // Extract all menu items from each deal
+            let allMenuItems = data.flatMap(deal => deal.menu_items);
             setCurrentItems(allMenuItems);
         } else {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
@@ -122,6 +117,7 @@ export default function Customer() {
             setCurrentItems(data.menu_items);
         }
     }
+    
 
     const handleCategoryClick = (category) => {
         setSearchResults(null);
@@ -251,6 +247,21 @@ export default function Customer() {
         }
         return () => clearTimeout(timer);
     }, [assistanceModalOpen]);
+
+    const getItemPrice = (orderId) => {
+        // Search the personalisedDeals for the corresponding order
+        for (const deal of personalisedDeals) {
+          for (const item of deal.menu_items) {
+            if (item.id === orderId) {
+              // If found, return the price inside the personalisedDeals
+              return item.price;
+            }
+          }
+        }
+        // If not found in personalisedDeals, return the original price
+        return currentOrder.find(order => order.id === orderId).price;
+      };
+      
 
     return (
         <>
@@ -399,7 +410,7 @@ export default function Customer() {
                                                     </Grid>
                                                 </Grid>
                                                 <Grid item>
-                                                    <Typography variant="body1">${order.price}</Typography>
+                                                    <Typography variant="body1">${getItemPrice(order.id)}</Typography>
                                                 </Grid>
                                             </Grid>
                                         </CardContent>
