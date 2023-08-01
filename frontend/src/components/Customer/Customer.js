@@ -24,8 +24,6 @@ export default function Customer() {
 
     const [assistanceModalOpen, setAssistanceModalOpen] = useState(false);
 
-
-
     const [searchInput, setSearchInput] = useState("");
     const [searchResults, setSearchResults] = useState(null);
     const debouncedSearchTerm = useDebounce(searchInput, 500);
@@ -109,14 +107,9 @@ export default function Customer() {
         let data;
         if (category === 'Personalised Deals') {
             data = personalisedDeals;
-            
-            // Extract all menu items from each deal and apply discount
-            let allMenuItems = data.flatMap(deal => {
-                return deal.menu_items.map(item => ({
-                    ...item, 
-                    price: (item.price * (1 - deal.discount)).toFixed(2) // Apply the discount
-                }));
-            });
+    
+            // Extract all menu items from each deal
+            let allMenuItems = data.flatMap(deal => deal.menu_items);
             setCurrentItems(allMenuItems);
         } else {
             const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`);
@@ -124,6 +117,7 @@ export default function Customer() {
             setCurrentItems(data.menu_items);
         }
     }
+    
 
     const handleCategoryClick = (category) => {
         setSearchResults(null);
@@ -254,6 +248,21 @@ export default function Customer() {
         return () => clearTimeout(timer);
     }, [assistanceModalOpen]);
 
+    const getItemPrice = (orderId) => {
+        // Search the personalisedDeals for the corresponding order
+        for (const deal of personalisedDeals) {
+          for (const item of deal.menu_items) {
+            if (item.id === orderId) {
+              // If found, return the price inside the personalisedDeals
+              return item.price;
+            }
+          }
+        }
+        // If not found in personalisedDeals, return the original price
+        return currentOrder.find(order => order.id === orderId).price;
+      };
+      
+
     return (
         <>
             <Header userType='customer' currentPage="/customer" />
@@ -380,8 +389,8 @@ export default function Customer() {
                                     <Card key={index} sx={{ mb: 1 }}>
                                         <CardContent sx={{ py: 1 }}>
                                             <Grid container justifyContent="space-between" alignItems="center">
-                                                <Grid item>
-                                                    <Typography variant="body1">{order.name}</Typography>
+                                                <Grid item xs={4}>
+                                                    <Typography variant="body1" >{order.name}</Typography>
                                                 </Grid>
                                                 <Grid item>
                                                     <Grid container alignItems="center" spacing={1}>
@@ -401,7 +410,7 @@ export default function Customer() {
                                                     </Grid>
                                                 </Grid>
                                                 <Grid item>
-                                                    <Typography variant="body1">${order.price}</Typography>
+                                                    <Typography variant="body1">${getItemPrice(order.id)}</Typography>
                                                 </Grid>
                                             </Grid>
                                         </CardContent>

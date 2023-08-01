@@ -61,6 +61,8 @@ export default function RestaurantManager() {
 
     const kitchenStaff = Object.values(users).filter(user => user.type === 'KitchenStaff');
     const waitStaff = Object.values(users).filter(user => user.type === 'WaitStaff');
+    const managers = Object.values(users).filter(user => user.type === 'Manager');
+
 
     const handleClickOpenModal = () => {
         setOpenModal(true);
@@ -131,8 +133,34 @@ export default function RestaurantManager() {
             <Header userType={userType} currentPage="restaurant-manager" />
             <Container maxWidth="lg"> 
                 <Box py={4} px={2}> 
-                <Grid container spacing={2} justify="center">
-                    <Grid item xs={12} md={6} lg={4}>
+                <Grid container spacing={2} justify="center">    
+                    <Grid item xs={12} md={3} lg={3}>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h5" align="center">Managers</Typography>
+                                {managers.map((manager, index) => (
+                                    <Typography align="center" key={index}>{manager.first_name} {manager.last_name}</Typography>
+                                ))}
+                                <Button 
+                                    component={Link} 
+                                    to="/register-staff" 
+                                    variant="contained"
+                                    color="secondary" 
+                                    style={{
+                                        marginTop: '20px', 
+                                        width: '200px', 
+                                        marginLeft: 'auto', 
+                                        marginRight: 'auto',
+                                        display: 'flex'
+                                    }}
+                                    startIcon={<Add />}
+                                >
+                                    New Manager
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} md={3} lg={3}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h5" align="center">Kitchen Staff</Typography>
@@ -158,7 +186,7 @@ export default function RestaurantManager() {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} md={6} lg={4}>
+                    <Grid item xs={12} md={3} lg={3}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h5" align="center">Wait Staff</Typography>
@@ -184,7 +212,7 @@ export default function RestaurantManager() {
                             </CardContent>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} md={6} lg={4}>
+                    <Grid item xs={12} md={3} lg={3}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h5" align="center">Available Tables</Typography>
