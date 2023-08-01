@@ -92,6 +92,7 @@ class Order(Base):
     """Table for order"""
     __tablename__ = 'order'
     id = mapped_column(Integer, primary_key=True)
+    # table = mapped_column(Integer, nullable=False)
     state = mapped_column(Integer, nullable=False)
     customer = mapped_column(Integer, ForeignKey('user.id'))
     menu_items: Mapped[List[MenuItem]] = relationship(secondary='order_menu', back_populates='orders')

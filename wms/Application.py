@@ -3,7 +3,7 @@ from wms import UserHandler, TableHandler, MenuHandler, Menu, SRMHandler, Servic
 from wms.DbHandler import *
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-
+import json
 
 class Application():
     def __init__(self):
@@ -81,16 +81,57 @@ class Application():
 
     def initialise_db(self):
         with Session(self.db_handler.engine) as session:
-            res = session.scalars(select(Category).order_by(Category.id)).fetchall()
-            for c in res:
-                print(f'\n\nCategories in database: {c}\n\n')
-                self.menu_handler.add_category(str(c.name))
-            print(f'\n\nCategories converted to objects: {self.menu_handler.menu.categories}\n\n')
+
+            ### CATEGORIES
+            categories = session.scalars(select(Category)).fetchall()
+            for cat in categories:
+                self.menu_handler.add_category(cat.name)
+            print(json.dumps(self.menu_handler.jsonify_categories(), indent=4))
+
+            ### MENU ITEMS
+            items = session.execute(select(MenuItem, Category)
+                                    .join(MenuItem.category))
+            for it in items:
+                self.menu_handler.add_menu_item(
+                    it.Category.name, 
+                    it.MenuItem.name, 
+                    it.MenuItem.price, 
+                    it.MenuItem.image_url
+                )
+            print(json.dumps(self.menu_handler.jsonify(), indent=4))
+
+            ### DEALS
+            association = session.execute(select(Deal.id, Deal.discount, MenuItem.name)
+                                          .join(MenuItem.deals)).fetchall()
+            deals = session.scalars(select(Deal.id)).fetchall()
+            for d in deals:
+                items = []
+                disc = float(0)
+                for a in association:
+                    if a[0] == d:
+                        items.append(a[2])
+                        disc = a[1]
+                self.menu_handler.add_deal(disc, items)
+            print(json.dumps(self.menu_handler.jsonify_deals(), indent=4))
+
+            # ORDERS
+            self.table_handler.add_table(10, None)
+            self.table_handler.add_table(10, None)
+            self.table_handler.add_table(10, None)
+            self.table_handler.add_table(10, None)
+            self.table_handler.add_table(10, None)
+
+            orders = session.scalars(select(Order.id)).fetchall()
+            order_deal = session.execute(select(Order.id, Deal.id).join(Order.deals)).fetchall()
+            order_menu = session.execute(select(Order.id, MenuItem.id).join(Order.menu_items)).fetchall()
+            
+            print(orders)
+            print(order_deal)
+            print(order_menu)
+
+            self.om_handler.order_manager.add_order(Order())
+
+      
 
 
-            res = session.execute(select(MenuItem, Category).join(MenuItem.category).order_by(MenuItem.id, Category.id))
-            # print(res)
-            for c in res:
-                self.menu_handler.add_menu_item(c.Category.name, c.MenuItem.name, c.MenuItem.price, c.MenuItem.image_url)
-            for m in self.menu_handler.menu.menu_items():
-                print(f'\n\nMenu Items converted to objects: {m.name}\n\n')
+
