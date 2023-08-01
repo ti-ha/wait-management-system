@@ -19,6 +19,7 @@ class Application():
             OrderManager(),
             self.table_handler,
             self.menu_handler,
+            self.db_handler
         )
         self.__restaurant_manager_handler = RestaurantManagerHandler(
             RestaurantManager(),

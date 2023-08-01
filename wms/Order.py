@@ -151,6 +151,10 @@ class Order:
         return self.__deals
     
     @property
+    def deal_ids(self) -> list[int]:
+        return [d.id for d in self.deals]
+    
+    @property
     def customer(self) -> int:
         """ Returns the customer id assigned to the order"""
         return self.__customer
@@ -159,6 +163,11 @@ class Order:
     def menu_items(self) -> list[MenuItem]:
         """ Returns list of menu items in the order """
         return [i["menu_item"] for i in self.__menu_items]
+    
+    @property
+    def menu_item_ids(self) -> list[int]:
+        """ Returns list of menu items ids in the order """
+        return [it.id for it in self.menu_items]
 
     @property
     def menu_item_states(self) -> list[dict]:
@@ -186,7 +195,7 @@ class Order:
             string: The state of the menu_item
         """
         menu_item_state = next((i["state"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
-        if menu_item_state == None:
+        if menu_item_state is None:
             raise ValueError("Order: get_menu_item_state(): menu_item does not exist in order")
         
         return menu_item_state
@@ -228,7 +237,7 @@ class Order:
                 raise ValueError("Order: add_deal(): Deal has expired")
             elif deal.user != self.customer:
                 raise ValueError("Order: add_deal(): That is not your deal")
-            elif next((i for i in deal.menu_items if i.visible == False) != None):
+            elif next((i for i in deal.menu_items if i.visible is False) is not None):
                 raise ValueError("Order: add_deal(): One or more menu_items is hidden")
 
         self.deals.append(deal)

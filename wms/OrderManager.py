@@ -1,6 +1,12 @@
 from __future__ import annotations
-from wms import Table, Bill, States
+from wms import Table, Bill, States, DbHandler
+from wms.DbHandler import Order as OrderTable
+from wms.DbHandler import MenuItem as MenuTable
+from wms.DbHandler import Deal as DealTable
 from .Order import Order
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+from datetime import datetime
 
 class OrderManager:
     def __init__(self):
@@ -87,7 +93,7 @@ class OrderManager:
 
         return order_list
     
-    def add_order(self, order: Order, table: Table):
+    def add_order(self, order: Order, table: Table, db: DbHandler):
         """ Adding orders to list of orders and relational map
 
         Args:
@@ -100,6 +106,23 @@ class OrderManager:
         if order in self.__orders:
             raise ValueError("OrderManager: add_order(): Order already exists")
         self.orders.append(order)
+        with Session(db.engine) as session:
+            items = session.scalars(select(MenuTable).filter(MenuTable.id.in_(order.menu_item_ids)))
+            deals = session.scalars(select(DealTable).filter(DealTable.id.in_(order.deal_ids)))
+            if session.get(OrderTable, order.id) is None:
+                session.add(OrderTable(
+                    id=order.id,
+                    state = order.state_value,
+                    customer = order.customer,
+                    menu_items = items.fetchall(),
+                    deals = deals.fetchall(),
+                    datetime = datetime.now()
+                ))
+            try: 
+                session.commit()
+            except:
+                session.rollback() 
+
         self.history.append(order)
 
         if table.id in self.__map.keys():

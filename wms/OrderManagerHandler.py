@@ -1,14 +1,21 @@
-from wms import OrderManager, TableHandler, MenuHandler, Order, RestaurantManagerHandler
+from wms import OrderManager, TableHandler, MenuHandler, Order, RestaurantManagerHandler, DbHandler
+from wms.DbHandler import Order as OrderTable
+from wms.DbHandler import MenuItem as MenuTable
+from wms.DbHandler import Deal as DealTable
 from .PersonalisedDeal import PersonalisedDeal
+from sqlalchemy.orm import Session
+from sqlalchemy import select
 
 class OrderManagerHandler():
     def __init__(self, order_manager: OrderManager,
                  table_handler: TableHandler,
-                 menu_handler: MenuHandler) -> None:
+                 menu_handler: MenuHandler,
+                 db: DbHandler) -> None:
         """ Constructor for the OrderManagerHandler Class """
         self.__order_manager = order_manager
         self.__table_handler = table_handler
         self.__menu_handler = menu_handler
+        self.__db = db
         self.__observers = []
 
     def attach(self, observer: RestaurantManagerHandler):
@@ -31,6 +38,10 @@ class OrderManagerHandler():
     @property
     def menu_handler(self):
         return self.__menu_handler
+    
+    @property
+    def db(self):
+        return self.__db
 
     def get_table_orders(self, table_id: int) -> dict:
         """ Acquires the table orders of a particular table
@@ -161,7 +172,7 @@ class OrderManagerHandler():
             if isinstance(deal, PersonalisedDeal):
                 self.menu_handler.menu.remove_deal(deal)
 
-        self.order_manager.add_order(Order(menu_items, deals, user), table)
+        self.order_manager.add_order(Order(menu_items, deals, user), table, self.db)
         self.notify(menu_items_ids)
 
     def change_order_state(self, order_id: int):

@@ -20,7 +20,6 @@ class Category():
         self.__name = name
         self.__menu_items = [] if menu_items is None else menu_items
         self.__visible = True
-        # self.__db_engine = db_engine
 
     @property
     def id(self) -> int:
@@ -138,14 +137,19 @@ class Category():
             raise ValueError("Category: add_menu_item(): MenuItem already in category")
         
         self.menu_items.append(menu_item)
+        
         with Session(db.engine) as session:
             session.add(MenuTable(
+                id=menu_item.id,
                 name=menu_item.name,
                 price=menu_item.price,
                 category_id=self.id,
                 image_url=menu_item.image_url
             ))
-            session.commit()
+            try: 
+                session.commit()
+            except:
+                session.rollback()
 
     def remove_menu_item(self, name, db: DbHandler) -> int:
         """ Removes a menu_item from the category
@@ -166,7 +170,10 @@ class Category():
         self.menu_items.remove(removed_item)
         with Session(db.engine) as session:
             session.execute(delete(MenuTable).where(MenuTable.name == name))
-            session.commit()
+            try: 
+                session.commit()
+            except:
+                session.rollback()
         return removed_item.id
         
     def jsonify(self) -> dict:

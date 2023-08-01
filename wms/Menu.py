@@ -8,7 +8,7 @@ from wms.DbHandler import MenuItem as MenuTable
 from wms import Category, MenuItem, Deal, DbHandler
 from .PersonalisedDeal import PersonalisedDeal
 from sqlalchemy.orm import Session
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 
 class Menu():
 
@@ -71,8 +71,11 @@ class Menu():
         
         self.__categories.append(category)
         with Session(db.engine) as session:
-            session.add(CategoryTable(name=category.name))
-            session.commit()
+            session.add(CategoryTable(id=category.id, name=category.name))
+            try: 
+                session.commit()
+            except:
+                session.rollback()
 
 
     def remove_category(self, name, db: DbHandler) -> None:
@@ -97,12 +100,15 @@ class Menu():
                     session.execute(delete(CategoryTable).where(
                         CategoryTable.name == name)
                     )
-                    session.commit()
+                    try: 
+                        session.commit()
+                    except:
+                        session.rollback()
                 return i
         
         raise ValueError("Menu: menu.remove_category(): not in categories")
     
-    def add_deal(self, deal, menu_items: list[String], db: DbHandler) -> None:
+    def add_deal(self, deal, menu_items: list[str], db: DbHandler) -> None:
         """ Adds a new deal to the menu
 
         Args:
@@ -117,17 +123,20 @@ class Menu():
         
         if deal in self.__deals:
             raise ValueError("Menu: add_deal(): Deal already exists")
-        
 
-
-        # with Session(db.engine) as session:
-        #     session.scalars(select(MenuTable).where(MenuTable.id).)
-        #     session.add(DealTable(
-        #         discount = deal.discount,
-        #         menu_items = items,
-        #         orders = []
-        #     ))
-        #     session.commit()
+        with Session(db.engine) as session:
+            res = session.scalars(select(MenuTable).filter(MenuTable.name.in_(menu_items)))
+            if session.get(DealTable, deal.id) is None:
+                session.add(DealTable(
+                    id=deal.id,
+                    discount = deal.discount,
+                    menu_items = res.fetchall(),
+                    orders = []
+                ))
+            try: 
+                session.commit()
+            except:
+                session.rollback()
 
     
     def remove_deal(self, deal) -> None:

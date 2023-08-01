@@ -3,6 +3,7 @@ from wms.DbHandler import DbHandler
 from wms.DbHandler import User as UserTable
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update
+
 class UserHandler():
     def __init__(self, db: DbHandler) -> None:
         """ Constructor for the UserHandler Class """
@@ -55,12 +56,16 @@ class UserHandler():
         self.__users.append(new_user)
         with Session(self.db.engine) as session:
             session.add(UserTable(
+                id=new_user.id,
                 first_name = firstname,
                 last_name = lastname,
                 password_hash = new_user.password_hash,
                 logged_in = 0
             ))
-            session.commit()
+            try: 
+                session.commit()
+            except:
+                session.rollback()
 
     def login(self, firstname, lastname, password) -> User:
         """ Attempts to log in the user
@@ -89,7 +94,10 @@ class UserHandler():
                 UserTable.last_name == lastname).values(
                 logged_in=1
             ))
-            session.commit()
+            try: 
+                session.commit()
+            except:
+                session.rollback()
         return usermatch if success else None
         
     def logout(self, firstname, lastname) -> bool:
@@ -113,7 +121,10 @@ class UserHandler():
                     UserTable.last_name == lastname).values(
                     logged_in=0
                 ))
-                session.commit()
+                try: 
+                    session.commit()
+                except:
+                    session.rollback()
             return True
         return False
 
