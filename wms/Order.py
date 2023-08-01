@@ -64,7 +64,14 @@ class State:
             return "completed"
         else:
             raise ValueError("State outside bounds")
-            
+        
+    @state.setter
+    def state(self, val: int):
+        # if val in range(-1, 5):
+        self.__state = States(val)
+        # else:
+            # raise ValueError("State outside bounds")
+
     @property
     def value(self) -> int:
         """ Converts state to int
@@ -177,6 +184,14 @@ class Order:
     def state(self) -> str:
         """ Returns current state of the order """
         return self.__state.state
+    
+    @state.setter
+    def state(self, val: int):
+        """ Sets state to current value """
+        s = State()
+        print(val)
+        s.state = val
+        self.state = s
     
     @property
     def state_value(self) -> int:

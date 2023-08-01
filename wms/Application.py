@@ -12,7 +12,7 @@ class Application():
         """
         self.__db_handler = DbHandler()
         self.__user_handler = UserHandler(self.db_handler)
-        self.__table_handler = TableHandler()
+        self.__table_handler = TableHandler(self.db_handler)
         self.__menu_handler = MenuHandler(Menu(self.db_handler), self.db_handler)
         self.__srm_handler = SRMHandler(
             ServiceRequestManager(self.db_handler),
@@ -80,6 +80,7 @@ class Application():
         return self.__db_handler
 
     def initialise_db(self):
+        """Create objects from database"""
         with Session(self.db_handler.engine) as session:
 
             ### CATEGORIES
@@ -114,22 +115,36 @@ class Application():
                 self.menu_handler.add_deal(disc, items)
             print(json.dumps(self.menu_handler.jsonify_deals(), indent=4))
 
-            # ORDERS
-            self.table_handler.add_table(10, None)
-            self.table_handler.add_table(10, None)
-            self.table_handler.add_table(10, None)
-            self.table_handler.add_table(10, None)
-            self.table_handler.add_table(10, None)
+            ### TABLES
+            tables = session.scalars(select(Table.limit).order_by(Table.id)).fetchall()
+            print(tables)
+            for table in tables:
+                self.table_handler.add_table(table, None)
 
-            orders = session.scalars(select(Order.id)).fetchall()
+            print(json.dumps(self.table_handler.jsonify(), indent=4))
+
+            ### ORDERS
+            orders = session.execute(select(Order.id, Order.table_id, Order.state)).fetchall()
             order_deal = session.execute(select(Order.id, Deal.id).join(Order.deals)).fetchall()
             order_menu = session.execute(select(Order.id, MenuItem.id).join(Order.menu_items)).fetchall()
             
-            print(orders)
-            print(order_deal)
-            print(order_menu)
+            for order, table, state in orders:
+                print(f'\n\n\nWOI ANJINGGGG     {order}, {table}, {state}\n\n\n')
+                deals = []
+                for o1, deal in order_deal:
+                    if o1 == order:
+                        deals.append(deal)
+                items = []
+                for o2, item in order_menu:
+                    if o2 == order:
+                        items.append(item)
+                self.om_handler.add_order(table, items, deals)
 
-            self.om_handler.order_manager.add_order(Order())
+                ## TODO set states
+                self.om_handler.order_manager.set_state(order, state)
+                print(json.dumps(self.om_handler.jsonify_orders(), indent=4))
+            # states = session.execute(select(Order.id, Order.s))
+            ### USERS
 
       
 

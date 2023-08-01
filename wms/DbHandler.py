@@ -30,17 +30,9 @@ class DbHandler():
 
     def initialise(self):
         """Create all tables"""
-        Base.metadata.reflect(self.engine)
-        # self.create_objects()
+        # Base.metadata.reflect(self.engine)
         Base.metadata.create_all(self.engine, checkfirst=True)
-
-    # def create_objects(self):
-    #     """Convert database schema to objects"""
-    #     with Session(self.engine) as session:
-    #         res = session.scalars(select(Category).order_by(Category.id))
-    #         for c in res:
                 
-
 class DealMenu(Base):
     """Association table for deal and menu items"""
     __tablename__ = 'deal_menu'
@@ -59,11 +51,19 @@ class OrderDeal(Base):
     order_id = mapped_column(ForeignKey('order.id'), primary_key=True)
     deal_id = mapped_column(ForeignKey('deal.id'), primary_key=True)
 
+class Deal(Base):
+    """Table for deal"""
+    __tablename__ = 'deal'
+    id = mapped_column(Integer, primary_key=True)
+    discount = mapped_column(Float(2), nullable=False)
+    menu_items: Mapped[List[MenuItem]] = relationship(secondary='deal_menu', back_populates='deals')
+    orders: Mapped[List[Order]] = relationship(secondary='order_deal',back_populates='deals')
+
 class Category(Base):
     """Table for category"""
     __tablename__ = 'category'
     __table_args__ = (UniqueConstraint('name'), )
-    id = mapped_column(Integer, Sequence('id_seq', start=0, increment=1), primary_key=True)
+    id = mapped_column(Integer, primary_key=True)
     name = mapped_column(String(40), nullable=False)
     menu_items: Mapped[Set[MenuItem]] = relationship(back_populates="category")
 
@@ -80,21 +80,21 @@ class MenuItem(Base):
     deals: Mapped[List[Deal]] = relationship(secondary='deal_menu', back_populates='menu_items')
     orders: Mapped[List[Order]] = relationship(secondary='order_menu', back_populates='menu_items')
 
-class Deal(Base):
-    """Table for deal"""
-    __tablename__ = 'deal'
+class Table(Base):
+    """Table for table"""
+    __tablename__ = 'table'
     id = mapped_column(Integer, primary_key=True)
-    discount = mapped_column(Float(2), nullable=False)
-    menu_items: Mapped[List[MenuItem]] = relationship(secondary='deal_menu', back_populates='deals')
-    orders: Mapped[List[Order]] = relationship(secondary='order_deal',back_populates='deals')
+    limit = mapped_column(Integer, nullable=False)
+    orders: Mapped[List[Order]] = relationship(back_populates='table')
 
 class Order(Base):
     """Table for order"""
     __tablename__ = 'order'
     id = mapped_column(Integer, primary_key=True)
-    # table = mapped_column(Integer, nullable=False)
     state = mapped_column(Integer, nullable=False)
     customer = mapped_column(Integer, ForeignKey('user.id'))
+    table: Mapped[Table] = relationship(back_populates='orders')
+    table_id = mapped_column(Integer, ForeignKey('table.id'))
     menu_items: Mapped[List[MenuItem]] = relationship(secondary='order_menu', back_populates='orders')
     deals: Mapped[List[Deal]] = relationship(secondary='order_deal',back_populates='orders')
     datetime = mapped_column(DateTime, nullable=False)

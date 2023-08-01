@@ -1,14 +1,22 @@
 from .Table import Table
 from .Customer import Customer
+from wms import DbHandler
+from wms.DbHandler import Table as TableTable
+from sqlalchemy.orm import Session
 
 class TableHandler():
-    def __init__(self) -> None:
+    def __init__(self, db: DbHandler) -> None:
         """ Constructor for the TableHandler Class """
         self.__tables = []
+        self.__db = db
 
     @property
     def tables(self) -> list[Table]:
         return self.__tables
+
+    @property
+    def db(self) -> DbHandler:
+        return self.__db
     
     def add_table(self, table_limit, orders):
         """ Adds a table to the restaurant
@@ -19,6 +27,15 @@ class TableHandler():
         """
         table = Table(table_limit, orders)
         self.__tables.append(table)
+        with Session(self.db.engine) as session:
+            try:
+                session.add(TableTable(
+                    id=table.id,
+                    limit=table.table_limit
+                ))
+                session.commit()
+            except:
+                session.rollback()
     
     def add_customer(self, table_id, customer: Customer) -> bool:
         """ Adds a customer to the table

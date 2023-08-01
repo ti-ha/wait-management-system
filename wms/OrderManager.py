@@ -114,6 +114,7 @@ class OrderManager:
                     id=order.id,
                     state = order.state_value,
                     customer = order.customer,
+                    table_id=table.id,
                     menu_items = items.fetchall(),
                     deals = deals.fetchall(),
                     datetime = datetime.now()
@@ -175,6 +176,15 @@ class OrderManager:
         else:
             raise TypeError("OrderManager: change_state(): Not a valid Order obj or order_id")
         order.change_state()
+
+    def set_state(self, order: int, val: int):
+        """ Set order to specified state 
+        
+        Args:
+            order (integer): Order id to have its state progressed to the 
+            next state
+        """
+        self.get_order(order).state = val
     
     def update_db_state(self, order: int, db: DbHandler):
         """Update order state in database
