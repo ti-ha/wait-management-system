@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import UniqueConstraint, CheckConstraint, create_engine, Integer, String, Float, ForeignKey, Engine
+from sqlalchemy import UniqueConstraint, create_engine, Integer, String, Float, ForeignKey, Engine
 import enum
 from sqlalchemy import Enum
 from typing import List, Set
@@ -9,18 +9,8 @@ from sqlalchemy.orm import relationship, DeclarativeBase, sessionmaker, Session,
 from sqlalchemy.types import DateTime
 from sqlalchemy.schema import Sequence
 
-# class OrderStates(enum.Enum):
-#     """Order states for database"""
-#     DELETED = -1
-#     ORDERED = 0
-#     COOKING = 1
-#     READY = 2
-#     SERVED = 3
-#     COMPLETED = 4
-
 class Base(DeclarativeBase):
     """Base class of database tables"""
-    pass
 
 class DbHandler():
     """A class to handle database functions"""
@@ -107,3 +97,14 @@ class User(Base):
     last_name = mapped_column(String(40), nullable=False)
     password_hash = mapped_column(String(64), nullable=False)
     logged_in = mapped_column(Integer, nullable=False)
+
+class ServiceRequest(Base):
+    """Table for service requests"""
+    __tablename__ = 'service_request'
+    id = mapped_column(Integer, primary_key=True)
+    table = mapped_column(Integer)
+    subject = mapped_column(String(64))
+    summary = mapped_column(String(128))
+    timestamp = mapped_column(String(512), nullable=False)
+    status = mapped_column(Integer)
+    assignee = mapped_column(Integer, ForeignKey('user.id'))

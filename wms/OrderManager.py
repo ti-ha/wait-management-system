@@ -5,7 +5,7 @@ from wms.DbHandler import MenuItem as MenuTable
 from wms.DbHandler import Deal as DealTable
 from .Order import Order
 from sqlalchemy.orm import Session
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from datetime import datetime
 
 class OrderManager:
@@ -131,7 +131,7 @@ class OrderManager:
             self.__map[table.id] = [order.id]
         table.add_order(order)
 
-    def remove_order(self, order: Order, table: Table):
+    def remove_order(self, order: Order, table: Table, db: DbHandler):
         """ Removing orders from list of orders and relational map
 
         Args:
@@ -148,6 +148,12 @@ class OrderManager:
             self.__map[table.id].remove(order.id)
             table.remove_order(order)
             self.orders.remove(order)
+            with Session(db.engine) as session:
+                try:
+                    session.execute(delete(OrderTable).where(OrderTable.id == order.id))
+                    session.commit()
+                except:
+                    session.rollback()
         else:
             raise ValueError("OrderManager: remove_order(): Table does not have supplied order")
         
@@ -178,12 +184,10 @@ class OrderManager:
             db (DbHandler): database handler object
         """
         with Session(db.engine) as session:
-            print(f'Order Table id: {OrderTable.id}')
-            print(f'Order id: {order}')
             try:
                 target = session.execute(select(OrderTable).where(
-                    OrderTable.id == order)
-                ).scalar_one()
+                    OrderTable.id == order
+                )).scalar_one()
                 target.state += 1
                 session.commit()
             except:

@@ -170,7 +170,7 @@ class OrderManagerHandler():
                 raise ValueError("OrderManagerHandler: add_order(): Deal does not exist")
             deals.append(deal)
             if isinstance(deal, PersonalisedDeal):
-                self.menu_handler.menu.remove_deal(deal)
+                self.menu_handler.menu.remove_deal(deal, self.db)
 
         self.order_manager.add_order(Order(menu_items, deals, user), table, self.db)
         self.notify(menu_items_ids)
@@ -223,7 +223,7 @@ class OrderManagerHandler():
         if table is None or order is None:
             raise ValueError("OrderManagerHandler: remove_order(): either table or order do not exist")
         try:
-            self.order_manager.remove_order(order, table)
+            self.order_manager.remove_order(order, table, self.db)
         except ValueError as exc:
             raise ValueError(
                 "OrderManagerHandler: remove_order(): Order either doesn't exist or is not assigned to a table"
@@ -253,7 +253,7 @@ class OrderManagerHandler():
         if t_id is None:
             raise ValueError("Order is not in a table. How did you manage that?")
 
-        self.order_manager.remove_order(order, self.table_handler.id_to_table(t_id))
+        self.order_manager.remove_order(order, self.table_handler.id_to_table(t_id), self.db)
 
     def calculate_and_return_bill(self, table_id: int) -> dict:
         """ Calculates and returns the current bill

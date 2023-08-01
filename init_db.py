@@ -71,8 +71,10 @@ if __name__ == '__main__':
     user.login("Manager", "A", "12345")
     user.logout("Manager", "A")
     user.login("Manager", "A", "12345")
-    user.logout("Manager", "A")
 
+    srm = app.srm_handler.srm
+
+    srm.add_request(0, "Spoon", "I need an extra spoon")
 
 
 

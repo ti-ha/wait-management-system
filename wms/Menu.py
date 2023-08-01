@@ -11,8 +11,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import delete, select
 
 class Menu():
-
-    def __init__(self, categories=None, deals=None):
+    def __init__(self, db: DbHandler, categories=None, deals=None):
         """ Constructor for the Menu class
 
         Args:
@@ -21,9 +20,15 @@ class Menu():
             deals (List[Deal], optional): Different menu deals. 
             Defaults to None.
         """
+        self.__db = db
         self.__categories = [] if categories is None else categories
         self.__deals = [] if deals is None else deals
  
+    @property
+    def db(self) -> DbHandler:
+        """Returns db handler"""
+        return self.__db
+    
     @property
     def categories(self) -> list[Category]:
         """ Returns a list of categories """
@@ -53,7 +58,7 @@ class Menu():
         """
         return next((it for it in self.categories if it.name == name), None)
 
-    def add_category(self, category: Category, db: DbHandler) -> None:
+    def add_category(self, category: Category) -> None:
         """ Adds a new category to the menu
 
         Args:
@@ -70,7 +75,7 @@ class Menu():
             raise ValueError("Menu: add_category(): Category already exists")
         
         self.__categories.append(category)
-        with Session(db.engine) as session:
+        with Session(self.db.engine) as session:
             session.add(CategoryTable(id=category.id, name=category.name))
             try: 
                 session.commit()
@@ -78,7 +83,7 @@ class Menu():
                 session.rollback()
 
 
-    def remove_category(self, name, db: DbHandler) -> None:
+    def remove_category(self, name) -> None:
         """ Removes a category, if that category exists, from the menu.
 
         Args:
@@ -96,7 +101,7 @@ class Menu():
         for i in self.categories:
             if i.name == name:
                 self.__categories.remove(i)
-                with Session(db.engine) as session:
+                with Session(self.db.engine) as session:
                     session.execute(delete(CategoryTable).where(
                         CategoryTable.name == name)
                     )
@@ -108,7 +113,7 @@ class Menu():
         
         raise ValueError("Menu: menu.remove_category(): not in categories")
     
-    def add_deal(self, deal, menu_items: list[str], db: DbHandler) -> None:
+    def add_deal(self, deal, menu_items: list[str]) -> None:
         """ Adds a new deal to the menu
 
         Args:
@@ -124,7 +129,7 @@ class Menu():
         if deal in self.__deals:
             raise ValueError("Menu: add_deal(): Deal already exists")
         self.__deals.append(deal)
-        with Session(db.engine) as session:
+        with Session(self.db.engine) as session:
             res = session.scalars(select(MenuTable).filter(MenuTable.name.in_(menu_items)))
             if session.get(DealTable, deal.id) is None:
                 session.add(DealTable(
@@ -159,6 +164,14 @@ class Menu():
             raise ValueError("Menu: menu.remove_deal(): not in deals")
         
         self.__deals.remove(deal)
+        with Session(self.db.engine) as session:
+            session.execute(delete(DealTable).where(
+                DealTable.id == deal.id)
+            )
+            try: 
+                session.commit()
+            except:
+                session.rollback()
         return deal
     
     def user_has_personalised(self, user):
