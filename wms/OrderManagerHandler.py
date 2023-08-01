@@ -187,7 +187,7 @@ class OrderManagerHandler():
         order = self.order_manager.get_order(order_id)
         if order is None:
             raise ValueError("Not a valid order_id")
-        self.order_manager.change_state(order_id)
+        self.order_manager.change_state(order_id, self.db)
         if self.order_manager.get_order(order_id).state == "completed":
             self.order_manager.orders.remove(self.order_manager.get_order(order_id))
 

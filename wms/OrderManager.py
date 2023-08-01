@@ -5,7 +5,7 @@ from wms.DbHandler import MenuItem as MenuTable
 from wms.DbHandler import Deal as DealTable
 from .Order import Order
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, update
 from datetime import datetime
 
 class OrderManager:
@@ -151,7 +151,7 @@ class OrderManager:
         else:
             raise ValueError("OrderManager: remove_order(): Table does not have supplied order")
         
-    def change_state(self, order: int | Order):
+    def change_state(self, order: int | Order, db: DbHandler):
         """ Move item along to the next stage
 
         Args:
@@ -162,12 +162,32 @@ class OrderManager:
             TypeError: Raised when order argument is not of type Order or Integer
         """
         if isinstance(order, int):
+            self.update_db_state(order, db)
             order = self.get_order(order)
         elif isinstance(order, Order):
-            pass
+            self.update_db_state(order.id, db)
         else:
             raise TypeError("OrderManager: change_state(): Not a valid Order obj or order_id")
         order.change_state()
+    
+    def update_db_state(self, order: int, db: DbHandler):
+        """Update order state in database
+        
+        Args:
+            order (int): the order id to have its state progressed to the next state
+            db (DbHandler): database handler object
+        """
+        with Session(db.engine) as session:
+            print(f'Order Table id: {OrderTable.id}')
+            print(f'Order id: {order}')
+            try:
+                target = session.execute(select(OrderTable).where(
+                    OrderTable.id == order)
+                ).scalar_one()
+                target.state += 1
+                session.commit()
+            except:
+                session.rollback()
 
     def change_menu_item_state(self, order: int | Order, id: int):
         """ Changes the menu_item state of a menu_item within a specified order

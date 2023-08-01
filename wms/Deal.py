@@ -147,4 +147,4 @@ class Deal():
             "id": self.id, 
             "discount": self.discount, 
             "menu_items": [i.jsonify() for i in self.menu_items]
-            }
+        }

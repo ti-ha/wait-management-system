@@ -311,7 +311,7 @@ class Order:
         Returns:
             Dict: New dictionary after deal discount is applied to menu items
         """
-        if deal.visible == False:
+        if deal.visible is False:
             discount = 0
         else:
             discount = deal.discount
@@ -329,7 +329,7 @@ class Order:
             {menuitem: price, ... , menuitem: price}.
             We do not want to modify the existing objects
         """
-        if self.bill != None:
+        if self.bill is not None:
             return self.bill
         
         pricedict = {}

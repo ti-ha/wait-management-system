@@ -33,20 +33,33 @@ if __name__ == '__main__':
     menu.add_menu_item("Snacks", "Item 10", 10, PLACEHOLDER)
     menu.add_menu_item("Snacks", "Item 11", 10, PLACEHOLDER)
 
-    menu.add_deal(5.0, ["Meatloaf", "Burger"])
-    menu.add_deal(5.0, ["Arancini Balls", "Burger"])
-    menu.add_deal(10.0, ["Greek Salad", "Burger"])
+    menu.add_deal(5.0, ["Meatloaf", "Burger"])          # Deal 0
+    menu.add_deal(5.0, ["Arancini Balls", "Burger"])    # Deal 1
+    menu.add_deal(10.0, ["Greek Salad", "Burger"])      # Deal 2
+    print(f'DEALS           : {menu.menu.deals}')
 
     table = app.table_handler
-    table.add_table(5, None)
-    table.add_table(5, None)
-    table.add_table(5, None)
-    table.add_table(5, None)
-    table.add_table(5, None)
+    table.add_table(5, None)                # Table 0
+    table.add_table(5, None)                # Table 1
+    table.add_table(5, None)                # Table 2
+    table.add_table(5, None)                # Table 3
+    table.add_table(5, None)                # Table 4
 
     order = app.om_handler
     
     order.add_order(0, [0, 1], [], None)
+    order.change_order_state(0)
+    order.change_order_state(0)
+
+    order.add_order(1, [], [1], None)
+    order.change_order_state(1)
+    order.change_order_state(1)
+    order.change_order_state(1)
+
+    order.add_order(2, [5, 6], [0, 1, 2], None)
+    order.change_order_state(2)
+    order.change_order_state(2)
+    order.change_order_state(2)
 
     user = app.user_handler
 

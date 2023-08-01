@@ -123,7 +123,7 @@ class Menu():
         
         if deal in self.__deals:
             raise ValueError("Menu: add_deal(): Deal already exists")
-
+        self.__deals.append(deal)
         with Session(db.engine) as session:
             res = session.scalars(select(MenuTable).filter(MenuTable.name.in_(menu_items)))
             if session.get(DealTable, deal.id) is None:
