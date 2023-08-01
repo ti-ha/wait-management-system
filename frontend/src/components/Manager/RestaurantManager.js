@@ -155,7 +155,7 @@ export default function RestaurantManager() {
                                     }}
                                     startIcon={<Add />}
                                 >
-                                    New Manager
+                                    New Staff
                                 </Button>
                             </CardContent>
                         </Card>
