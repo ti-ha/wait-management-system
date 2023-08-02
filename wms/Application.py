@@ -87,7 +87,7 @@ class Application():
             categories = session.scalars(select(Category)).fetchall()
             for cat in categories:
                 self.menu_handler.add_category(cat.name)
-            #print(json.dumps(self.menu_handler.jsonify_categories(), indent=4))
+            print(json.dumps(self.menu_handler.jsonify_categories(), indent=4))
 
             ### MENU ITEMS
             items = session.execute(select(MenuItem, Category)
@@ -95,7 +95,7 @@ class Application():
             for it in items:
                 self.menu_handler.add_menu_item(it.Category.name, it.MenuItem.name,
                                                 it.MenuItem.price, it.MenuItem.image_url)
-            #print(json.dumps(self.menu_handler.jsonify(), indent=4))
+            print(json.dumps(self.menu_handler.jsonify(), indent=4))
 
             ### DEALS
             association = session.execute(select(Deal.id, Deal.discount, MenuItem.name)
@@ -113,11 +113,11 @@ class Application():
 
             ### TABLES
             tables = session.scalars(select(Table.limit).order_by(Table.id)).fetchall()
-            #print(tables)
+            print(tables)
             for table in tables:
                 self.table_handler.add_table(table, None)
 
-            #print(json.dumps(self.table_handler.jsonify(), indent=4))
+            print(json.dumps(self.table_handler.jsonify(), indent=4))
 
             ### ORDERS
             orders = session.execute(select(Order.id, Order.table_id, 
