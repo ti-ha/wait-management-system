@@ -40,7 +40,7 @@ def create_tables(app):
     menu.add_deal(10.0, ["Greek Salad", "Burger"])      # Deal 2
 
     table = app.table_handler
-    
+
     table.add_table(5, None)                # Table 0
     table.add_table(5, None)                # Table 1
     table.add_table(5, None)                # Table 2
@@ -80,6 +80,10 @@ def create_tables(app):
 
 def main():
     app = Application()
+    app.om_handler.add_order(0, [1], [], None)
+    app.om_handler.add_order(0, [1, 2], [], None)
+    app.om_handler.add_order(0, [1, 2, 3], [], None)
+
     # create_tables(app)
 
 if __name__ == '__main__':

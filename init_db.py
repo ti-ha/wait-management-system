@@ -15,7 +15,7 @@ def init_categories(session: Session, menu_handler: MenuHandler):
     categories = session.scalars(select(Category)).fetchall()
     for cat in categories:
         menu_handler.add_category(cat.name)
-    print(json.dumps(menu_handler.jsonify_categories(), indent=4))
+    # print(json.dumps(menu_handler.jsonify_categories(), indent=4))
 
 def init_menu_items(session: Session, menu_handler: MenuHandler):
     """Initialise menu items from existing database
@@ -29,7 +29,7 @@ def init_menu_items(session: Session, menu_handler: MenuHandler):
     for item in items:
         menu_handler.add_menu_item(item.Category.name, item.MenuItem.name,
                                    item.MenuItem.price, item.MenuItem.image_url)
-    print(json.dumps(menu_handler.jsonify(), indent=4))
+    # print(json.dumps(menu_handler.jsonify(), indent=4))
 
 def init_deals(session: Session, menu_handler: MenuHandler):
     """Initialise deals from existing database
@@ -49,7 +49,7 @@ def init_deals(session: Session, menu_handler: MenuHandler):
                 items.append(item_name)
                 disc = d_discount
         menu_handler.add_deal(disc, items)
-    print(json.dumps(menu_handler.jsonify_deals(), indent=4))
+    # print(json.dumps(menu_handler.jsonify_deals(), indent=4))
 
 def init_tables(session: Session, table_handler: TableHandler):
     """Initialise tables from existing database
@@ -63,7 +63,7 @@ def init_tables(session: Session, table_handler: TableHandler):
     for table in tables:
         table_handler.add_table(table, None)
 
-    print(json.dumps(table_handler.jsonify(), indent=4))
+    # print(json.dumps(table_handler.jsonify(), indent=4))
 
 def init_orders(session: Session, om_handler: OrderManagerHandler):
     """Initialise order history from existing database
@@ -105,7 +105,7 @@ def init_users(session: Session, user_handler: UserHandler):
 
     for first, last, utype, phash in users:
         user_handler.add_user(first, last, utype, "", phash)
-    print(json.dumps(user_handler.jsonify(), indent=4))
+    # print(json.dumps(user_handler.jsonify(), indent=4))
 
 def initialise_db(db_handler: DbHandler, menu_handler: MenuHandler,
                   table_handler: TableHandler, om_handler: OrderManagerHandler,

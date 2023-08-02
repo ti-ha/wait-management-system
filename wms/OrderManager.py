@@ -120,10 +120,10 @@ class OrderManager:
                     deals = deals.fetchall(),
                     datetime = datetime.now()
                 ))
-            try: 
-                session.commit()
-            except:
-                session.rollback() 
+            # try: 
+            session.commit()
+            # except:
+                # session.rollback() 
 
         if table.id in self.__map.keys():
             self.__map[table.id] += [order.id]
