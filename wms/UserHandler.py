@@ -20,7 +20,7 @@ class UserHandler():
         """Returns db"""
         return self.__db
     
-    def add_user(self, firstname, lastname, user_type, password):
+    def add_user(self, firstname, lastname, user_type, password, existing_hash=None):
         """ Adds a user to the system
 
         Args:
@@ -42,13 +42,13 @@ class UserHandler():
             raise ValueError("UserHandler: add_user(): User with exact credentials already exists")
         
         if user_type == "Customer": 
-            new_user = Customer(firstname, lastname, password)
+            new_user = Customer(firstname, lastname, password, existing_hash)
         elif user_type == "KitchenStaff":
-            new_user = KitchenStaff(firstname, lastname, password)
+            new_user = KitchenStaff(firstname, lastname, password, existing_hash)
         elif user_type == "WaitStaff":
-            new_user = WaitStaff(firstname, lastname, password)
+            new_user = WaitStaff(firstname, lastname, password, existing_hash)
         elif user_type == "Manager":
-            new_user = Manager(firstname, lastname, password)
+            new_user = Manager(firstname, lastname, password, existing_hash)
         else: 
             return None
         
