@@ -1,85 +1,136 @@
-from wms import *
-
-MEATLOAF_URL =  "https://www.spendwithpennies.com/wp-content/uploads/2022/12/1200-The-Best-Meatloaf-Recipe-SpendWithPennies.jpg"
-ARANCINI_BALLS_URL = "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/arancini_balls-db2b1df.jpg?quality=90&webp=true&resize=440,400"
-GREEK_SALAD_URL = "https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2018/08/Greek-Salad-main.jpg"
-SALT_AND_PEPPER_SQUID_URL = "https://redhousespice.com/wp-content/uploads/2022/02/squid-with-salt-and-pepper-seasoning-scaled.jpg"
-PLACEHOLDER = "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg"
-
-def create_tables(app):
-    menu = app.menu_handler
-
-    menu.add_category("Entrees")
-    menu.add_menu_item("Entrees", "Meatloaf", 3, MEATLOAF_URL)
-    menu.add_menu_item("Entrees", "Arancini Balls", 9, ARANCINI_BALLS_URL)
-    menu.add_menu_item("Entrees", "Greek Salad", 6.5, GREEK_SALAD_URL)
-    menu.add_menu_item("Entrees", "Salt and Pepper Squid", 8.5, SALT_AND_PEPPER_SQUID_URL)
-
-    menu.add_category("Mains")
-    menu.add_menu_item("Mains", "Burger", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 2", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 3", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 4", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 5", 12, PLACEHOLDER)
-    menu.add_menu_item("Mains", "Item 6", 12, PLACEHOLDER)
-
-    menu.add_category("Snacks")
-    menu.add_menu_item("Snacks", "Item 7", 10, PLACEHOLDER)
-    menu.add_menu_item("Snacks", "Item 8", 10, PLACEHOLDER)
-    menu.add_menu_item("Snacks", "Item 9", 10, PLACEHOLDER)
-    menu.add_menu_item("Snacks", "Item 10", 10, PLACEHOLDER)
-    menu.add_menu_item("Snacks", "Item 11", 10, PLACEHOLDER)
-
-    menu.add_deal(5.0, ["Meatloaf", "Burger"])          # Deal 0
-    menu.add_deal(5.0, ["Arancini Balls", "Burger"])    # Deal 1
-    menu.add_deal(10.0, ["Greek Salad", "Burger"])      # Deal 2
-
-    print('\n\n\n\n\n\n')
-    table = app.table_handler
-    table.add_table(5, None)                # Table 0
-    table.add_table(5, None)                # Table 1
-    table.add_table(5, None)                # Table 2
-    table.add_table(5, None)                # Table 3
-    table.add_table(5, None)                # Table 4
-    print('\n\n\n\n\n\n')
-
-    order = app.om_handler
-    
-    order.add_order(0, [0, 1], [], None)
-    order.change_order_state(0)
-    order.change_order_state(0)
-
-    order.add_order(1, [], [1], None)
-    order.change_order_state(1)
-    order.change_order_state(1)
-    order.change_order_state(1)
-
-    order.add_order(2, [5, 6], [0, 1, 2], None)
-    order.change_order_state(2)
-    order.change_order_state(2)
-    order.change_order_state(2)
-
-    user = app.user_handler
-
-    user.add_user("Manager", "A", "Manager", "12345")
-    user.add_user("Customer", "A", "Customer", "12345")
-    user.add_user("WaitStaff", "A", "WaitStaff", "12345")
-    user.add_user("KitchenStaff", "A", "KitchenStaff", "12345")
-
-    user.login("Manager", "A", "12345")
-    user.logout("Manager", "A")
-    user.login("Manager", "A", "12345")
-
-    srm = app.srm_handler.srm
-
-    srm.add_request(0, "Spoon", "I need an extra spoon")
+import json
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+from wms import MenuHandler, TableHandler, OrderManagerHandler, UserHandler, DbHandler
+from wms.DbHandler import Category, MenuItem, Deal, User, Table, Order
 
 
-if __name__ == '__main__':
-    app = Application()
-    # create_tables(app)
+def init_categories(session: Session, menu_handler: MenuHandler):
+    """Initialise categories from existing database
 
-    
+    Args:
+        session (Session): SQLAlchemy session
+        menu_handler (MenuHandler): Menu handler
+    """
+    categories = session.scalars(select(Category)).fetchall()
+    for cat in categories:
+        menu_handler.add_category(cat.name)
+    print(json.dumps(menu_handler.jsonify_categories(), indent=4))
+
+def init_menu_items(session: Session, menu_handler: MenuHandler):
+    """Initialise menu items from existing database
+
+    Args:
+        session (Session): SQLAlchemy session
+        menu_handler (MenuHandler): Menu handler
+    """
+    items = session.execute(select(MenuItem, Category)
+                            .join(MenuItem.category))
+    for it in items:
+        menu_handler.add_menu_item(it.Category.name, it.MenuItem.name,
+                                   it.MenuItem.price, it.MenuItem.image_url)
+    print(json.dumps(menu_handler.jsonify(), indent=4))
+
+def init_deals(session: Session, menu_handler: MenuHandler):
+    """Initialise deals from existing database
+
+    Args:
+        session (Session): SQLAlchemy session
+        menu_handler (MenuHandler): Menu handler
+    """
+    association = session.execute(select(Deal.id, Deal.discount, MenuItem.name)
+                                 .join(MenuItem.deals)).fetchall()
+    deals = session.scalars(select(Deal.id)).fetchall()
+    for deal in deals:
+        items = []
+        disc = float(0)
+        for d_id, d_discount, item_name in association:
+            if d_id == deal:
+                items.append(item_name)
+                disc = d_discount
+        menu_handler.add_deal(disc, items)
+    print(json.dumps(menu_handler.jsonify_deals(), indent=4))
+
+def init_tables(session: Session, table_handler: TableHandler):
+    """Initialise tables from existing database
+
+    Args:
+        session (Session): SQLAlchemy session
+        table_handler (TableHandler): Table handler
+    """
+    tables = session.scalars(select(Table.limit).order_by(Table.id)).fetchall()
+    print(tables)
+    for table in tables:
+        table_handler.add_table(table, None)
+
+    print(json.dumps(table_handler.jsonify(), indent=4))
+
+def init_orders(session: Session, om_handler: OrderManagerHandler):
+    """Initialise order history from existing database
+
+    Args:
+        session (Session): SQLAlchemy session
+        om_handler (OrderManagerHandler): Order manager handler
+    """
+    orders = session.execute(select(Order.id, Order.table_id, 
+                                    Order.state)).fetchall()
+    order_deal = session.execute(select(Order.id, Deal.id)
+                                .join(Order.deals)).fetchall()
+    order_menu = session.execute(select(Order.id, MenuItem.id)
+                                .join(Order.menu_items)).fetchall()
+
+    for order, table, state in orders:
+        deals = []
+        for o1, deal in order_deal:
+            if o1 == order:
+                deals.append(deal)
+        items = []
+        for o2, item in order_menu:
+            if o2 == order:
+                items.append(item)
+        om_handler.add_order(table, items, deals)
+
+        om_handler.order_manager.set_state(order, int(state))
+        print(json.dumps(om_handler.jsonify_orders(), indent=4))
+
+def init_users(session: Session, user_handler: UserHandler):
+    """Initialise users from existing database
+
+    Args:
+        session (Session): SQLAlchemy session
+        user_handler (UserHandler): User handler
+    """
+    users = session.execute(select(User.first_name, User.last_name, 
+                                   User.type, User.password_hash)).fetchall()
+
+    for first, last, utype, phash in users:
+        user_handler.add_user(first, last, utype, "", phash)
+    print(json.dumps(user_handler.jsonify(), indent=4))
+
+def initialise_db(db_handler: DbHandler, menu_handler: MenuHandler,
+                  table_handler: TableHandler, om_handler: OrderManagerHandler,
+                  user_handler: UserHandler):
+    """Initialise server from existing database
+
+    Args:
+        db_handler (DbHandler): Database handler
+        menu_handler (MenuHandler): Menu handler
+        table_handler (TableHandler): Table handler
+        om_handler (OrderManagerHandler): Order manager handler
+        user_handler (UserHandler): User handler
+    """
+    with Session(db_handler.engine) as session:
+        init_categories(session, menu_handler)
+        init_menu_items(session, menu_handler)
+        init_deals(session, menu_handler)
+        init_tables(session, table_handler)
+        init_orders(session, om_handler)
+        init_users(session, user_handler)
+
+
+
+
+
 
 
 
