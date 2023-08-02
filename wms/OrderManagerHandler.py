@@ -333,7 +333,7 @@ class OrderManagerHandler():
         orders = table.orders
         for i in orders:
             if i.state == "served":
-                i.change_state()
+                self.change_order_state(i.id)
 
 
     def pay_order_bill(self, order_id: int):
