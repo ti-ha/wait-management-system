@@ -36,7 +36,7 @@ export default function TableSelection() {
 
     const handleConfirm = () => {
         console.log(`Table ${tableNo} selected`);
-        navigate(`/customer/${tableNo}`)
+        navigate(`/customer/${tableNo}`);
     }
 
     return (

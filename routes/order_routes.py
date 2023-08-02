@@ -1,6 +1,6 @@
 from flask import Blueprint
 from wms import *
-from middlewares import backend, token_optional, token_required, call
+from middlewares import backend, token_required, call
 from flask import request, session, jsonify
 
 order_blueprint = Blueprint("order", __name__)
@@ -53,8 +53,7 @@ def get_orders(current_user):
     )
 
 @order_blueprint.route('/ordermanager/orders/add/<table_id>' , methods=['POST'], endpoint='add_order')
-@token_optional
-def add_order(current_user, table_id):
+def add_order(table_id):
     """ Adds an order to the order manager with the table it belongs to
 
     JSON FORMAT:
@@ -77,7 +76,7 @@ def add_order(current_user, table_id):
             int(table_id),
             menu_items_ids,
             deals_ids,
-            current_user.id if current_user is not None else session['user_id']
+            session['user_id']
         )
     return jsonify({"error": "Incorrect content-type"}), 400
 

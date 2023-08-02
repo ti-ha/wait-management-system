@@ -49,7 +49,7 @@ const menuItems = [
             { name: "Meatloaf", price: 3, image_url: imageLinks["Meatloaf"] },
             { name: "Arancini Balls", price: 9, image_url: imageLinks["Arancini Balls"] },
             { name: "Greek Salad", price: 6.5, image_url: imageLinks["Greek Salad"] },
-            { name: "Salt and Pepper Squid", price: 8.5, image_url: imageLinks["Salt and Pepper Squid"] }
+            { name: "Squid", price: 8.5, image_url: imageLinks["Salt and Pepper Squid"] }
         ]
     },
     {
