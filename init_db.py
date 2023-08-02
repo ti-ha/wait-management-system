@@ -73,13 +73,13 @@ def init_orders(session: Session, om_handler: OrderManagerHandler):
         om_handler (OrderManagerHandler): Order manager handler
     """
     orders = session.execute(select(Order.id, Order.table_id,
-                                    Order.state)).fetchall()
+                                    Order.state, Order.customer)).fetchall()
     order_deal = session.execute(select(Order.id, Deal.id)
                                 .join(Order.deals)).fetchall()
     order_menu = session.execute(select(Order.id, MenuItem.id)
                                 .join(Order.menu_items)).fetchall()
 
-    for order, table, state in orders:
+    for order, table, state, customer in orders:
         deals = []
         for o_deal, deal in order_deal:
             if o_deal == order:
@@ -88,7 +88,7 @@ def init_orders(session: Session, om_handler: OrderManagerHandler):
         for o_menu, item in order_menu:
             if o_menu == order:
                 items.append(item)
-        om_handler.add_order(table, items, deals)
+        om_handler.add_order(table, items, deals, customer)
 
         om_handler.order_manager.set_state(order, int(state))
     print(json.dumps(om_handler.jsonify_orders(), indent=4))
