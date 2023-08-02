@@ -41,5 +41,20 @@ Week 7
 •   Implemented Menu editor functionality - adding, deleting, editing menu items and categories.
 •   Significant UX/UI overhaul to improve the aesthatics and useability of the system.
 
+Week 8
+•   Another busy week - continued on with frontend development work.
+•   Implemented many new pages in the Manager section.
+•   Gave the demo for Demonstration 2
+
+Week 9
+•   Another busy week - continued with frontend development work.+
+•   Finished all of the functionality in Sprint 3 in the frontend.
+•   Another significant UI overhaul and refactoring of code.
+
+Week 10
+•   Finished off coding in the frontend. The entire frontend codebase was done by myself.
+•   Worked on the final report - Frontend Overview, Frontend Challenges and User Guide sections.
+•   Some further UI and bug fixes in the frontend.
+•   Had a meeting with team to prepare for final demonstration.
 
 
