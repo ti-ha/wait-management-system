@@ -105,6 +105,7 @@ class User(Base):
     id = mapped_column(Integer, primary_key=True)
     first_name = mapped_column(String(40), nullable=False)
     last_name = mapped_column(String(40), nullable=False)
+    type = mapped_column(String(20), nullable=False)
     password_hash = mapped_column(String(64), nullable=False)
     logged_in = mapped_column(Integer, nullable=False)
 

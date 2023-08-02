@@ -124,9 +124,12 @@ class Application():
             print(json.dumps(self.table_handler.jsonify(), indent=4))
 
             ### ORDERS
-            orders = session.execute(select(Order.id, Order.table_id, Order.state)).fetchall()
-            order_deal = session.execute(select(Order.id, Deal.id).join(Order.deals)).fetchall()
-            order_menu = session.execute(select(Order.id, MenuItem.id).join(Order.menu_items)).fetchall()
+            orders = session.execute(select(Order.id, Order.table_id, 
+                                            Order.state)).fetchall()
+            order_deal = session.execute(select(Order.id, Deal.id)
+                                         .join(Order.deals)).fetchall()
+            order_menu = session.execute(select(Order.id, MenuItem.id)
+                                         .join(Order.menu_items)).fetchall()
             
             for order, table, state in orders:
                 print(f'\n\n\nWOI ANJINGGGG     {order}, {table}, {state}\n\n\n')
@@ -141,10 +144,18 @@ class Application():
                 self.om_handler.add_order(table, items, deals)
 
                 ## TODO set states
-                self.om_handler.order_manager.set_state(order, state)
+                # self.om_handler.order_manager.set_state(order, state)
                 print(json.dumps(self.om_handler.jsonify_orders(), indent=4))
             # states = session.execute(select(Order.id, Order.s))
+
             ### USERS
+            users = session.execute(select(User.first_name, User.last_name, 
+                                           User.type, User.password_hash)).fetchall()
+            
+            ## TODO add user using hashed password
+            for fn, ln, type, phash in users:
+                print(f'\n\n{fn} {ln} {type} {phash} \n\n')
+            # self.user_handler.add_user()
 
       
 

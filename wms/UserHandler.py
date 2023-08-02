@@ -59,6 +59,7 @@ class UserHandler():
                 id=new_user.id,
                 first_name = firstname,
                 last_name = lastname,
+                type = user_type,
                 password_hash = new_user.password_hash,
                 logged_in = 0
             ))
