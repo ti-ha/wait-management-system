@@ -152,27 +152,30 @@ const main = async () => {
             .catch(error => console.error('Error:', error))
     });
     
-    Promise.all(categoryPromises).then(() => {
-        menuItems.forEach(({category, items}) => {
-            items.forEach((item) => {
-                console.log(`Creating item: ${item.name} in category: ${category}`);
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `${authToken}`
-                    },
-                    body: JSON.stringify(item)
-                };
-            
-                fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`, requestOptions)
-                    .then(response => response.text())
-                    .then(data => console.log(data))
-                    .catch(error => console.log('Error:', error));
-            });
-        });
-    });
+    await Promise.all(categoryPromises);
     
+    for (const {category, items} of menuItems) {
+        for (const item of items) {
+            console.log(`Creating item: ${item.name} in category: ${category}`);
+            const requestOptions = {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `${authToken}`
+                },
+                body: JSON.stringify(item)
+            };
+            
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/menu/categories/${category}`, requestOptions);
+                const data = await response.text();
+                console.log(data);
+            } catch (error) {
+                console.log('Error:', error);
+            }
+        }
+    }
+
     
     const tables = [1, 2, 3];
     
@@ -199,6 +202,7 @@ const main = async () => {
             console.error("Error adding table:", error);
         }
     });
+
 };
 
 
