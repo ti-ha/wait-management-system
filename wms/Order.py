@@ -196,6 +196,8 @@ class Order:
     @state_obj.setter
     def state_obj(self, state: State):
         self.__state = state
+        for i in self.menu_item_states:
+            i["state"] = State(self.state_value)
 
     def get_menu_item_state_obj(self, id: int) -> State:
         """Gets the state of a menu_item within the order

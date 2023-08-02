@@ -106,6 +106,7 @@ class OrderManager:
         if order in self.__orders:
             raise ValueError("OrderManager: add_order(): Order already exists")
         self.orders.append(order)
+        self.history.append(order)
         with Session(db.engine) as session:
             items = session.scalars(select(MenuTable).filter(MenuTable.id.in_(order.menu_item_ids)))
             deals = session.scalars(select(DealTable).filter(DealTable.id.in_(order.deal_ids)))
@@ -123,8 +124,6 @@ class OrderManager:
                 session.commit()
             except:
                 session.rollback() 
-
-        self.history.append(order)
 
         if table.id in self.__map.keys():
             self.__map[table.id] += [order.id]
