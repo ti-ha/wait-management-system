@@ -82,7 +82,6 @@ const menuItems = [
 let authToken;
 
 const loginAsManager = async () => {
-    // your code here
     try {
         const manager = users.find(user => user.user_type === "Manager");
         const response = await fetch(`${process.env.REACT_APP_API_URL}/user/login`, {
