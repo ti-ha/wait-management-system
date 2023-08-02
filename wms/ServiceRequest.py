@@ -128,6 +128,11 @@ class ServiceRequest:
         """ The WaitStaff assigned to the request. Defaults to None. """
         return self.__assignee
     
+    @property
+    def assignee_id(self) -> int:
+        """ WaitStaff id if exist, else None """
+        return self.assignee.id if self.assignee is not None else None
+    
     def transition_state(self):
         """ Move the state of the order one pace forward. """
         self.__status.transition_state()

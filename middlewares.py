@@ -1,4 +1,5 @@
 from wms import *
+# from wms import Application
 from flask import Flask, jsonify, request, current_app
 import jwt
 from functools import wraps
@@ -86,3 +87,4 @@ def call(msg, func, *args):
 
     else:
         return jsonify(msg), 200
+

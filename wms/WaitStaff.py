@@ -2,7 +2,7 @@ from __future__ import annotations
 from wms import User, ServiceRequest
 
 class WaitStaff(User):
-    def __init__(self, firstname, lastname, password):
+    def __init__(self, firstname, lastname, password, password_hash=None):
         """ Constructor of the WaitStaff class that inherits the User Class
 
         Args:
@@ -10,5 +10,5 @@ class WaitStaff(User):
             lastname (string): Last Name of the User
             password (string): Password of the user
         """
-        super().__init__(firstname, lastname, password)
+        super().__init__(firstname, lastname, password, password_hash)
     

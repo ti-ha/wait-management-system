@@ -1,15 +1,20 @@
-from wms import Menu, Category, MenuItem, Deal, RestaurantManagerHandler
+from wms import DbHandler, Menu, Category, MenuItem, Deal, RestaurantManagerHandler
 from collections import OrderedDict
 
 class MenuHandler():
-    def __init__(self, menu: Menu):
+    def __init__(self, menu: Menu, db: DbHandler):
         """ Constructor for the MenuHandler Class """
         self.__menu = menu
         self.__observers = []
+        self.__db = db
     
     @property
     def menu(self) -> Menu:
         return self.__menu
+    
+    @property
+    def db(self) -> DbHandler:
+        return self.__db
 
     def attach(self, observer: RestaurantManagerHandler):
         """ Attach observer to menu handler """
@@ -85,6 +90,7 @@ class MenuHandler():
         """
         self.__menu.add_category(Category(category))
 
+
     def add_menu_item(self, category, name, price, imageurl) -> None:
         """ Adds a menu item to the menu
 
@@ -100,7 +106,7 @@ class MenuHandler():
         if self.__menu.get_category(category).menu_item_by_name(name) is not None:
             raise ValueError("Menu item with this name already exists")
         item = MenuItem(name, price, imageurl)
-        self.__menu.get_category(category).add_menu_item(item)
+        self.__menu.get_category(category).add_menu_item(item, self.db)
         self.notify_add(item.id)
 
     def add_deal(self, discount, menu_items) -> None:
@@ -126,7 +132,7 @@ class MenuHandler():
             raise ValueError("One or more items is not present in the menu")
         
         deal = Deal(discount, deal_items)
-        self.__menu.add_deal(deal)
+        self.__menu.add_deal(deal, menu_items)
         return None
      
     def remove_category(self, category) -> None:
@@ -144,7 +150,7 @@ class MenuHandler():
             category (String): Category that menu item belongs to
             name (String): Name of the menu item
         """
-        removed_id = self.__menu.get_category(category).remove_menu_item(name)
+        removed_id = self.__menu.get_category(category).remove_menu_item(name, self.db)
         self.notify_delete(removed_id)
 
     def update_category(self, category, name, visible):
@@ -167,8 +173,8 @@ class MenuHandler():
         
         curr_category.update(name, visible)
 
-    def update_menu_item(self, category, old_name, 
-                         new_name, price, image_url, visible):
+    def update_menu_item(self, category, old_name, new_name, price, image_url, 
+                         visible):
         """ Updates menu item name, price, image_url and/or visibility
 
         Args:

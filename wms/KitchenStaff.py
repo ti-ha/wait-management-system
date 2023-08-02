@@ -3,7 +3,7 @@ from .User import User
 from wms import Order
 
 class KitchenStaff(User):
-    def __init__(self, firstname, lastname, password):
+    def __init__(self, firstname, lastname, password, password_hash=None):
         """ Constructor of the KitchenStaff class that inherits the User Class
 
         Args:
@@ -11,7 +11,7 @@ class KitchenStaff(User):
             lastname (string): Last Name of the User
             password (string): Password of the user
         """
-        super().__init__(firstname, lastname, password)
+        super().__init__(firstname, lastname, password, password_hash)
         self.__orders = []
 
     @property

@@ -1,16 +1,26 @@
 from wms import User, Customer, KitchenStaff, WaitStaff, Manager
+from wms.DbHandler import DbHandler
+from wms.DbHandler import User as UserTable
+from sqlalchemy.orm import Session
+from sqlalchemy import select, update
 
 class UserHandler():
-    def __init__(self) -> None:
+    def __init__(self, db: DbHandler) -> None:
         """ Constructor for the UserHandler Class """
         self.__users = []
+        self.__db = db
     
     @property
     def users(self) -> list[User]:
         """ Returns list of users"""
         return self.__users
     
-    def add_user(self, firstname, lastname, user_type, password):
+    @property
+    def db(self) -> DbHandler:
+        """Returns db"""
+        return self.__db
+    
+    def add_user(self, firstname, lastname, user_type, password, existing_hash=None):
         """ Adds a user to the system
 
         Args:
@@ -32,17 +42,31 @@ class UserHandler():
             raise ValueError("UserHandler: add_user(): User with exact credentials already exists")
         
         if user_type == "Customer": 
-            new_user = Customer(firstname, lastname, password)
+            new_user = Customer(firstname, lastname, password, existing_hash)
         elif user_type == "KitchenStaff":
-            new_user = KitchenStaff(firstname, lastname, password)
+            new_user = KitchenStaff(firstname, lastname, password, existing_hash)
         elif user_type == "WaitStaff":
-            new_user = WaitStaff(firstname, lastname, password)
+            new_user = WaitStaff(firstname, lastname, password, existing_hash)
         elif user_type == "Manager":
-            new_user = Manager(firstname, lastname, password)
+            new_user = Manager(firstname, lastname, password, existing_hash)
         else: 
             return None
         
         self.__users.append(new_user)
+        self.__users.append(new_user)
+        with Session(self.db.engine) as session:
+            session.add(UserTable(
+                id=new_user.id,
+                first_name = firstname,
+                last_name = lastname,
+                type = user_type,
+                password_hash = new_user.password_hash,
+                logged_in = 0
+            ))
+            try: 
+                session.commit()
+            except:
+                session.rollback()
 
     def login(self, firstname, lastname, password) -> User:
         """ Attempts to log in the user
@@ -65,6 +89,16 @@ class UserHandler():
             return None
     
         usermatch.status = True
+        with Session(self.db.engine) as session:
+            session.execute(update(UserTable).where(
+                UserTable.first_name == firstname).where(
+                UserTable.last_name == lastname).values(
+                logged_in=1
+            ))
+            try: 
+                session.commit()
+            except:
+                session.rollback()
         return usermatch if success else None
         
     def logout(self, user: User) -> bool:
@@ -77,12 +111,23 @@ class UserHandler():
         Returns:
             Bool: Returns true if logout was successful, false otherwise
         """
-        if not isinstance(user, User):
-            raise TypeError("UserHandler: logout(): argument is of invalid type (expected User)")
-        elif user is not None:
-            user.status = False
-            return None
-        raise ValueError("UserHandler: logout(): token did not match a user")
+        usermatch = next((i for i in self.users 
+                     if i.firstname == user.firstname and i.lastname == user.lastname), None)
+        
+        if usermatch is not None:
+            usermatch.status = False
+            with Session(self.db.engine) as session:
+                session.execute(update(UserTable).where(
+                    UserTable.first_name == user.firstname).where(
+                    UserTable.last_name == user.lastname).values(
+                    logged_in=0
+                ))
+                try: 
+                    session.commit()
+                except:
+                    session.rollback()
+            return True
+        return False
 
     def jsonify(self) -> dict:
         """ Creates a dictionary of all the users and their first name, last 

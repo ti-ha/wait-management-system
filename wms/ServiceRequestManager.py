@@ -1,11 +1,20 @@
-from wms import ServiceRequest
+from wms import ServiceRequest, DbHandler
+from wms.DbHandler import ServiceRequest as SRTable
+from sqlalchemy.orm import Session
+from sqlalchemy import update, select
 
 class ServiceRequestManager:
-    def __init__(self):
+    def __init__(self, db: DbHandler):
         self.__queue = []
         # Once a Service Request is removed from the queue it cannot be changed.
         self.__history = []
+        self.__db = db
 
+    @property
+    def db(self) -> DbHandler:
+        """Returns db handler"""
+        return self.__db
+    
     @property
     def queue(self) -> list[ServiceRequest]:
         """ The list of active service requests in the queue.
@@ -35,8 +44,23 @@ class ServiceRequestManager:
         request_active = next((i for i in self.queue if i.table == table), None)
         
         if not request_active:
-            self.queue.append(ServiceRequest(table, subject, summary))
+            sr = ServiceRequest(table, subject, summary)
+            self.queue.append(sr)
             self.history.append(self.queue[-1])
+            with Session(self.db.engine) as session:
+                session.add(SRTable(
+                    id=sr.id,
+                    table = sr.table,
+                    subject = sr.subject,
+                    summary = sr.summary,
+                    timestamp = sr.timestamp,
+                    status = sr.status,
+                    assignee = sr.assignee_id
+                ))
+                try: 
+                    session.commit()
+                except:
+                    session.rollback()
         else:
             raise Exception("ServiceRequestManager: add_request(): A request is already active at this table")
 
@@ -51,7 +75,7 @@ class ServiceRequestManager:
         """
         return next((i for i in self.queue if i.id == id), None)
     
-    def update_request(self, id, subject, summary):
+    def update_request(self, id, subj, summ):
         """Updates a request with matching id, based on a provided subject or
         summary.
 
@@ -65,8 +89,17 @@ class ServiceRequestManager:
         """
         sr = self.get_request(id)
         if sr:
-            sr.subject = sr.subject if subject == None else subject
-            sr.summary = sr.summary if summary == None else summary
+            sr.subject = sr.subject if subj is None else subj
+            sr.summary = sr.summary if summ is None else summ
+            with Session(self.db.engine) as session:
+                try:
+                    session.execute(update(SRTable).where(SRTable.id == id)).values(
+                        subject=subj, summary=summ
+                    )
+                    session.commit()
+                except:
+                    session.rollback()
+ 
         else:
             raise ValueError("ServiceRequestManager: update_request(): Invalid id")
     
@@ -97,6 +130,15 @@ class ServiceRequestManager:
             raise ValueError("ServiceRequestManager: transition_request_state(): Request does not exist or has been archived")
         
         request.transition_state()
+        with Session(self.db.engine) as session:
+            try:
+                target = session.execute(select(SRTable).where(
+                    SRTable.id == id
+                )).scalar_one()
+                target.status += 1
+                session.commit()
+            except:
+                session.rollback()
         if request.status == "completed":
             self.queue.remove(request)
 

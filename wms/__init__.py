@@ -23,4 +23,5 @@ from .SRMHandler import SRMHandler
 from .RestaurantManagerHandler import RestaurantManagerHandler
 from .PersonalisedDealEngine import PersonalisedDealEngine
 from .Application import Application
+from .DbHandler import DbHandler
 
