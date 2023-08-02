@@ -92,7 +92,8 @@ def init_orders(session: Session, om_handler: OrderManagerHandler, table_handler
 
         om_handler.order_manager.set_state(order, int(state))
         if int(state) == 4:
-            print(om_handler.get_order_by_id(order))
+            om_handler.get_order_by_id(order).calculate_bill()
+            om_handler.get_order_by_id(order).bill.pay()
             om_handler.order_manager.orders.remove(om_handler.get_order_by_id(order))
     print(json.dumps(om_handler.jsonify_orders(), indent=4))
 
