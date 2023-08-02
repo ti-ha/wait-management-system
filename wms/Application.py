@@ -93,12 +93,8 @@ class Application():
             items = session.execute(select(MenuItem, Category)
                                     .join(MenuItem.category))
             for it in items:
-                self.menu_handler.add_menu_item(
-                    it.Category.name, 
-                    it.MenuItem.name, 
-                    it.MenuItem.price, 
-                    it.MenuItem.image_url
-                )
+                self.menu_handler.add_menu_item(it.Category.name, it.MenuItem.name,
+                                                it.MenuItem.price, it.MenuItem.image_url)
             print(json.dumps(self.menu_handler.jsonify(), indent=4))
 
             ### DEALS
@@ -132,7 +128,6 @@ class Application():
                                          .join(Order.menu_items)).fetchall()
             
             for order, table, state in orders:
-                print(f'\n\n\nWOI ANJINGGGG     {order}, {table}, {state}\n\n\n')
                 deals = []
                 for o1, deal in order_deal:
                     if o1 == order:
@@ -156,7 +151,7 @@ class Application():
             for fn, ln, type, phash in users:
                 print(f'\n\n{fn} {ln} {type} {phash} \n\n')
             # self.user_handler.add_user()
-
+            print(json.dumps(self.user_handler.jsonify(), indent=4))
       
 
 
