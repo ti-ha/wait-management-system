@@ -29,7 +29,7 @@ Once that is completed, run `npm start`.
 
 The frontend will be running on http://localhost:3000
 
-**IMPORTANT NOTE**: Ensure that the .env file is configured with the correct API URL. The API URL is currently
+**IMPORTANT NOTE**: Ensure that the frontend/.env file is configured with the correct API URL. The API URL is currently
 configured to **http://127.0.0.1:5001** which is correct for CSE systems. To check your API URL, please look at the terminal
 upon starting the flask application in the backend. The URL that the server is running on will be the appropriate API URL.
 
