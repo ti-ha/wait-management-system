@@ -184,7 +184,7 @@ class OrderManager:
             order (integer): Order id to have its state progressed to the 
             next state
         """
-        self.get_order(order).state = val
+        self.get_order(order).set_state(val)
     
     def update_db_state(self, order: int, db: DbHandler):
         """Update order state in database

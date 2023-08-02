@@ -35,9 +35,9 @@ class States(Enum):
 
 class State:
 
-    def __init__(self):
+    def __init__(self, value):
         """ Constructor for the State class """
-        self.__state = States(0)
+        self.__state = States(value)
 
     def transition_state(self):
         """ Moves state to the next one """
@@ -114,7 +114,7 @@ class Order:
         """
         self.__id = next(Order.__id_iter)
         self.__bill = None
-        self.__state = State()
+        self.__state = State(0)
         self.__deals = [deals] if isinstance(deals, Deal) else deals
         self.__menu_items_ids = itertools.count()
         self.__customer = customer if customer else None
@@ -126,13 +126,13 @@ class Order:
             if menu_items.visible == False:
                 raise ValueError("Order(): One or more menu_items is currently hidden")
             self.__menu_items = [{"menu_item": menu_items,
-                                  "state": State(),
+                                  "state": State(0),
                                   "order_specific_id": next(self.__menu_items_ids)}]
         else:
             if next((i for i in menu_items if i.visible == False), None) != None:
                 raise ValueError("Order(): One or more menu_items is currently hidden")
             self.__menu_items = [{"menu_item": m,
-                                  "state": State(),
+                                  "state": State(0),
                                   "order_specific_id": next(self.__menu_items_ids)}
                                   for m in menu_items]
         #self.__menu_items = [menu_items] if isinstance(menu_items, MenuItem) else menu_items
@@ -185,17 +185,17 @@ class Order:
         """ Returns current state of the order """
         return self.__state.state
     
-    @state.setter
-    def state(self, val: int):
-        """ Sets state to current value """
-        s = State()
-        print(val)
-        s.state = val
-        self.state = s
-    
     @property
     def state_value(self) -> int:
         return self.__state.value
+    
+    @property
+    def state_obj(self) -> State:
+        return self.__state
+    
+    @state_obj.setter
+    def state_obj(self, state: State):
+        self.__state = state
 
     def get_menu_item_state_obj(self, id: int) -> State:
         """Gets the state of a menu_item within the order
@@ -230,6 +230,9 @@ class Order:
     def change_state(self):
         """ Transitions state to the next one """
         self.__state.transition_state()
+
+    def set_state(self, val: int):
+        self.state_obj = State(val)
 
     def add_deal(self, deal):
         """ Adding a deal item to the order

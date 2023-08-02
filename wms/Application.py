@@ -87,7 +87,7 @@ class Application():
             categories = session.scalars(select(Category)).fetchall()
             for cat in categories:
                 self.menu_handler.add_category(cat.name)
-            print(json.dumps(self.menu_handler.jsonify_categories(), indent=4))
+            #print(json.dumps(self.menu_handler.jsonify_categories(), indent=4))
 
             ### MENU ITEMS
             items = session.execute(select(MenuItem, Category)
@@ -95,7 +95,7 @@ class Application():
             for it in items:
                 self.menu_handler.add_menu_item(it.Category.name, it.MenuItem.name,
                                                 it.MenuItem.price, it.MenuItem.image_url)
-            print(json.dumps(self.menu_handler.jsonify(), indent=4))
+            #print(json.dumps(self.menu_handler.jsonify(), indent=4))
 
             ### DEALS
             association = session.execute(select(Deal.id, Deal.discount, MenuItem.name)
@@ -109,15 +109,15 @@ class Application():
                         items.append(a[2])
                         disc = a[1]
                 self.menu_handler.add_deal(disc, items)
-            print(json.dumps(self.menu_handler.jsonify_deals(), indent=4))
+            #print(json.dumps(self.menu_handler.jsonify_deals(), indent=4))
 
             ### TABLES
             tables = session.scalars(select(Table.limit).order_by(Table.id)).fetchall()
-            print(tables)
+            #print(tables)
             for table in tables:
                 self.table_handler.add_table(table, None)
 
-            print(json.dumps(self.table_handler.jsonify(), indent=4))
+            #print(json.dumps(self.table_handler.jsonify(), indent=4))
 
             ### ORDERS
             orders = session.execute(select(Order.id, Order.table_id, 
@@ -139,7 +139,7 @@ class Application():
                 self.om_handler.add_order(table, items, deals)
 
                 ## TODO set states
-                # self.om_handler.order_manager.set_state(order, state)
+                self.om_handler.order_manager.set_state(order, int(state))
                 print(json.dumps(self.om_handler.jsonify_orders(), indent=4))
             # states = session.execute(select(Order.id, Order.s))
 
@@ -150,7 +150,7 @@ class Application():
             ## TODO add user using hashed password
             for fn, ln, type, phash in users:
                 print(f'\n\n{fn} {ln} {type} {phash} \n\n')
-            # self.user_handler.add_user()
+             #self.user_handler.add_user()
             print(json.dumps(self.user_handler.jsonify(), indent=4))
       
 
