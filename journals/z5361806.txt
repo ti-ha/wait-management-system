@@ -58,3 +58,19 @@ Utilized SQLalchemy to implement the database for menu items and categories, wit
 of the components planned in the near future.
 
 Week 8 
+
+During the Tuesday meeting at 6 pm, we conducted our Week 8 demo preparations to ensure all 
+sprint objectives were accomplished. We also briefly discussed the retrospective and identified 
+topics for a more in-depth conversation after the demo on Wednesday. On Wednesday, during the demo,
+ our group was scheduled to present second among all the teams. After confirming our readiness for 
+ the demo, we collaborated on a shared Google doc to draft the second retrospective. We compiled a 
+ comprehensive list of achievements during Sprint 2 and identified areas that required improvement 
+ for Sprint 3. My main goal for sprint 3 was to work with Ravi to get the database working and adapt it to
+ the new functionalities.
+
+ Week 9 
+ There was stnadups in the Wednesday lab meeting. The overall progress is promising, with only some frontend functionality and database tasks 
+  remaining to complete the system's functionality for Sprint 3. We also started discussions on
+   the report. Since there are still a few functionalities to implement for the database, I will be 
+   focusing on that and the report until the next meeting, scheduled for Sunday at 6 pm.
+During Sunday's meeting, we quickly caught up on everyone's progress, and discussed roles for the final demo and other deliverables.
