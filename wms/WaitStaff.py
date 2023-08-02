@@ -10,5 +10,5 @@ class WaitStaff(User):
             lastname (string): Last Name of the User
             password (string): Password of the user
         """
-        super().__init__(firstname, lastname, password, password_hash=None)
+        super().__init__(firstname, lastname, password, password_hash)
     
