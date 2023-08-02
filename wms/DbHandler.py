@@ -30,7 +30,7 @@ class DbHandler():
 
     def initialise(self):
         """Create all tables"""
-        # Base.metadata.reflect(self.engine)
+        Base.metadata.reflect(self.engine)
         Base.metadata.create_all(self.engine, checkfirst=True)
                 
 class DealMenu(Base):

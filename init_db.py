@@ -26,9 +26,9 @@ def init_menu_items(session: Session, menu_handler: MenuHandler):
     """
     items = session.execute(select(MenuItem, Category)
                             .join(MenuItem.category))
-    for it in items:
-        menu_handler.add_menu_item(it.Category.name, it.MenuItem.name,
-                                   it.MenuItem.price, it.MenuItem.image_url)
+    for item in items:
+        menu_handler.add_menu_item(item.Category.name, item.MenuItem.name,
+                                   item.MenuItem.price, item.MenuItem.image_url)
     print(json.dumps(menu_handler.jsonify(), indent=4))
 
 def init_deals(session: Session, menu_handler: MenuHandler):
@@ -100,7 +100,7 @@ def init_users(session: Session, user_handler: UserHandler):
         session (Session): SQLAlchemy session
         user_handler (UserHandler): User handler
     """
-    users = session.execute(select(User.first_name, User.last_name, 
+    users = session.execute(select(User.first_name, User.last_name,
                                    User.type, User.password_hash)).fetchall()
 
     for first, last, utype, phash in users:

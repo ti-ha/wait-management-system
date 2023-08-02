@@ -39,14 +39,13 @@ def create_tables(app):
     menu.add_deal(5.0, ["Arancini Balls", "Burger"])    # Deal 1
     menu.add_deal(10.0, ["Greek Salad", "Burger"])      # Deal 2
 
-    print('\n\n\n\n\n\n')
     table = app.table_handler
+    
     table.add_table(5, None)                # Table 0
     table.add_table(5, None)                # Table 1
     table.add_table(5, None)                # Table 2
     table.add_table(5, None)                # Table 3
     table.add_table(5, None)                # Table 4
-    print('\n\n\n\n\n\n')
 
     order = app.om_handler
     
