@@ -109,7 +109,7 @@ class Application():
                         items.append(a[2])
                         disc = a[1]
                 self.menu_handler.add_deal(disc, items)
-            #print(json.dumps(self.menu_handler.jsonify_deals(), indent=4))
+            print(json.dumps(self.menu_handler.jsonify_deals(), indent=4))
 
             ### TABLES
             tables = session.scalars(select(Table.limit).order_by(Table.id)).fetchall()
@@ -138,19 +138,15 @@ class Application():
                         items.append(item)
                 self.om_handler.add_order(table, items, deals)
 
-                ## TODO set states
                 self.om_handler.order_manager.set_state(order, int(state))
                 print(json.dumps(self.om_handler.jsonify_orders(), indent=4))
-            # states = session.execute(select(Order.id, Order.s))
 
             ### USERS
-            users = session.execute(select(User.first_name, User.last_name, 
+            users = session.execute(select(User.first_name, User.last_name,
                                            User.type, User.password_hash)).fetchall()
             
-            ## TODO add user using hashed password
-            for fn, ln, type, phash in users:
-                print(f'\n\n{fn} {ln} {type} {phash} \n\n')
-             #self.user_handler.add_user()
+            for first, last, utype, phash in users:
+                self.user_handler.add_user(first, last, utype, "", phash)
             print(json.dumps(self.user_handler.jsonify(), indent=4))
       
 
