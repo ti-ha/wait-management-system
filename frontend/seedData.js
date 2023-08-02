@@ -33,7 +33,11 @@ const imageLinks = {
     "Arancini Balls": "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/arancini_balls-db2b1df.jpg?quality=90&webp=true&resize=440,400",
     "Greek Salad": "https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2018/08/Greek-Salad-main.jpg",
     "Salt and Pepper Squid": "https://redhousespice.com/wp-content/uploads/2022/02/squid-with-salt-and-pepper-seasoning-scaled.jpg",
-    "Placeholder": "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg"
+    "Steak": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Steak_with_shitaki_mushrooms.jpg/300px-Steak_with_shitaki_mushrooms.jpg",
+    "Pizza": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Pizza-3007395.jpg/220px-Pizza-3007395.jpg",
+    "Prawn Chips": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Fried_Krupuk_Udang.JPG/250px-Fried_Krupuk_Udang.JPG",
+    "Buffalo Wings": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Buffalo_wings-01.jpg/220px-Buffalo_wings-01.jpg",
+    "Burger": "https://t4.ftcdn.net/jpg/01/69/56/95/360_F_169569546_zaLG8x4tyIu3SDn1jYWXThVpMjCEbn8Q.jpg"
 }
 
 const categories = [
@@ -55,22 +59,16 @@ const menuItems = [
     {
         category: "Mains",
         items: [
-            { name: "Burger", price: 12, image_url: imageLinks["Placeholder"] },
-            { name: "Item 2", price: 12, image_url: imageLinks["Placeholder"] },
-            { name: "Item 3", price: 12, image_url: imageLinks["Placeholder"] },
-            { name: "Item 4", price: 12, image_url: imageLinks["Placeholder"] },
-            { name: "Item 5", price: 12, image_url: imageLinks["Placeholder"] },
-            { name: "Item 6", price: 12, image_url: imageLinks["Placeholder"] }
+            { name: "Burger", price: 12, image_url: imageLinks["Burger"] },
+            { name: "Steak", price: 25, image_url: imageLinks["Steak"] },
+            { name: "Pizza", price: 18, image_url: imageLinks["Pizza"] },
         ]
     },
     {
         category: "Snacks",
         items: [
-            { name: "Item 7", price: 10, image_url: imageLinks["Placeholder"] },
-            { name: "Item 8", price: 10, image_url: imageLinks["Placeholder"] },
-            { name: "Item 9", price: 10, image_url: imageLinks["Placeholder"] },
-            { name: "Item 10", price: 10, image_url: imageLinks["Placeholder"] },
-            { name: "Item 11", price: 10, image_url: imageLinks["Placeholder"] }
+            { name: "Prawn Chips", price: 7, image_url: imageLinks["Prawn Chips"] },
+            { name: "Buffalo Wings", price: 10, image_url: imageLinks["Buffalo Wings"] },
         ]
     }
 ]
