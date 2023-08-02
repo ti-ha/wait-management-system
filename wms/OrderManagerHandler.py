@@ -310,6 +310,11 @@ class OrderManagerHandler():
         [i.bill.pay() for i in table.orders]
         
         bill.pay()
+        orders = table.orders
+        for i in orders:
+            if i.state == "served":
+                i.change_state()
+
 
     def pay_order_bill(self, order_id: int):
         """ A function to simulate the payment of an order's bill

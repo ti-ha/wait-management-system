@@ -168,13 +168,15 @@ class OrderManager:
             TypeError: Raised when order argument is not of type Order or Integer
         """
         if isinstance(order, int):
-            self.update_db_state(order, db)
+            #self.update_db_state(order, db)
             order = self.get_order(order)
         elif isinstance(order, Order):
-            self.update_db_state(order.id, db)
+            #self.update_db_state(order.id, db)
+            pass
         else:
             raise TypeError("OrderManager: change_state(): Not a valid Order obj or order_id")
         order.change_state()
+        self.update_db_state(order.id, db)
 
     def set_state(self, order: int, val: int):
         """ Set order to specified state 
@@ -193,14 +195,14 @@ class OrderManager:
             db (DbHandler): database handler object
         """
         with Session(db.engine) as session:
-            try:
-                target = session.execute(select(OrderTable).where(
-                    OrderTable.id == order
-                )).scalar_one()
-                target.state += 1
-                session.commit()
-            except:
-                session.rollback()
+        #try:
+            target = session.execute(select(OrderTable).where(
+                OrderTable.id == order
+            )).scalar_one()
+            target.state += 1
+            session.commit()
+        #except:
+            #session.rollback()
 
     def change_menu_item_state(self, order: int | Order, id: int):
         """ Changes the menu_item state of a menu_item within a specified order
