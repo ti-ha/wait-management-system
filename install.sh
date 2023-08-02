@@ -1,6 +1,6 @@
 #!/bin/bash
 rm -rf venv
-python3 -m venv venv
+py -3.9 -m venv venv
 python3 -m pip install --upgrade pip
 
 case "$(uname -sr)" in
@@ -20,10 +20,7 @@ case "$(uname -sr)" in
    CYGWIN*|MINGW*|MINGW32*|MSYS*)
      source venv/Scripts/activate
      ;;
-
-   # Add here more strings to compare
-   # See correspondence table at the bottom of this answer
-
+     
    *)
      echo 'Other OS' 
      ;;
