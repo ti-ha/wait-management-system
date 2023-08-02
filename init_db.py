@@ -72,7 +72,7 @@ def init_orders(session: Session, om_handler: OrderManagerHandler):
         session (Session): SQLAlchemy session
         om_handler (OrderManagerHandler): Order manager handler
     """
-    orders = session.execute(select(Order.id, Order.table_id, 
+    orders = session.execute(select(Order.id, Order.table_id,
                                     Order.state)).fetchall()
     order_deal = session.execute(select(Order.id, Deal.id)
                                 .join(Order.deals)).fetchall()
@@ -81,12 +81,12 @@ def init_orders(session: Session, om_handler: OrderManagerHandler):
 
     for order, table, state in orders:
         deals = []
-        for o1, deal in order_deal:
-            if o1 == order:
+        for o_deal, deal in order_deal:
+            if o_deal == order:
                 deals.append(deal)
         items = []
-        for o2, item in order_menu:
-            if o2 == order:
+        for o_menu, item in order_menu:
+            if o_menu == order:
                 items.append(item)
         om_handler.add_order(table, items, deals)
 
@@ -126,11 +126,3 @@ def initialise_db(db_handler: DbHandler, menu_handler: MenuHandler,
         init_tables(session, table_handler)
         init_orders(session, om_handler)
         init_users(session, user_handler)
-
-
-
-
-
-
-
-
