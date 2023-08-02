@@ -250,17 +250,27 @@ export default function Customer() {
 
     const getItemPrice = (orderId) => {
         // Search the personalisedDeals for the corresponding order
+        let price;
         for (const deal of personalisedDeals) {
           for (const item of deal.menu_items) {
             if (item.id === orderId) {
-              // If found, return the price inside the personalisedDeals
-              return item.price;
+              // If found, set the price inside the personalisedDeals
+              price = item.price;
+              break;
             }
           }
+          if (price) break;
         }
-        // If not found in personalisedDeals, return the original price
-        return currentOrder.find(order => order.id === orderId).price;
-      };
+      
+        // If not found in personalisedDeals, get the original price
+        if (!price) {
+          price = currentOrder.find(order => order.id === orderId).price;
+        }
+      
+        const quantity = currentOrder.find(order => order.id === orderId).quantity;
+        return (price * quantity).toFixed(2);
+    };
+      
       
 
     return (
