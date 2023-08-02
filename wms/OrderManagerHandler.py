@@ -64,7 +64,7 @@ class OrderManagerHandler():
             "orders": [i.jsonify() for i in orders]
         }
 
-    def get_order_by_id(self, order_id: int) -> dict:
+    def get_order_by_id(self, order_id: int) -> Order:
         """ Gets an order by its ID value
 
         Args:
