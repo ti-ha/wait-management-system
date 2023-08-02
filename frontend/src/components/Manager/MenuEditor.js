@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import './MenuEditor.css'
-import { Button } from "@mui/material";
+import { IconButton, Button, Grid, Card, CardContent, Typography, Box, CardMedia } from '@mui/material';
 import { Add, Edit, Delete, Visibility, VisibilityOff } from "@mui/icons-material";
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import AddCategoryModal from './AddCategoryModal.js';
@@ -370,102 +369,140 @@ export default function MenuEditor() {
 
 
     return (
-        <div className="customerPage">
+        <>
             <Header userType={userType} currentPage="menu-editor" />
-            <div className="editorContainer">
-                <div className="categories">
-                    <Button 
-                        variant="contained" 
-                        onClick={() => setShowAddCategoryModal(true)} 
-                        sx={{marginBottom: '10px'}}
-                        startIcon={<Add />}
-                    >
-                        Add New Category
-                    </Button>
-                    <Button 
-                        variant="contained" 
-                        onClick={() => setShowAddItemModal(true)}
-                        startIcon={<Add />}
-                    >
-                        Add New Menu Item
-                    </Button>
-                    <h2>Menu</h2>
+            <Box 
+                sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    minHeight: '90vh',
+                    maxWidth: '1600px', 
+                    margin: 'auto',
+                    pt: 10
+                }}
+            >
+                <Grid container spacing={3} justifyContent="center">
+                    <Grid item xs={12} md={3}>
+                        <Box 
+                            sx={{ 
+                                marginLeft: '20px', 
+                                marginRight: '20px',
+                            }}
+                        >
+                            <Button 
+                                variant="contained" 
+                                onClick={() => setShowAddCategoryModal(true)} 
+                                sx={{marginBottom: '10px'}}
+                                startIcon={<Add />}
+                            >
+                                Add New Category
+                            </Button>
+                            <Button 
+                                variant="contained" 
+                                onClick={() => setShowAddItemModal(true)}
+                                sx={{marginBottom: '10px'}}
+                                startIcon={<Add />}
+                            >
+                                Add New Menu Item
+                            </Button>
+                            <DragDropContext onDragEnd={handleOnDragEndCategories}>
+                                <Droppable droppableId="categories">
+                                    {(provided) => (
+                                        <div {...provided.droppableProps} ref={provided.innerRef}>
+                                            {categories.map((category, index) => (
+                                                <Draggable key={category.id.toString()} draggableId={category.id.toString()} index={index}>
+                                                    {(provided) => (
+                                                        <Card 
+                                                            ref={provided.innerRef}
+                                                            {...provided.draggableProps}
+                                                            {...provided.dragHandleProps}
+                                                            onClick={() => handleCategoryClick(category.name)}
+                                                            sx={{ marginBottom: '10px', cursor: 'pointer', background: category.name === currentCategory ? '#808080' : '#f0f0f0' }}
+                                                        >
+                                                            <CardContent>
+                                                                <div 
+                                                                    style={{
+                                                                        display: 'flex',
+                                                                        justifyContent: 'space-between',
+                                                                        alignItems: 'center',
+                                                                    }}
+                                                                >
+                                                                    {category.visible ? 
+                                                                        <Visibility onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "False")}}/> 
+                                                                        : 
+                                                                        <VisibilityOff onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "True")}}/>
+                                                                    }
+                                                                    <Typography align="center" style={category.visible ? {} : {textDecoration: 'line-through'}}>{category.name}</Typography>
+                                                                    <div>
+                                                                        <Edit onClick={(e) => {e.stopPropagation(); setEditCategory({active: true, category: category.name})}}/>
+                                                                        <Delete onClick={(e) => {e.stopPropagation(); setDeleteCategory({active: true, category: category.name})}}/>
+                                                                    </div>
+                                                                </div>
+                                                            </CardContent>
+                                                        </Card>
+                                                    )}
+                                                </Draggable>
+                                            ))}
+                                            {provided.placeholder}
+                                        </div>
+                                    )}
+                                </Droppable>
+                            </DragDropContext>
+                        </Box>
+                    </Grid>
 
-                    <DragDropContext onDragEnd={handleOnDragEndCategories}>
-                        <Droppable droppableId="categories">
-                            {(provided) => (
-                                <div {...provided.droppableProps} ref={provided.innerRef}>
-                                    {categories.map((category, index) => (
-                                        <Draggable key={category.id.toString()} draggableId={category.id.toString()} index={index}>
-                                            {(provided) => (
-                                                <div 
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                    className={`${category.name === currentCategory ? "selectedCategoryBox" : "categoryBox"}`}
-                                                    onClick={() => handleCategoryClick(category.name)}
-                                                >
-                                                    <div className="editFunctionality">
-                                                        {category.visible ? 
-                                                            <Visibility onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "False")}}/> 
-                                                            : 
-                                                            <VisibilityOff onClick={(e) => {e.stopPropagation(); handleVisibilityCategory(category.name, "True")}}/>
-                                                        }
-                                                        <p style={category.visible ? {} : {textDecoration: 'line-through'}}>{category.name}</p>
-                                                        <div>
-                                                            <Edit onClick={(e) => {e.stopPropagation(); setEditCategory({active: true, category: category.name})}}/>
-                                                            <Delete onClick={(e) => {e.stopPropagation(); setDeleteCategory({active: true, category: category.name})}}/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
-                </div>
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h4" align="center" gutterBottom>{currentCategory}</Typography>
+                        <DragDropContext onDragEnd={handleOnDragEndItems}>
+                            <Droppable droppableId="items">
+                                {(provided) => (
+                                    <Grid container spacing={3} {...provided.droppableProps} ref={provided.innerRef}>
+                                        {currentItems.map((item, index) => (
+                                            <Draggable key={item.id.toString()} draggableId={item.id.toString()} index={index}>
+                                                {(provided) => (
+                                                    <Grid item xs={12} sm={6} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                        <Card>
+                                                            <CardMedia
+                                                                component="img"
+                                                                alt={item.name}
+                                                                height="140"
+                                                                image={item.imageURL}
+                                                                title={item.name}
+                                                            />
+                                                            <CardContent sx={{ position: 'relative' }}>
+                                                        <Box>
+                                                            <Typography gutterBottom variant="h5" component="div">
+                                                                {item.name}
+                                                            </Typography>
+                                                            <Typography variant="body2" color="text.secondary">
+                                                                ${item.price}
+                                                            </Typography>
+                                                        </Box>
+                                                        <Box sx={{ position: 'absolute', right: 0, top: 0 }}>
+                                                            <IconButton onClick={(e) => {e.stopPropagation(); setEditItem({active: true, item})}}>
+                                                                <Edit />
+                                                            </IconButton>
+                                                            <IconButton onClick={(e) => {e.stopPropagation(); setDeleteItem({active: true, item: item, categoryName: currentCategory})}}>
+                                                                <Delete />
+                                                            </IconButton>
+                                                        </Box>
+                                                    </CardContent>
 
-                <div className="items">
-                    <h2 className="itemsTitle">{currentCategory}</h2>
-                    <DragDropContext onDragEnd={handleOnDragEndItems}>
-                        <Droppable droppableId="items">
-                            {(provided) => (
-                                <div className="editorItemContainer" {...provided.droppableProps} ref={provided.innerRef}>
-                                    {currentItems.map((item, index) => (
-                                        <Draggable key={item.id.toString()} draggableId={item.id.toString()} index={index}>
-                                            {(provided) => (
-                                                <div 
-                                                    className="itemBox"
-                                                    ref={provided.innerRef} 
-                                                    {...provided.draggableProps} 
-                                                    {...provided.dragHandleProps} 
-                                                >
-                                                    <div className="imageContainer">
-                                                        <img src={item.imageURL} alt={item.name}/> 
-                                                    </div>
-                                                    <div className="itemInfo">
-                                                        <p>{item.name}</p>
-                                                        <p>${item.price}</p>
-                                                    </div>
-                                                    <div className="editDeleteIcons">
-                                                        <Edit onClick={(e) => {e.stopPropagation(); setEditItem({active: true, item})}}/>
-                                                        <Delete onClick={(e) => {e.stopPropagation(); setDeleteItem({active: true, item: item, categoryName: currentCategory})}}/>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
-                </div>
-
-            </div>
+                                                        </Card>
+                                                    </Grid>
+                                                )}
+                                            </Draggable>
+                                        ))}
+                                        {provided.placeholder}
+                                    </Grid>
+                                )}
+                            </Droppable>
+                        </DragDropContext>
+                    </Grid>
+                </Grid>
+            </Box>
 
             {showAddCategoryModal && 
                 <AddCategoryModal 
@@ -519,6 +556,6 @@ export default function MenuEditor() {
                     objectName={deleteItem.item.name}
                 />
             }
-        </div>
+        </>
     )
 };

@@ -338,7 +338,7 @@ class Order:
         for i in deal.menu_items:
             item = i.name
             if item in pricedict.keys():
-                pricedict[item] = pricedict[item] - (discount*pricedict[item])
+                pricedict[item] = round(pricedict[item] - (discount*pricedict[item]), 2)
         return pricedict
 
     def calculate_bill(self) -> Bill:

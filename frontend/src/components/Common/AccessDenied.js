@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Box } from "@mui/material";
-import './AccessDenied.css';
+import { Button, Box, Typography } from "@mui/material";
 
 export default function AccessDenied({ userType }) {
     let backLink, deniedHeading, deniedMessage;
@@ -16,19 +15,20 @@ export default function AccessDenied({ userType }) {
     }
 
     return (
-        <Box className="access-denied-container">
-            <Box className="access-denied-content">
-                <h1>{deniedHeading}</h1>
-                <p>{deniedMessage}</p>
+        <Box display="flex" flexDirection="column" justifyContent="space-between" minHeight="100vh" p={2} boxSizing="border-box">
+            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flexGrow={1} textAlign="center">
+                <Typography variant="h2" sx={{ mb: 3 }}>{deniedHeading}</Typography>
+                <Typography variant="body1" sx={{ mb: 3 }}>{deniedMessage}</Typography>
                 <Button variant="contained" color="primary" component={Link} to={backLink}>
                     {userType === 'KitchenStaff' || userType === 'WaitStaff' ? "Back to Staff Page" : "Back to Ordering"}
                 </Button>
             </Box>
             {(userType !== 'KitchenStaff' && userType !== 'WaitStaff') &&
-                <Box className="access-denied-footer">
-                    <p>Are you a staff member? <Link to="/login">Login here</Link></p>
+                <Box display="flex" alignItems="center" justifyContent="center" height="100px">
+                    <Typography variant="body1">Are you a staff member? <Link to="/login">Login here</Link></Typography>
                 </Box>
             }
         </Box>
     );
+    
 }

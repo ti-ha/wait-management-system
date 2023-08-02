@@ -101,7 +101,7 @@ class UserHandler():
                 session.rollback()
         return usermatch if success else None
         
-    def logout(self, firstname, lastname) -> bool:
+    def logout(self, user: User) -> bool:
         """ Attempts to log out the user
 
         Args:
@@ -112,14 +112,14 @@ class UserHandler():
             Bool: Returns true if logout was successful, false otherwise
         """
         usermatch = next((i for i in self.users 
-                     if i.firstname == firstname and i.lastname == lastname), None)
+                     if i.firstname == user.firstname and i.lastname == user.lastname), None)
         
         if usermatch is not None:
             usermatch.status = False
             with Session(self.db.engine) as session:
                 session.execute(update(UserTable).where(
-                    UserTable.first_name == firstname).where(
-                    UserTable.last_name == lastname).values(
+                    UserTable.first_name == user.firstname).where(
+                    UserTable.last_name == user.lastname).values(
                     logged_in=0
                 ))
                 try: 

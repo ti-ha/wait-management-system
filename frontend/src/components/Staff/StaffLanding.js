@@ -31,7 +31,8 @@ export default function StaffLanding() {
                     </Typography>
                     <Typography variant="body1">
                         The <strong>Kitchen View</strong> shows current orders being prepared. <br /> 
-                        The <strong>Wait Staff View</strong> shows orders served and tables requiring assistance.
+                        The <strong>Wait Staff View</strong> shows orders served and tables requiring assistance. <br />
+                        The <strong>Orders</strong> page gives you access to all the current and past orders.<br /> 
                     </Typography>
                 </Grid>
 

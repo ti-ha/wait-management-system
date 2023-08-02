@@ -1,9 +1,0 @@
-.billOrder {
-    display: flex;
-    justify-content: space-between;
-}
-
-.billOrder > div, strong, p {
-    width: 33.33%; 
-    text-align: center; 
-}

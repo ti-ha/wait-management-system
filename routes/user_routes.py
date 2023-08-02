@@ -1,6 +1,6 @@
 from flask import Blueprint
 from wms import *
-from middlewares import backend, token_optional, token_required, call
+from middlewares import backend, token_required, call, blacklist_token, unblacklist_token
 from flask import request, jsonify, session, current_app
 import jwt
 import datetime
@@ -87,36 +87,27 @@ def login():
         if user:
             # Define the session user_id
             session['user_id'] = user.id
+
+            # Generate token
+            token = jwt.encode({"user_id": user.id,
+                                "expiry": str(datetime.datetime.utcnow().date())},
+                        current_app.config['SECRET_KEY'],
+                        algorithm="HS256")
+            
+            unblacklist_token(token)
+
             return jsonify({"message": "Success",
-                            "auth_token": jwt.encode(
-                                            {"user_id": user.id,
-                                             "expiry": str(datetime.datetime.utcnow().date())},
-                                            current_app.config['SECRET_KEY'],
-                                            algorithm="HS256"
-                            )}), 200
+                            "auth_token": token}), 200
+        
         return jsonify({"error": "Incorrect credentials"}), 400
     
 @user_blueprint.route('/user/logout', methods=['POST'], endpoint='logout')
-def logout():
-    """ Logs out a user given a firstname and lastname
-    
-    JSON FORMAT:
-    {
-        "first_name": string
-        "last_name": string
-    }
-    """
-    content_type = request.headers.get('Content-Type')
-    if content_type == 'application/json':
-        obj = request.json
-        try:
-            first_name = obj["first_name"]
-            last_name = obj["last_name"]
-        except KeyError:
-            return jsonify({"error": "Incorrect fields"}), 400
-        
-        user = backend.user_handler.logout(first_name, last_name)
-        if user:
-            # TODO: Token logout 
-            return jsonify({"message": "Successfully logged out"}), 200
-        return jsonify({"error": "Incorrect credentials"}), 400
+@token_required
+def logout(current_user):
+    """ Logs out a user given a valid auth token """
+    blacklist_token(request.headers['Authorization'])
+    return call(
+        {"message": "Successfully logged out"},
+        backend.user_handler.logout,
+        current_user
+    )
