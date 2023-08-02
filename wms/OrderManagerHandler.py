@@ -80,7 +80,7 @@ class OrderManagerHandler():
         if order is None:
             raise ValueError("Not a valid order_id")
 
-        return order.jsonify()
+        return order
     
     def get_menu_item_count(self, order_id: int, menu_item_id: int):
         """ Gets the number of times a menu item with generic id menu_item_id
@@ -225,6 +225,8 @@ class OrderManagerHandler():
         if order is None:
             raise ValueError("Not a valid order_id")
         order.change_menu_item_state_by_id(menu_item_id)
+        order.update_menu_state()
+        self.order_manager.update_db_state(order_id, self.db)
 
     def remove_order(self, table_id: int, order_id: int):
         """ Remove an order from the list of orders
@@ -334,6 +336,7 @@ class OrderManagerHandler():
         for i in orders:
             if i.state == "served":
                 self.change_order_state(i.id)
+                self.order_manager.remove_order(i, table)
 
 
     def pay_order_bill(self, order_id: int):

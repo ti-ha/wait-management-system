@@ -216,6 +216,10 @@ class Order:
             raise ValueError("Order: get_menu_item_state(): menu_item does not exist in order")
         
         return menu_item_state
+    
+    def update_menu_state(self):
+        while min([i["state"].value for i in self.menu_item_states]) > self.state_value:
+            self.change_state()
 
 
     def change_menu_item_state_by_id(self, id):

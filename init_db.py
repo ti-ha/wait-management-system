@@ -65,7 +65,7 @@ def init_tables(session: Session, table_handler: TableHandler):
 
     # print(json.dumps(table_handler.jsonify(), indent=4))
 
-def init_orders(session: Session, om_handler: OrderManagerHandler):
+def init_orders(session: Session, om_handler: OrderManagerHandler, table_handler: TableHandler):
     """Initialise order history from existing database
 
     Args:
@@ -91,6 +91,9 @@ def init_orders(session: Session, om_handler: OrderManagerHandler):
         om_handler.add_order(table, items, deals, customer)
 
         om_handler.order_manager.set_state(order, int(state))
+        if int(state) == 4:
+            print(om_handler.get_order_by_id(order))
+            om_handler.order_manager.orders.remove(om_handler.get_order_by_id(order))
     print(json.dumps(om_handler.jsonify_orders(), indent=4))
 
 def init_users(session: Session, user_handler: UserHandler):
@@ -124,5 +127,5 @@ def initialise_db(db_handler: DbHandler, menu_handler: MenuHandler,
         init_menu_items(session, menu_handler)
         init_deals(session, menu_handler)
         init_tables(session, table_handler)
-        init_orders(session, om_handler)
+        init_orders(session, om_handler, table_handler)
         init_users(session, user_handler)

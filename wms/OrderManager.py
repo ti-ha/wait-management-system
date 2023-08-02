@@ -131,7 +131,7 @@ class OrderManager:
             self.__map[table.id] = [order.id]
         table.add_order(order)
 
-    def remove_order(self, order: Order, table: Table, db: DbHandler):
+    def remove_order(self, order: Order, table: Table):
         """ Removing orders from list of orders and relational map
 
         Args:
@@ -147,15 +147,9 @@ class OrderManager:
         if table.id in self.map.keys():
             self.__map[table.id].remove(order.id)
             table.remove_order(order)
-            self.orders.remove(order)
-            with Session(db.engine) as session:
-                try:
-                    session.execute(delete(OrderTable).where(OrderTable.id == order.id))
-                    session.commit()
-                except:
-                    session.rollback()
         else:
             raise ValueError("OrderManager: remove_order(): Table does not have supplied order")
+        self.orders.remove(order)
         
     def change_state(self, order: int | Order, db: DbHandler):
         """ Move item along to the next stage
@@ -176,6 +170,7 @@ class OrderManager:
         else:
             raise TypeError("OrderManager: change_state(): Not a valid Order obj or order_id")
         order.change_state()
+        order.update_menu_state()
         self.update_db_state(order.id, db)
 
     def set_state(self, order: int, val: int):
@@ -199,7 +194,8 @@ class OrderManager:
             target = session.execute(select(OrderTable).where(
                 OrderTable.id == order
             )).scalar_one()
-            target.state += 1
+            if self.get_order(order).state_value == target.state + 1:
+                target.state += 1
             session.commit()
         #except:
             #session.rollback()
