@@ -91,7 +91,7 @@ def init_orders(session: Session, om_handler: OrderManagerHandler):
         om_handler.add_order(table, items, deals)
 
         om_handler.order_manager.set_state(order, int(state))
-        print(json.dumps(om_handler.jsonify_orders(), indent=4))
+    print(json.dumps(om_handler.jsonify_orders(), indent=4))
 
 def init_users(session: Session, user_handler: UserHandler):
     """Initialise users from existing database

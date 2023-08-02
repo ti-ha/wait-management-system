@@ -114,7 +114,7 @@ class OrderManager:
                 session.add(OrderTable(
                     id=order.id,
                     state = order.state_value,
-                    customer = order.customer,
+                    customer = int(order.customer),
                     table_id=table.id,
                     menu_items = items.fetchall(),
                     deals = deals.fetchall(),

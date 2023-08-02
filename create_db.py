@@ -80,7 +80,7 @@ def create_tables(app):
 
 def main():
     app = Application()
-    # app.om_handler.add_order(0, [1], [], None)
+    app.om_handler.add_order(0, [1], [1], 1)
     # app.om_handler.add_order(0, [1, 2], [], None)
     # app.om_handler.add_order(0, [1, 2, 3], [], None)
 

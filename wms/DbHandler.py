@@ -102,7 +102,7 @@ class Order(Base):
 class User(Base):
     """Table for user"""
     __tablename__ = 'user'
-    id = mapped_column(Integer, primary_key=True)
+    id = mapped_column(String(40), primary_key=True)
     first_name = mapped_column(String(40), nullable=False)
     last_name = mapped_column(String(40), nullable=False)
     type = mapped_column(String(20), nullable=False)
