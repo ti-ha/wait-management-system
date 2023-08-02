@@ -170,7 +170,7 @@ class OrderManagerHandler():
                 raise ValueError("OrderManagerHandler: add_order(): Deal does not exist")
             deals.append(deal)
             if isinstance(deal, PersonalisedDeal):
-                self.menu_handler.menu.remove_deal(deal, self.db)
+                self.menu_handler.menu.remove_deal(deal)
 
         self.order_manager.add_order(Order(menu_items, deals, user), table, self.db)
         self.notify(menu_items_ids)
