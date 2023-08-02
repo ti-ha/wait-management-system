@@ -168,10 +168,8 @@ class OrderManager:
             TypeError: Raised when order argument is not of type Order or Integer
         """
         if isinstance(order, int):
-            #self.update_db_state(order, db)
             order = self.get_order(order)
         elif isinstance(order, Order):
-            #self.update_db_state(order.id, db)
             pass
         else:
             raise TypeError("OrderManager: change_state(): Not a valid Order obj or order_id")
@@ -194,12 +192,14 @@ class OrderManager:
             order (int): the order id to have its state progressed to the next state
             db (DbHandler): database handler object
         """
+        # print(f'\n\n\nSTATE VALUE: {self.get_order(order).state_value}\n\n\n')
         with Session(db.engine) as session:
         #try:
             target = session.execute(select(OrderTable).where(
                 OrderTable.id == order
             )).scalar_one()
-            target.state += 1
+            if target.state in range(-1, 4):
+                target.state += 1
             session.commit()
         #except:
             #session.rollback()

@@ -30,9 +30,9 @@ class Application():
         self.__pd_engine = PersonalisedDealEngine(self.user_handler,
                                                   self.om_handler)
 
-        # self.db_handler.initialise()
-        initialise_db(self.db_handler, self.menu_handler, self.table_handler,
-                      self.om_handler, self.user_handler)
+        self.db_handler.initialise()
+        # initialise_db(self.db_handler, self.menu_handler, self.table_handler,
+                    #   self.om_handler, self.user_handler)
 
     @property
     def menu_handler(self) -> MenuHandler:
