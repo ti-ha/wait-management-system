@@ -81,6 +81,26 @@ class OrderManagerHandler():
             raise ValueError("Not a valid order_id")
 
         return order.jsonify()
+    
+    def get_menu_item_count(self, order_id: int, menu_item_id: int):
+        """ Gets the number of times a menu item with generic id menu_item_id
+        occurs in an order with matching order_id
+
+        Args:
+            order_id (int): the order_id to be matched
+            menu_item_id (int): the menu_item_id being searched
+
+        Raises:
+            ValueError: _description_
+
+        Returns:
+            _type_: _description_
+        """
+        order = self.order_manager.get_order(order_id)
+        if order is None:
+            raise ValueError("Not a valid order_id")
+        
+        return len([i for i in order.menu_items if i.id == menu_item_id])
 
     def get_order_state(self, order_id: int) -> dict:
         """ Gets the current state of an order
