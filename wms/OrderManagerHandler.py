@@ -4,8 +4,14 @@ from .PersonalisedDeal import PersonalisedDeal
 class OrderManagerHandler():
     def __init__(self, order_manager: OrderManager,
                  table_handler: TableHandler,
-                 menu_handler: MenuHandler) -> None:
-        """ Constructor for the OrderManagerHandler Class """
+                 menu_handler: MenuHandler):
+        """ Constructor for the OrderManagerHandler Class
+
+        Args:
+            order_manager (OrderManager): OrderManager object utilised with the handler
+            table_handler (TableHandler): TableHandler object utilised with the handler
+            menu_handler (MenuHandler): MenuHandler object utilised with the handler
+        """
         self.__order_manager = order_manager
         self.__table_handler = table_handler
         self.__menu_handler = menu_handler
@@ -21,17 +27,17 @@ class OrderManagerHandler():
             observer.order_update(menu_items)
 
     @property
-    def order_manager(self):
+    def order_manager(self) -> OrderManager:
         """ Returns order manager handler object """
         return self.__order_manager
     
     @property
-    def table_handler(self):
+    def table_handler(self) -> TableHandler:
         """ Returns table handler object """
         return self.__table_handler
     
     @property
-    def menu_handler(self):
+    def menu_handler(self) -> MenuHandler:
         """ Returns menu handler object """
         return self.__menu_handler
 
@@ -39,13 +45,13 @@ class OrderManagerHandler():
         """ Acquires the table orders of a particular table
 
         Args:
-            table_id (Integer): ID of a table
+            table_id (int): ID of a table
 
         Raises:
             ValueError: Raised if table ID does not correspond to any table
 
         Returns:
-            Dict: A dictionary of all the table orders of a particular table
+            dict: A dictionary of all the table orders of a particular table
         """
         try:
             orders = self.order_manager.get_table_orders(table_id)
@@ -60,13 +66,13 @@ class OrderManagerHandler():
         """ Gets an order by its ID value
 
         Args:
-            order_id (Integer): ID value of the order
+            order_id (int): ID value of the order
 
         Raises:
             ValueError: Raised if order_id does not match any of the orders
 
         Returns:
-            Dict: A dictionary of the order to be found
+            dict: A dictionary of the order to be found
         """
         order = self.order_manager.get_order(order_id)
         if order is None:
@@ -78,13 +84,13 @@ class OrderManagerHandler():
         """ Gets the current state of an order
 
         Args:
-            order_id (Integer): ID value of the order
+            order_id (int): ID value of the order
 
         Raises:
             ValueError: Raised if order_id does not match any of the orders
 
         Returns:
-            Dict: A dictionary of the order's state
+            dict: A dictionary of the order's state
         """
         order = self.order_manager.get_order(order_id)
         if order is None:
@@ -121,13 +127,13 @@ class OrderManagerHandler():
         """ Gets the current bill of an order
 
         Args:
-            order_id (Integer): ID value of the order
+            order_id (int): ID value of the order
 
         Raises:
             ValueError: Raised if order_id does not match any of the orders
 
         Returns:
-            Dict: A dictionary of the order's bill price and whether it is paid
+            dict: A dictionary of the order's bill price and whether it is paid
             or not
         """
         order = self.order_manager.get_order(order_id)
@@ -141,15 +147,18 @@ class OrderManagerHandler():
             "paid": order.bill.paid
         }
 
-    def add_order(self, table_id: int, menu_items_ids: list[int], deals_ids: list[int], user=None):
-        """ Adds an order to the list of orders
+    def add_order(self, table_id: int, menu_items_ids: list[int], deals_ids: list[int], 
+                  user: str = None):
+        """ Adds an order to the list of orders. Notifies restaurant manager to
+        update menu item statistics. 
 
         Args:
-            table_id (Integer): ID value of a table
-            menu_items_ids (List[Integer]): List of ID values corresponding to
+            table_id (int): ID value of a table
+            menu_items_ids (list[int]): List of ID values corresponding to
             individual menu item objects
-            deals_ids (List[Integer]): List of ID values corresponding to
+            deals_ids (list[int]): List of ID values corresponding to
             individual deal objects
+            user (str, optional): User that sent in the order. Defaults to None.
 
         Raises:
             ValueError: Raised if table_id does not correspond to any table
@@ -185,7 +194,7 @@ class OrderManagerHandler():
         """ Changes the state of an order
 
         Args:
-            order_id (Integer): ID value of the order
+            order_id (int): ID value of the order
 
         Raises:
             ValueError: Raised if order_id does not match any of the orders
@@ -216,8 +225,8 @@ class OrderManagerHandler():
         """ Remove an order from the list of orders
 
         Args:
-            table_id (Integer): ID value of the table
-            order_id (Integer): ID value of the order
+            table_id (int): ID value of the table
+            order_id (int): ID value of the order
 
         Raises:
             ValueError: Raised if either the table_id or order_id do not
@@ -239,7 +248,7 @@ class OrderManagerHandler():
         """ Removed an order by it's ID value
 
         Args:
-            order_id (Integer): ID value of the order
+            order_id (int): ID value of the order
 
         Raises:
             ValueError: Raised if order_id does not match any of the orders
@@ -265,14 +274,14 @@ class OrderManagerHandler():
         """ Calculates and returns the current bill
 
         Args:
-            table_id (Integer): ID value of the table
+            table_id (int): ID value of the table
 
         Raises:
             e: Raised when either there is an invalid table_id or the table
             has no orders to calculate a bill out of
 
         Returns:
-            Dict: A dictionary of the bill's price and whether or not it has
+            dict: A dictionary of the bill's price and whether or not it has
             been paid
         """
 
@@ -293,7 +302,7 @@ class OrderManagerHandler():
         """ A function to simulate the payment of the table bill
 
         Args:
-            table_id (Integer): ID value of the table
+            table_id (int): ID value of the table
 
         Raises:
             ValueError: Raised if table_id does not match any of the tables
@@ -321,7 +330,7 @@ class OrderManagerHandler():
         """ A function to simulate the payment of an order's bill
 
         Args:
-            order_id (Integer): ID value of the order
+            order_id (int): ID value of the order
 
         Raises:
             ValueError: Raised if order_id does not match any of the orders
@@ -336,7 +345,6 @@ class OrderManagerHandler():
         
         order.mark_as_paid()
 
-    #jsons
     def jsonify(self) -> dict:
         """ Creates a dictionary with a list containing all of the orders of
         each individual table

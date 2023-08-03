@@ -1,23 +1,24 @@
 from wms import User, Customer, KitchenStaff, WaitStaff, Manager
 
 class UserHandler():
-    def __init__(self) -> None:
+    def __init__(self):
         """ Constructor for the UserHandler Class """
         self.__users = []
     
     @property
     def users(self) -> list[User]:
-        """ Returns list of users"""
+        """ Returns list of users """
         return self.__users
     
-    def add_user(self, firstname, lastname, user_type, password):
+    def add_user(self, firstname: str, lastname: str, user_type: str, password: str):
         """ Adds a user to the system
 
         Args:
-            firstname (String): First name of the user
-            lastname (String): Last name of the user
-            user_type (String): Class type of the user. Must be one of Customer,
+            firstname (str): First name of the user
+            lastname (str): Last name of the user
+            user_type (str): Class type of the user. Must be one of Customer,
             KitchenStaff, WaitStaff or Manager 
+            password (str): Password of the user.
 
         Returns:
             None: Returns None if an invalid user_type was provided
@@ -44,13 +45,13 @@ class UserHandler():
         
         self.__users.append(new_user)
 
-    def login(self, firstname, lastname, password) -> User:
+    def login(self, firstname: str, lastname: str, password: str) -> User:
         """ Attempts to log in the user
 
         Args:
-            firstname (String): First name of the user
-            lastname (String): Last name of the user
-            password (String): Password of the user
+            firstname (str): First name of the user
+            lastname (str): Last name of the user
+            password (str): Password of the user
 
         Returns:
             User: Returns the user if log in was successful, otherwise 
@@ -71,11 +72,10 @@ class UserHandler():
         """ Attempts to log out the user
 
         Args:
-            firstname (String): First name of the user
-            lastname (String): Last name of the user
+            user (User): User logging out of the system
 
         Returns:
-            Bool: Returns true if logout was successful, false otherwise
+            bool: Returns true if logout was successful, false otherwise
         """
         if not isinstance(user, User):
             raise TypeError("UserHandler: logout(): argument is of invalid type (expected User)")
@@ -86,11 +86,11 @@ class UserHandler():
 
     def jsonify(self) -> dict:
         """ Creates a dictionary of all the users and their first name, last 
-        name and class type. 
+        name, class type and hashed password. 
 
         Returns:
-            Dic: A dictionary of all the users and their first name, last name
-        and class type. 
+            dict: A dictionary of all the users and their first name, last name
+        class type, and hashed password. 
         """
         
         user_dict = {}
@@ -105,7 +105,7 @@ class UserHandler():
         """ Finds a particular user by their ID value
 
         Args:
-            id (Integer): ID value of the user
+            id (int): ID value of the user
 
         Returns:
             User: User to be found by their ID value

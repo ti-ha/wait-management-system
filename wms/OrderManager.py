@@ -13,7 +13,6 @@ class OrderManager:
         # maps table: [orders]
         self.__map = {}
         
-    # Getter
     @property
     def orders(self) -> list[Order]:
         """ Returns list of orders """
@@ -29,18 +28,18 @@ class OrderManager:
         """ Returns dictionary linking tables to list of orders """
         return self.__map
     
-    def get_order(self, order_id) -> Order:
+    def get_order(self, order_id: int) -> Order:
         """ Returns a specific order based off provided order ID
 
         Args:
-            order_ID (integer): ID number of order to be obtained
+            order_ID (int): ID number of order to be obtained
 
         Returns:
             Order: Item of type Order based off provided ID
         """
         return next((i for i in self.orders if i.id == order_id), None)
     
-    def get_order_from_history(self, order_id) -> Order:
+    def get_order_from_history(self, order_id: int) -> Order:
         """Returns a specific order based off provided order ID from the history
 
         Args:
@@ -51,24 +50,24 @@ class OrderManager:
         """
         return next((i for i in self.history if i.id == order_id), None)
     
-    def get_table_from_order(self, order_ID) -> Table:
+    def get_table_from_order(self, order_id: int) -> Table:
         """ Given an order ID, finds the table that the order belongs to
 
         Args:
-            order_ID (Integer): ID number of order to use to find the table
+            order_id (int): ID number of order to use to find the table
 
         Returns:
             Table: Table object that has the order specified by the order ID
         """
         for i in self.map.keys():
-            if order_ID in self.map[i]:
+            if order_id in self.map[i]:
                 return i
     
     def get_table_orders(self, table_id: int) -> list[Order]:
         """ Returns a list of orders at a specific table
 
         Args:
-            table_id (integer): ID of table to acquire the orders of
+            table_id (int): ID of table to acquire the orders of
 
         Raises:
             ValueError: Raised when table does not exist
@@ -132,7 +131,7 @@ class OrderManager:
         """ Move item along to the next stage
 
         Args:
-            order (integer | Order): Object to have its state progressed to the 
+            order (int | Order): Object to have its state progressed to the 
             next state
 
         Raises:
@@ -170,14 +169,14 @@ class OrderManager:
         """ Move item along to a specified state
 
         Args:
-            order (integer | Order): Object to have its state changed
+            order (int | Order): Object to have its state changed
             string (str): The new state of the order object
 
         Raises:
             TypeError: Raised when order argument is not of type Order or Integer
 
         Returns:
-            Boolean: True or false whether the change was successful or not. 
+            bool: True or false whether the change was successful or not. 
             True if change was successful and false if the string was invalid
         """
         if isinstance(order, int):
@@ -198,7 +197,7 @@ class OrderManager:
         """ Calculates the current table bill from the table's list of orders
 
         Args:
-            table_id (integer): ID of the table
+            table_id (int): ID of the table
 
         Raises:
             TypeError: Raised when there is an invalid table ID
@@ -230,7 +229,7 @@ class OrderManager:
         """
         return {
             "orders": [i.jsonify() for i in self.orders]
-            }
+        }
     
     def history_json(self) -> dict:
         """ Creates a dictionary with a list containing all of the current and
@@ -254,7 +253,7 @@ class OrderManager:
         """
         return {
             "orders": [i.jsonify(self.get_table_from_order(i.id)) for i in self.orders]
-            }
+        }
 
 
 
