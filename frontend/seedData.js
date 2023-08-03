@@ -89,7 +89,7 @@ const loginAsManager = async () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(manager)
+            body: JSON.stringify({ first_name: "Manager", last_name: "One", password: "manager" })
         });
   
         if (!response.ok) { 
