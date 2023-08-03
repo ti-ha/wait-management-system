@@ -1,5 +1,5 @@
 class Bill:
-    def __init__(self, price):
+    def __init__(self, price: float):
         """ Constructor for the bill class
 
         Args:
@@ -8,9 +8,15 @@ class Bill:
         self.__price = price
         self.__paid = False
 
-    def __eq__(self, bill):
-        """ Checks if the price of another bill object is the same, if so
-        returns True. if the other non-boolean attribute is not equal, or its
+    def __eq__(self, bill) -> bool:
+        """ Checks if the price of another bill object is the same.
+        
+        Args:
+            bill (Bill): Bill object to compare to current object
+
+        Returns:
+            bool: If prices of the two bill objects are the same, return True.
+        If the other non-boolean attribute is not equal, or its
         the wrong class type, return false.
         """
         if not isinstance(bill, Bill):      return False
@@ -18,8 +24,6 @@ class Bill:
         
         return True
 
-
-    # Getters for price and paid status
     @property
     def price(self) -> float:
         """ Returns bill price """
@@ -30,9 +34,8 @@ class Bill:
         """ Returns if it is paid or not """
         return self.__paid
 
-    def pay(self) -> None:
-        """ When the bill is paid, set bool to true
-        """
+    def pay(self):
+        """ When the bill is paid, set bool to true """
         self.__paid = True
 
     def jsonify(self) -> dict:

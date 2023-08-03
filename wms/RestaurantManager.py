@@ -12,7 +12,7 @@ class RestaurantManager:
         """ Adds menu item id to statistics dictionary
 
         Args:
-            menu_item_id (Integer): Menu item to be added to the dictionary
+            menu_item_id (int): Menu item to be added to the dictionary
 
         Raises:
             ValueError: Raised if menu item is already in the dictionary
@@ -29,7 +29,7 @@ class RestaurantManager:
         """ Deletes a menu item id to statistics dictionary
 
         Args:
-            menu_item_id (Integer): Menu item to be removed from the dictionary
+            menu_item_id (int): Menu item to be removed from the dictionary
 
         Raises:
             ValueError: Raised if menu item is not in the dictionary
@@ -48,7 +48,7 @@ class RestaurantManager:
         updates the 2D dictionary structure accordingly
 
         Args:
-            menu_items (list[Integer]): List of menu items ordered
+            menu_items (list[int]): List of menu items ordered
 
         Raises:
             ValueError: Raised if a menu item is not in the dictionary
@@ -67,7 +67,7 @@ class RestaurantManager:
                     self.statistics[key][item] += 1
                     self.statistics[item][key] += 1
 
-    def jsonify(self, reverse = True) -> list:
+    def jsonify(self, reverse: bool = True) -> list:
         """ Creates a list of all the menu items and the number of menu item 
         orders. Used when sorting most and least popular menu items
 
@@ -86,7 +86,7 @@ class RestaurantManager:
         """ Returns entire 2D structure of menu statistics
 
         Returns:
-            Dict: A dictionary where each key corresponds to a menu item with a
+            dict: A dictionary where each key corresponds to a menu item with a
             dictionary of its frequency of orders with other menu items as the
             key value 
         """
@@ -96,7 +96,7 @@ class RestaurantManager:
         """ Returns the most paired item for each menu item
 
         Returns:
-            List[Tuple]: List of tuples where each tuple contains the menu item
+            list[tuple]: List of tuples where each tuple contains the menu item
             id and its most paired menu item's id 
         """
         frequent_pairs = []

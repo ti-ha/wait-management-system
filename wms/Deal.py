@@ -7,28 +7,18 @@ class Deal():
     # Primary key
     __id_iter = itertools.count()
 
-    def __init__(self, discount, menu_items=None):
+    def __init__(self, discount: float, menu_items: list[MenuItem] = None):
         """ Constructor for the Deal Class
 
         Args:
             discount (float): Discount percentage that applies to the deal
-            menu_items (MenuItem, optional): Menu items that the deal applies
-            to. Defaults to None.
+            menu_items (list[MenuItem], optional): Menu items that the deal 
+            applies to. Defaults to None.
         """
         self.__id = next(Deal.__id_iter)
         # A float value between 0 and 1 (percentage discount)
         self.__discount = float(discount)
-        self.__menu_items = menu_items
-        # getting around annoying python default value behaviour
-
-        # We need this for when someone passes only one menu item into the deal so it still ends up as an array.
-        # Not sure where else this is a problem
-        if isinstance(menu_items, MenuItem):
-            self.__menu_items = [menu_items]
-        else:
-            self.__menu_items = menu_items
-
-        self.__menu_items = [] if menu_items is None else menu_items
+        self.__menu_items = [] if menu_items == None else menu_items
 
     @property
     def id(self):
@@ -41,11 +31,10 @@ class Deal():
         return self.__discount
     
     @discount.setter
-    def discount(self, discount):
+    def discount(self, discount: float):
         """ Sets the discount for the deal """
         if Deal.is_float(discount):
             self.__discount = float(discount)
-            return
         else:
             raise ValueError("Deal: deal.set_discount(num): num is not floatable")
         
@@ -57,10 +46,10 @@ class Deal():
     @property
     def visible(self) -> bool:
         """ Returns if the deal should be visible based on the menu-items in the
-        deal"""
-        return next((i for i in self.menu_items if i.visible is False), None) is None
+        deal """
+        return next((i for i in self.menu_items if i.visible == False), None) == None
     
-    def add_menu_item(self, menu_item):
+    def add_menu_item(self, menu_item: MenuItem):
         """ Adds a menu item to the deal.
 
         Args:
@@ -78,7 +67,7 @@ class Deal():
         
         self.__menu_items.append(menu_item)
 
-    def remove_menu_item(self, menu_item) -> MenuItem:
+    def remove_menu_item(self, menu_item: MenuItem) -> MenuItem:
         """ Removes a menu item to the deal.
 
         Args:
@@ -100,7 +89,7 @@ class Deal():
         self.__menu_items.remove(menu_item)
         return menu_item
     
-    def is_applicable(self, menu_item) -> bool:
+    def is_applicable(self, menu_item: MenuItem) -> bool:
         """ Checks if the deal is applicable to a specific menu_item.
 
         Args:
@@ -110,7 +99,7 @@ class Deal():
             TypeError: Raised when menu_item argument is not of type MenuItem
 
         Returns:
-            Boolean: Returns true if menu_item is discounted by this deal, false
+            bool: Returns true if menu_item is discounted by this deal, false
             otherwise
         """
         if not isinstance(menu_item, MenuItem):
@@ -128,7 +117,7 @@ class Deal():
             num (any): Argument to check if it is of type float
 
         Returns:
-            Boolean: True if argument is of type float, false otherwise
+            bool: Returns true if argument is of type float, false otherwise
         """
         try:
             float(num)
@@ -138,10 +127,11 @@ class Deal():
         
     def jsonify(self) -> dict:
         """ Creates a dictionary containing the id and discount value of the 
-        deal
+        deal and the menu items the deal applies to
 
         Returns:
             dict: Dictionary containing the id and discount value of the deal
+        and the menu items the deal applies to
         """
         return {
             "id": self.id, 

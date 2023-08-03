@@ -5,8 +5,20 @@ from wms import (
 from functools import cmp_to_key
 
 class RestaurantManagerHandler():
-    def __init__(self, restaurant_manager, menu_handler, order_handler, table_handler, user_handler):
-        """ Constructor for the RestaurantManagerHandler Class """
+    def __init__(self, restaurant_manager: RestaurantManager, menu_handler: MenuHandler, 
+                 order_handler: OrderManagerHandler, table_handler: TableHandler, 
+                 user_handler: UserHandler):
+        """ Constructor for the RestaurantManagerHandler Clas
+
+        Args:
+            restaurant_manager (RestaurantManager): RestaurantManager object utilised
+            with the handler
+            menu_handler (MenuHandler): MenuHandler object utilised with the handler
+            order_handler (OrderManagerHandler): OrderManagerHandler object utilised
+            with the handler
+            table_handler (TableHandler): TableHandler object utilised with the handler
+            user_handler (UserHandler): UserHandler object utilised with the handler
+        """
         self.__rm = restaurant_manager
         self.__table_handler = table_handler
         self.__user_handler = user_handler
@@ -53,19 +65,19 @@ class RestaurantManagerHandler():
         """ Update statistic dictionary values """
         self.rm.increase_count(menu_items)
 
-    def get_menu_stats(self):
+    def get_menu_stats(self) -> dict:
         """ Gets menu statistics with menu item names as keys """
         return self.menu_handler.jsonify_stats(self.rm.jsonify())
     
-    def get_menu_stats_reversed(self):
+    def get_menu_stats_reversed(self) -> dict:
         """ Gets menu statistics but with unpopular first """
         return self.menu_handler.jsonify_stats(self.rm.jsonify(reverse=False))
     
-    def get_menu_stats_full(self):
+    def get_menu_stats_full(self) -> dict:
         """ Gets full 2D menu statistics """
         return self.menu_handler.jsonify_stats_full(self.rm.jsonify_full())
     
-    def get_menu_stats_pairs(self):
+    def get_menu_stats_pairs(self) -> dict:
         """ Gets most paired item for each menu item """
         return self.menu_handler.jsonify_frequent_pairs(self.rm.jsonify_frequent_pair())
 
@@ -112,7 +124,7 @@ class RestaurantManagerHandler():
             table (Table): Table that contains the list of orders to go through
 
         Returns:
-            tuple: Contains the lowest order status and its corresponding order
+            list: Contains the lowest order status and its corresponding order
             id
         """
         order_states = [[i.state_value, i.state, i.id] for i in table.orders if i.state_value != -1]
@@ -128,7 +140,7 @@ class RestaurantManagerHandler():
             table_list (list[Table]): List of tables to jsonify
 
         Returns:
-            Dict: A dictionary containing the id, availability string, table
+            dict: A dictionary containing the id, availability string, table
         limit and occupied boolean of the table that have been sorted by table
         limit
         """
@@ -143,7 +155,7 @@ class RestaurantManagerHandler():
             table_list (list[Table]): List of tables to jsonify
 
         Returns:
-            Dict: A dictionary containing the id, availability string, table
+            dict: A dictionary containing the id, availability string, table
         limit, occupied boolean and the state and order_id of lowest order
         status of the table (ignoring deleted orders)
         """
@@ -159,7 +171,7 @@ class RestaurantManagerHandler():
         """ Sorts the staff members by their position
 
         Returns:
-            Dict: A dictionary containing information about all the staff 
+            dict: A dictionary containing information about all the staff 
             members sorted by their position
         """
         staff_list = [i for i in self.user_handler.users if i.__class__ in [WaitStaff, KitchenStaff, Manager]]
@@ -170,7 +182,7 @@ class RestaurantManagerHandler():
         """ Sorts the staff members by their login status
 
         Returns:
-            Dict: A dictionary containing information about all the staff 
+            dict: A dictionary containing information about all the staff 
             members sorted by their login status
         """
         staff_list = [i for i in self.user_handler.users if i.__class__ in [WaitStaff, KitchenStaff, Manager]]
@@ -179,13 +191,13 @@ class RestaurantManagerHandler():
     
     def jsonify_user_position(self, user_list: list[User]) -> dict:
         """ Creates a dictionary containing the id, first name, last name and
-        position of the staff member.
+        position of the staff member
 
         Args:
             user_list (list[User]): List of users to jsonify
 
         Returns:
-            Dict: A dictionary containing the id, first name, last name and
+            dict: A dictionary containing the id, first name, last name and
         position of the staff member.
         """
         user_info = []
@@ -197,13 +209,13 @@ class RestaurantManagerHandler():
     
     def jsonify_user_status(self, user_list: list[User]) -> dict:
         """ Creates a dictionary containing the id, first name, last name,
-        position and login status of the staff member.
+        position and login status of the staff member
 
         Args:
             user_list (list[User]): List of users to jsonify
 
         Returns:
-            Dict: A dictionary containing the id, first name, last name and
+            dict: A dictionary containing the id, first name, last name and
         position of the staff member.
         """
         user_info = []

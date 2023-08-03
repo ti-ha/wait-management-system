@@ -11,13 +11,15 @@ from sqlalchemy.orm import Session
 from sqlalchemy import delete, select
 
 class Menu():
-    def __init__(self, db: DbHandler, categories=None, deals=None):
+
+    def __init__(self, db: DbHandler, categories: list[Category] = None, deals: list[Deal] = None):
         """ Constructor for the Menu class
 
         Args:
-            categories (List[Category], optional): Different menu categories. 
+            db (DbHandler): Database handler to ensure database persistence
+            categories (list[Category], optional): Different menu categories. 
             Defaults to None.
-            deals (List[Deal], optional): Different menu deals. 
+            deals (list[Deal], optional): Different menu deals. 
             Defaults to None.
         """
         self.__db = db
@@ -35,7 +37,7 @@ class Menu():
         return self.__categories
     
     @categories.setter
-    def categories(self, categories):
+    def categories(self, categories: list[Category]):
         """ Sets the categories of the menu """
         if not isinstance(categories, list[Category]):
             return ValueError("Menu: menu.set_categories(categories): argument is not a list of categories")
@@ -46,11 +48,11 @@ class Menu():
         """ Returns a list of deals """
         return self.__deals
     
-    def get_category(self, name) -> (Category | None):
+    def get_category(self, name: str) -> (Category | None):
         """ Returns a category with a matching name attribute
 
         Args:
-            name (string): Name of the category 
+            name (str): Name of the category 
 
         Returns:
             Category: Category to be acquired. If no category is found returns
@@ -58,7 +60,7 @@ class Menu():
         """
         return next((it for it in self.categories if it.name == name), None)
 
-    def add_category(self, category: Category) -> None:
+    def add_category(self, category: Category):
         """ Adds a new category to the menu
 
         Args:
@@ -83,18 +85,18 @@ class Menu():
                 session.rollback()
 
 
-    def remove_category(self, name) -> None:
+    def remove_category(self, name: str) -> (Category | None):
         """ Removes a category, if that category exists, from the menu.
 
         Args:
-            name (string): Name of the category to be removed
+            name (str): Name of the category to be removed
 
         Raises:
             TypeError: Raised if name argument is not a string
             ValueError: Raised if category does not exist in the menu
 
         Returns:
-            Category: Returns the removed category
+            Category: Returns the removed category if found, None otherwise
         """
         if not isinstance(name, str):
             raise TypeError("Menu: menu.remove_category(): not a string")
@@ -113,11 +115,12 @@ class Menu():
         
         raise ValueError("Menu: menu.remove_category(): not in categories")
     
-    def add_deal(self, deal, menu_items: list[str]) -> None:
+    def add_deal(self, deal: Deal, menu_items: list[str]) -> None:
         """ Adds a new deal to the menu
 
         Args:
             deal (Deal): Deal to be added to the menu
+            menu_items (list[str]): List of menu items that the deal applies to
 
         Raises:
             TypeError: Raised if deal object is not of type Deal
@@ -144,18 +147,18 @@ class Menu():
                 session.rollback()
 
     
-    def remove_deal(self, deal) -> None:
+    def remove_deal(self, deal: Deal) -> Deal:
         """ Removes a deal from the menu.
 
         Args:
             deal (Deal): Deal to be removed from the menu
 
         Raises:
-             TypeError: Raised if deal object is not of type Deal
+            TypeError: Raised if deal object is not of type Deal
             ValueError: Raised if deal does not exist in the menu
 
         Returns:
-            Deal: Returns removed deal
+            Deal: Returns removed deal if found
         """
         if not isinstance(deal, Deal):
             raise TypeError("Menu: menu.remove_deal(): Object is not of type Deal")
@@ -174,14 +177,15 @@ class Menu():
                 session.rollback()
         return deal
     
-    def user_has_personalised(self, user):
-        """_summary_
+    def user_has_personalised(self, user: str) -> bool:
+        """ A check for if a personalised deal applies to a particular user. 
+        Also removes any expired personalised deals for that user.
 
         Args:
-            user (_type_): _description_
+            user (str): ID string of the user
 
         Returns:
-            _type_: _description_
+            bool: Returns true if a personalised deal was found, false otherwise
         """
         for i in self.deals:
             if isinstance(i, PersonalisedDeal):
@@ -206,14 +210,14 @@ class Menu():
             output += i.menu_items
         return output
     
-    def menu_item_lookup(self, id) -> MenuItem:
+    def menu_item_lookup(self, id: int) -> (MenuItem | None):
         """ Performs a look up through the menu's menu items
 
         Args:
-            id (integer): ID of menu item to be searched for
+            id (int): ID of menu item to be searched for
 
         Returns:
-            MenuItem: Menu item to be searched for if found. Returs None if 
+            MenuItem: Menu item to be searched for if found. Returns None if 
             menu item cannot be found.
         """
         for i in self.menu_items():
@@ -221,11 +225,11 @@ class Menu():
                 return i
         return None
     
-    def update_categories(self, new_order):
+    def update_categories(self, new_order: list[str]):
         """ Updates the order of the categories given a list of category IDs
 
         Args:
-            new_order (List[String]): List of category IDs that represent the 
+            new_order (list[str]): List of category IDs that represent the 
             new order of categories in the menu
 
         Raises:
@@ -272,16 +276,11 @@ class Menu():
         # The harshness of the similarity. 1.0 is max value and will only return 
         # exact matches. 0 returns everything. 0.5 is a pretty good midpoint
         STRENGTH_COEFFICIENT = 0.40
-        # Good luck deciphering all this
         # Generate levenschtein distances for each menu item in all categories against the query argument
         levenschtein = [[sm(None, j.name, query).ratio() 
                          for j in i.menu_items if j.visible == True] 
                          for i in self.categories if i.visible == True]
 
-        #if len(levenschtein) == 0:
-        #    return {"message": "No matches"}
-        #if max([i for sublist in levenschtein for i in sublist]) < STRENGTH_COEFFICIENT:
-        #    return {"message": "No matches"}
         # Get the normal dictionary of menu_items in self.categories
         normal = [[j 
                    for j in i.menu_items if j.visible == True] 

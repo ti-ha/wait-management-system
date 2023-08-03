@@ -4,16 +4,17 @@ from wms import MenuItem, DbHandler
 from sqlalchemy.orm import Session
 from wms.DbHandler import MenuItem as MenuTable
 from sqlalchemy import delete
+
 class Category():
 
     __id_iter = itertools.count()
 
-    def __init__(self, name, menu_items=None):
-        """ Constructor (no menu items by default)
+    def __init__(self, name: str, menu_items: list[MenuItem] = None):
+        """ Constructor for the category class
 
         Args:
-            name (String): Name of the category
-            menu_items (List[MenuItem], optional): List of menu items to be 
+            name (str): Name of the category
+            menu_items (list[MenuItem], optional): List of menu items to be 
             predefined with the new category. Defaults to None.
         """
         self.__id = next(Category.__id_iter)
@@ -32,7 +33,7 @@ class Category():
         return self.__name
     
     @name.setter
-    def name(self, name):
+    def name(self, name: str):
         """ Sets the category name """
         if not isinstance(name, str):
             raise TypeError("Category: category.set_name(name): argument is not string")
@@ -49,29 +50,29 @@ class Category():
         return self.__visible
 
     @visible.setter
-    def visible(self, visible):
+    def visible(self, visible: bool):
         """ Sets the category visiblity as well as its menu items """
         self.__visible = visible
         for item in self.menu_items:
             item.visible = visible
 
-    def update(self, name, visible):
+    def update(self, name: str, visible: str):
         """ Updates the name and/or visibility of the category
 
         Args:
-            name (String): Name of the category
-            visible (String): Visibility of the category
+            name (str): Name of the category
+            visible (str): Visibility of the category
         """
         if name is not None: 
             self.name = name 
         if visible is not None: 
             self.visible = (visible == "True")
 
-    def update_menu_items(self, new_order):
+    def update_menu_items(self, new_order: list[str]):
         """ Updates the order of the menu items given a list of menu item IDs
 
         Args:
-            new_order (List[String]): List of menu item IDs that represent the 
+            new_order (list[str]): List of menu item IDs that represent the 
             new order of menu items in the category
 
         Raises:
@@ -101,7 +102,7 @@ class Category():
 
         self.__menu_items = new_menu_items
 
-    def menu_item(self, menu_item) -> (MenuItem | None):
+    def menu_item(self, menu_item: MenuItem) -> (MenuItem | None):
         """ Returns a specific menu item from category
 
         Args:
@@ -112,15 +113,15 @@ class Category():
             item exists
         """
         return next((it for it in self.menu_items if it.is_equal(menu_item)), None)
-
-    def menu_item_by_name(self, name) -> (MenuItem | None):
+    
+    def menu_item_by_name(self, name: str) -> (MenuItem | None):
         """ Returns menu item by name
 
         Args:
             name (str): name of item
 
         Returns:
-            MenuItem if present, else None 
+            MenuItem: Returns a menu item if present, else None 
         """
         return next((it for it in self.menu_items if it.name == name), None)
 
@@ -128,7 +129,8 @@ class Category():
         """ Adds a menu_item to the category
 
         Args:
-            menu_item (Menu_Item): Menu item to be added to the category
+            menu_item (MenuItem): Menu item to be added to the category
+            db (DbHandler): Database handler to add menu item to the database
 
         Raises:
             ValueError: Raised if menu item is already in the category
@@ -151,17 +153,18 @@ class Category():
             except:
                 session.rollback()
 
-    def remove_menu_item(self, name, db: DbHandler) -> int:
+    def remove_menu_item(self, name: str, db: DbHandler) -> int:
         """ Removes a menu_item from the category
 
         Args:
-            menu_item (MenuItem): Menu item to be removed from the category
+            name (str): Name of the menu item to be removed from the category
+            db (DbHandler): Database handler to add menu item to the database
 
         Raises:
             ValueError: Raised if menu item does not exist in the category
 
         Returns:
-            Integer: Id of the menu item that was removed
+            int: Id of the menu item that was removed
         """
         removed_item = self.menu_item_by_name(name)
         if removed_item is None:
@@ -184,7 +187,6 @@ class Category():
             dict: Dictionary containing the id, name and list of menu items 
         of the category
         """
-
         return {
             "id": self.id, 
             "name": self.name, 
