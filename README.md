@@ -1,4 +1,4 @@
-# Setup (On local machines *NOT CSE*)
+# Setup on local machines (*NOT CSE*)
 The following instructions are for running the system on your local machine.
 They will not work on CSE Servers (Scroll down to the next heading for CSE
 specific instructions)
