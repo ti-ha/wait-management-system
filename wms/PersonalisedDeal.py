@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 EXPIRY_HOURS = 1
 
 class PersonalisedDeal(Deal):
-    def __init__(self, discount, menu_items, user):
+    def __init__(self, discount: float, menu_items, user: str):
         """ Constructor for the personalisedDeal class """
         super().__init__(discount, [menu_items])
         self.__user = user
@@ -17,7 +17,7 @@ class PersonalisedDeal(Deal):
         """ The user associated with the deal
 
         Returns:
-            string: The id of the user associated with the deal
+            str: The id of the user associated with the deal
         """
         return self.__user
     
@@ -26,7 +26,7 @@ class PersonalisedDeal(Deal):
         """ The expiry date of the deal
 
         Returns:
-            string: datestring of the expiry of the deal
+            str: datestring of the expiry of the deal
         """
         return self.__expiry.strftime("%H:%M:%S %d/%m/%Y")
     

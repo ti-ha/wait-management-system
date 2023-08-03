@@ -1,7 +1,8 @@
 from .User import User
 
 class Customer(User):
-    def __init__(self, firstname="Guest", lastname="Customer", password="1234"):
+    def __init__(self, firstname: str = "Guest", lastname: str = "Customer", 
+                 password: str = "1234"):
         """ Constructor of the Customer class that inherits the User Class
         Args:
             firstname (str, optional): First Name of the User. Defaults to 
@@ -19,6 +20,6 @@ class Customer(User):
         return self.__table
     
     @table.setter   
-    def table(self, table) -> None:
+    def table(self, table):
         """ Sets the table the customer will be at """
         self.__table = table

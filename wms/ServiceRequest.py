@@ -25,14 +25,18 @@ class States(Enum):
         return States(v)
 
     @staticmethod
-    def list():
+    def list() -> list[str]:
         """ Returns names of all the states """
         return [i.lower() for i in States._member_names_]
 
 class State:
 
-    def __init__(self, value=0):
-        """ Constructor for the State class """
+    def __init__(self, value: int = 0):
+        """ Constructor for the State class 
+
+        Args:
+            value (int, optional): Integer for a default state value. Defaults to 0.
+        """
         self.__state = States(value)
 
     def transition_state(self):
@@ -85,6 +89,13 @@ class ServiceRequest:
     __id_iter = itertools.count()
 
     def __init__(self, table: Table, subject: str, summary: str):
+        """ Constructor for the ServiceRequest class
+
+        Args:
+            table (Table): Table that called the service request
+            subject (str): Description of the subject of the service request
+            summary (str): Description of the summary of the service request
+        """
         self.__id = next(ServiceRequest.__id_iter)
         self.__table = table
         self.__subject = subject
@@ -94,33 +105,33 @@ class ServiceRequest:
         self.__assignee = None
 
     @property
-    def id(self):
-        """ The id of the service request."""
+    def id(self) -> itertools.count:
+        """ The id of the service request """
         return self.__id
     
     @property
-    def table(self):
-        """ The table at which the service request is being called from.  """
+    def table(self) -> Table:
+        """ The table at which the service request is being called from """
         return self.__table
     
     @property
-    def subject(self):
-        """ The subject field of the service request. """
+    def subject(self) -> str:
+        """ The subject field of the service request """
         return self.__subject
     
     @property
-    def summary(self):
-        """ The summary field of the service request. """
+    def summary(self) -> str:
+        """ The summary field of the service request """
         return self.__summary
     
     @property
-    def timestamp(self):
-        """ The time when the service request was created. """
+    def timestamp(self) -> str:
+        """ The time when the service request was created """
         return self.__timestamp
     
     @property
     def status(self) -> str:
-        """ The status of the service request. """
+        """ The status of the service request """
         return self.__status.state
     
     @property
@@ -156,7 +167,7 @@ class ServiceRequest:
         """ Sets the assignee of the request. """
         self.__assignee = assignee
 
-    def jsonify(self):
+    def jsonify(self) -> dict:
         """Generates a JSON-style dictionary containing all the relevant
         attributes of the Service Request.
 

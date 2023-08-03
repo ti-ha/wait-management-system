@@ -2,8 +2,14 @@ from wms import ServiceRequestManager, UserHandler, WaitStaff
 
 # SRM stands for "Service Request Manager"
 class SRMHandler():
-    def __init__(self, service_request_manager: ServiceRequestManager, user_handler: UserHandler) -> None:
-        """ Constructor for the SRMHandler Class """
+    def __init__(self, service_request_manager: ServiceRequestManager, user_handler: UserHandler):
+        """ Constructor for the SRMHandler Class
+
+        Args:
+            service_request_manager (ServiceRequestManager): ServiceRequestManager
+            object utilised with the handler
+            user_handler (UserHandler): UserHandler utilised with the handler
+        """
         self.__srm = service_request_manager
         self.__user_handler = user_handler
 
@@ -17,8 +23,8 @@ class SRMHandler():
         """ Returns the User Handler object """
         return self.__user_handler
     
-    def id_to_waitstaff(self, user_id) -> WaitStaff:
-        """Given a user id, returns None or the user matching the user_id, if
+    def id_to_waitstaff(self, user_id: int) -> WaitStaff:
+        """ Given a user id, returns None or the user matching the user_id, if
         and only if that user is a WaitStaff.
 
         Args:
@@ -30,8 +36,9 @@ class SRMHandler():
         user = self.user_handler.id_to_user(user_id)
         return user if user.__class__ == WaitStaff else None
     
-    def assign_request_to_user(self, request_id, user_id):
-        """Assigns a request to a specific user so they can view their requests later.
+    def assign_request_to_user(self, request_id: int, user_id: int):
+        """ Assigns a request to a specific user so they can view their requests 
+        later.
 
         Args:
             request_id (int): The id of the request
@@ -55,8 +62,8 @@ class SRMHandler():
         
         request.assignee = assignee
 
-    def unassign_request_from_user(self, request_id, user_id):
-        """Unassigns a  request from a specific user so they can no longer see
+    def unassign_request_from_user(self, request_id: int, user_id: int):
+        """ Unassigns a  request from a specific user so they can no longer see
         it in their queue.
 
         Args:

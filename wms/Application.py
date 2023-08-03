@@ -17,32 +17,32 @@ class Application():
 
     @property
     def menu_handler(self) -> MenuHandler:
-        """ Returns the MenuHandler object."""
+        """ Returns the MenuHandler object """
         return self.__menu_handler
     
     @property
     def table_handler(self) -> TableHandler:
-        """ Returns the TableHandler object."""
+        """ Returns the TableHandler object """
         return self.__table_handler
     
     @property
     def om_handler(self) -> OrderManagerHandler:
-        """ Returns the OrderManagerHandler object."""
+        """ Returns the OrderManagerHandler object """
         return self.__om_handler
     
     @property
     def user_handler(self) -> UserHandler:
-        """ Returns the UserHandler object."""
+        """ Returns the UserHandler object """
         return self.__user_handler
     
     @property
     def srm_handler(self) -> SRMHandler:
-        """ Returns the ServiceRequestManager Handler object."""
+        """ Returns the ServiceRequestManager Handler object """
         return self.__srm_handler
     
     @property
     def restaurant_manager_handler(self) -> RestaurantManagerHandler:
-        """ Returns the RestaurantManagerHandler object."""
+        """ Returns the RestaurantManagerHandler object """
         return self.__restaurant_manager_handler
     
     @property

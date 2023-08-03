@@ -5,8 +5,20 @@ from wms import (
 from functools import cmp_to_key
 
 class RestaurantManagerHandler():
-    def __init__(self, restaurant_manager, menu_handler, order_handler, table_handler, user_handler):
-        """ Constructor for the RestaurantManagerHandler Class """
+    def __init__(self, restaurant_manager: RestaurantManager, menu_handler: MenuHandler, 
+                 order_handler: OrderManagerHandler, table_handler: TableHandler, 
+                 user_handler: UserHandler):
+        """ Constructor for the RestaurantManagerHandler Clas
+
+        Args:
+            restaurant_manager (RestaurantManager): RestaurantManager object utilised
+            with the handler
+            menu_handler (MenuHandler): MenuHandler object utilised with the handler
+            order_handler (OrderManagerHandler): OrderManagerHandler object utilised
+            with the handler
+            table_handler (TableHandler): TableHandler object utilised with the handler
+            user_handler (UserHandler): UserHandler object utilised with the handler
+        """
         self.__rm = restaurant_manager
         self.__table_handler = table_handler
         self.__user_handler = user_handler
@@ -128,7 +140,7 @@ class RestaurantManagerHandler():
             table_list (list[Table]): List of tables to jsonify
 
         Returns:
-            Dict: A dictionary containing the id, availability string, table
+            dict: A dictionary containing the id, availability string, table
         limit and occupied boolean of the table that have been sorted by table
         limit
         """
@@ -143,7 +155,7 @@ class RestaurantManagerHandler():
             table_list (list[Table]): List of tables to jsonify
 
         Returns:
-            Dict: A dictionary containing the id, availability string, table
+            dict: A dictionary containing the id, availability string, table
         limit, occupied boolean and the state and order_id of lowest order
         status of the table (ignoring deleted orders)
         """
@@ -159,7 +171,7 @@ class RestaurantManagerHandler():
         """ Sorts the staff members by their position
 
         Returns:
-            Dict: A dictionary containing information about all the staff 
+            dict: A dictionary containing information about all the staff 
             members sorted by their position
         """
         staff_list = [i for i in self.user_handler.users if i.__class__ in [WaitStaff, KitchenStaff, Manager]]
@@ -170,7 +182,7 @@ class RestaurantManagerHandler():
         """ Sorts the staff members by their login status
 
         Returns:
-            Dict: A dictionary containing information about all the staff 
+            dict: A dictionary containing information about all the staff 
             members sorted by their login status
         """
         staff_list = [i for i in self.user_handler.users if i.__class__ in [WaitStaff, KitchenStaff, Manager]]
@@ -179,13 +191,13 @@ class RestaurantManagerHandler():
     
     def jsonify_user_position(self, user_list: list[User]) -> dict:
         """ Creates a dictionary containing the id, first name, last name and
-        position of the staff member.
+        position of the staff member
 
         Args:
             user_list (list[User]): List of users to jsonify
 
         Returns:
-            Dict: A dictionary containing the id, first name, last name and
+            dict: A dictionary containing the id, first name, last name and
         position of the staff member.
         """
         user_info = []
@@ -197,13 +209,13 @@ class RestaurantManagerHandler():
     
     def jsonify_user_status(self, user_list: list[User]) -> dict:
         """ Creates a dictionary containing the id, first name, last name,
-        position and login status of the staff member.
+        position and login status of the staff member
 
         Args:
             user_list (list[User]): List of users to jsonify
 
         Returns:
-            Dict: A dictionary containing the id, first name, last name and
+            dict: A dictionary containing the id, first name, last name and
         position of the staff member.
         """
         user_info = []

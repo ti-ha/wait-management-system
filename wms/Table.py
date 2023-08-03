@@ -9,13 +9,13 @@ class Table:
     # Unique identifier starting from 0
     __id_iter = itertools.count()
 
-    def __init__(self, table_limit, orders=None):
+    def __init__(self, table_limit: int, orders: list[Order] = None):
         """ Constructor for Table class
 
         Args:
-            table_limit (integer): Limit to how many people can be seated at
+            table_limit (int): Limit to how many people can be seated at
             this table
-            orders (List[Order], optional): List of orders to be predefined 
+            orders (list[Order], optional): List of orders to be predefined 
             with the table. Defaults to None.
         """
         self.__id = next(Table.__id_iter)
@@ -26,7 +26,6 @@ class Table:
         self.__table_limit = table_limit
         self.__bill = None
 
-    # Getters for the class variables
     @property
     def id(self) -> itertools.count:
         """ Returns table ID """
@@ -57,7 +56,6 @@ class Table:
         """ Returns the table bill """
         return self.__bill
     
-    # Setter for the bill 
     @bill.setter
     def bill(self, bill: Bill):
         """ Sets the table bill """
@@ -67,14 +65,14 @@ class Table:
         """ Unique getter to show how many open seats there are
 
         Returns:
-            String: String that describes the number of open seats out of the 
+            str: String that describes the number of open seats out of the 
             total number of seats or the string FULL if there are no open seats
         """
         open_seats = self.__table_limit - len(self.__customers)
         return f"{open_seats} / {self.__table_limit}" if open_seats != 0 else "FULL"
 
-    def add_customers(self, customer):
-        """Adding a customer to the list of customers
+    def add_customers(self, customer: Customer):
+        """ Adding a customer to the list of customers
 
         Args:
             customer (Customer): Customer to be added to the table
@@ -98,7 +96,7 @@ class Table:
         if len(self.__customers) >= self.__table_limit:
             self.__occupied = True
 
-    def add_order(self, order):
+    def add_order(self, order: Order):
         """ Adding an order to the list of orders
 
         Args:
@@ -116,7 +114,7 @@ class Table:
         
         self.__orders.append(order)
 
-    def remove_order(self, order):
+    def remove_order(self, order: Order):
         """ Removing an order from the list of orders
 
         Args:
@@ -139,7 +137,7 @@ class Table:
         limit and occupied boolean of the table  
 
         Returns:
-            Dict: A dictionary containing the id, availability string, table
+            dict: A dictionary containing the id, availability string, table
         limit and occupied boolean of the table  
         """
         return {

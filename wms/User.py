@@ -6,12 +6,13 @@ class User:
     # Unique identifier starting from 0
     __id_iter = itertools.count()
 
-    def __init__(self, firstname, lastname, password):
+    def __init__(self, firstname: str, lastname: str, password: str):
         """ Constructor for the User Class
 
         Args:
-            firstname (string): First Name of the User
-            lastname (string): Last Name of the User
+            firstname (str): First Name of the User
+            lastname (str): Last Name of the User
+            password (str): Password of the User
         """
         self.__id = next(User.__id_iter)
         self.__firstname = firstname
@@ -19,7 +20,6 @@ class User:
         self.__password = generate_password_hash(password)
         self.__logged_in = False
 
-    # Getters
     @property
     def firstname(self) -> str:
         """ Returns user's first name """
@@ -50,7 +50,7 @@ class User:
         """ Sets the user's logged in status """
         self.__logged_in = status
     
-    def check_password(self, password) -> bool:
+    def check_password(self, password: str) -> bool:
         """ Check given password against hashed password """
         return check_password_hash(self.password_hash, password)
     
