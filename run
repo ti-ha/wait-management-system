@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Initialise backend
+case "$(uname -sr)" in
+
+   Darwin*)
+     source venv/bin/activate     # OS X
+     ;;
+
+   Linux*Microsoft*)
+     source venv/bin/activate     # Windows Subsystem for Linux
+     ;;
+
+   Linux*)
+     source venv/bin/activate   # Linux
+     ;;
+
+   CYGWIN*|MINGW*|MINGW32*|MSYS*)
+     source venv/Scripts/activate # Windows
+     ;;
+     
+   *)
+     echo 'Other OS'              # We don't do that here
+     exit
+     ;;
+esac
+
+pip3 freeze
