@@ -49,17 +49,18 @@ def create_tables(app):
 
     order = app.om_handler
     
-    order.add_order(0, [0, 1], [], None)
-    order.change_order_state(0)
+    order.add_order(0, [1, 1, 2, 3], [], None)
+    # order.add_order(0, [2, 2], [])
+    # order.change_order_state(0)
 
-    order.add_order(0, [1, 1, 2], [], None)
-    order.change_order_state(1)
-    order.change_order_state(1)
+    order.add_order(0, [4, 4], [0, 1], None)
+    # order.change_order_state(1)
+    # order.change_order_state(1)
 
-    order.add_order(2, [5, 5, 5, 5, 5, 6, 6, 6], [0, 1, 2], None)
-    order.change_order_state(2)
-    order.change_order_state(2)
-    order.change_order_state(2)
+    order.add_order(2, [5, 5, 5, 6, 6], [0, 1, 2], None)
+    # order.change_order_state(2)
+    # order.change_order_state(2)
+    # order.change_order_state(2)
 
     user = app.user_handler
 

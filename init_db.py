@@ -76,8 +76,9 @@ def init_orders(session: Session, om_handler: OrderManagerHandler, table_handler
                                     Order.state, Order.customer)).fetchall()
     order_deal = session.execute(select(Order.id, Deal.id)
                                 .join(Order.deals)).fetchall()
-    order_menu = session.execute(select(Order.id, MenuItem.id, OrderMenu.quantity)
-                                .join(Order.menu_items)).fetchall()
+    order_menu = session.execute(select(OrderMenu.order_id, OrderMenu.menu_item_id, OrderMenu.quantity)).fetchall()
+    
+    # print(order_menu)
 
     for order, table, state, customer in orders:
         deals = []
@@ -86,9 +87,11 @@ def init_orders(session: Session, om_handler: OrderManagerHandler, table_handler
                 deals.append(deal)
         # TODO
         items = []
-        for o_menu, item, quantity in order_menu:
-            if o_menu == order:
+        for o_id, item, quantity in order_menu:
+            # print(f'\n\n\n{o_id}, {item}, {quantity}\n\n\n')
+            if o_id == order:
                 items.extend(repeat(item, quantity))
+        # print(items)
         om_handler.add_order(table, items, deals, customer)
 
         om_handler.order_manager.set_state(order, int(state))
