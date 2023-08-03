@@ -146,6 +146,7 @@ class OrderManager:
         else:
             self.__map[table.id] = [order.id]
         table.add_order(order)
+        order.calculate_bill()
 
     def get_menu_item_count(self, order_id: int, menu_item_id: int):
         """ Gets the number of times a menu item with generic id menu_item_id
@@ -177,7 +178,7 @@ class OrderManager:
         Raises:
             ValueError: Raised when table does not have that order object
         """
-        if order not in self.__orders:
+        if order not in self.orders and order not in self.history:
             raise ValueError("OrderManager: remove_order(): Order does not exist")
 
         if table.id in self.map.keys():

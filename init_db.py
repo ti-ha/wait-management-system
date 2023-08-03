@@ -91,15 +91,10 @@ def init_orders(session: Session, om_handler: OrderManagerHandler, table_handler
             # print(f'\n\n\n{o_id}, {item}, {quantity}\n\n\n')
             if o_id == order:
                 items.extend(repeat(item, quantity))
-        # print(items)
         om_handler.add_order(table, items, deals, customer)
 
         om_handler.order_manager.set_state(order, int(state))
-        if int(state) == 4:
-            om_handler.get_order_by_id(order).calculate_bill()
-            om_handler.get_order_by_id(order).bill.pay()
-            om_handler.order_manager.orders.remove(om_handler.get_order_by_id(order))
-    print(json.dumps(om_handler.jsonify_orders(), indent=4))
+    #print(json.dumps(om_handler.jsonify_orders(), indent=4))
 
 def init_users(session: Session, user_handler: UserHandler):
     """Initialise users from existing database

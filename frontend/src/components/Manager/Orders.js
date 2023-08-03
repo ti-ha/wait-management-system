@@ -83,8 +83,8 @@ export default function Orders() {
         return <AccessDenied userType={userType}/>
     }
 
-    const currentOrders = orders.filter(order => order.state !== "served");
-    const completedOrders = orders.filter(order => order.state === "served");
+    const currentOrders = orders.filter(order => order.state !== "completed");
+    const completedOrders = orders.filter(order => order.state === "completed");
 
     return (
         <>

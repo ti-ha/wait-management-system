@@ -108,13 +108,13 @@ class PersonalisedDealEngine():
         # Generate data structure for counting menu_items by frequency in order
         user_frequencies = {}
         for order in self.order_manager_handler.order_manager.history:
-            if order.customer not in user_frequencies.keys() and order.customer:
+            if order.customer != None and order.customer not in user_frequencies.keys():
                 user_frequencies[order.customer] = { menu_item.id: 1 
                                                     for menu_item in order.menu_items 
                                                     if menu_item.visible }
-            elif order.customer:
+            elif order.customer != None:
                 for menu_item in order.menu_items:
-                    if menu_item.visible and menu_item:
+                    if menu_item and menu_item.visible:
                         print(order.customer, menu_item.id)
                         user_frequencies[order.customer][menu_item.id] += 1
 

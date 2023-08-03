@@ -135,7 +135,7 @@ class OrderManagerHandler():
             "paid": order.bill.paid
         }
 
-    def add_order(self, table_id: int, menu_items_ids: list[int], deals_ids: list[int], user=None):
+    def add_order(self, table_id: int, menu_items_ids: list[int], deals_ids: list[int], user):
         """ Adds an order to the list of orders
 
         Args:
@@ -316,7 +316,6 @@ class OrderManagerHandler():
         for i in orders:
             if i.state == "served":
                 self.change_order_state(i.id)
-                self.order_manager.remove_order(i, table)
 
 
     def pay_order_bill(self, order_id: int):

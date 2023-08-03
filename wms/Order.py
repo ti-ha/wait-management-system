@@ -358,11 +358,15 @@ class Order:
         
         pricedict = {}
         for i in self.menu_items:
-            pricedict[i.name] = i.price
+            if i.name not in pricedict.keys():
+                pricedict[i.name] = i.price
+            else:
+                pricedict[i.name] += i.price
 
         # For each deal in the order, apply it to the price dictionary
         for i in self.deals:
             pricedict = self.apply_deal(pricedict, i)
+
 
         # Add the prices in pricedict together
         finalcost = sum([float(pricedict[i]) for i in pricedict])
