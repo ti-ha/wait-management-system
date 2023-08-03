@@ -3,6 +3,6 @@
 
 
 # Initialise virtualenv
-xterm -e source venv/bin/activate && python3 app.py
+xterm -e "source venv/bin/activate && python3 app.py"
 
-xterm -e cd frontend && npm start
+xterm -e "cd frontend && npm start"
