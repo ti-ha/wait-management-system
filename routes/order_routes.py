@@ -20,6 +20,7 @@ def get_order_manager(current_user):
 @order_blueprint.route('/ordermanager/history', methods=['GET'], endpoint='get_history')
 @token_required
 def get_history(current_user):
+    """ Gets the history of orders within the order manager """
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
         return jsonify({"error": "Must be a staff member to make this request"})
     
@@ -31,6 +32,7 @@ def get_history(current_user):
 @order_blueprint.route('/ordermanager/history/<order_id>', methods=['GET'], endpoint='get_order_from_history')
 @token_required
 def get_order_from_history(current_user, order_id):
+    """ Gets a specific order from the history of orders """
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
         return jsonify({"error": "Must be a staff member to make this request"})
     
@@ -164,7 +166,7 @@ def get_order_state(current_user, order_id):
 def advance_order_state(current_user, order_id):
     """ Advances the state of a particular order
 
-    EMPTY FOR NOW. WE WILL EXPAND THIS LATER TO INCLUDE STATE LEAPS IF WE WANT
+    EMPTY POST REQUEST
     """
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
         return jsonify({"error": "Must be a staff member to make this request"}), 401
@@ -178,6 +180,7 @@ def advance_order_state(current_user, order_id):
 @order_blueprint.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['GET'], endpoint='get_menu_item_state')
 @token_required
 def get_menu_item_state(current_user, order_id, menu_item_id):
+    """ Gets the current state of a specified menu item in a specified order """
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
         return jsonify({"error": "Must be a staff member to make this request"}), 401
     
@@ -191,7 +194,10 @@ def get_menu_item_state(current_user, order_id, menu_item_id):
 @order_blueprint.route('/ordermanager/orders/<order_id>/<menu_item_id>/state', methods=['POST'], endpoint='change_menu_item_state')
 @token_required
 def change_menu_item_state(current_user, order_id, menu_item_id):
-
+    """ Change the state of a specified menu item in a specified order 
+    
+    EMPTY POST REQUEST
+    """
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
         return jsonify({"error": "Must be a staff member to make this request"}), 401
     

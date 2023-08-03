@@ -296,6 +296,7 @@ def create_deal(current_user):
 
 @menu_blueprint.route('/menu/search', methods=['GET'], endpoint='search_menu')
 def search_menu():
+    """ Performs a search through the menu """
     query = request.args.get('query')
 
     return call(

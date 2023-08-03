@@ -22,6 +22,7 @@ def get_user(current_user):
 @user_blueprint.route('/me', methods=['GET'], endpoint='get_current_user')
 @token_required
 def get_current_user(current_user):
+    """ Gets the current user of the system """
     return call(
         None,
         current_user.jsonify
@@ -104,7 +105,7 @@ def login():
 @user_blueprint.route('/user/logout', methods=['POST'], endpoint='logout')
 @token_required
 def logout(current_user):
-    """ Logs out a user given a valid auth token """
+    """ Logs out the current user """
     blacklist_token(request.headers['Authorization'])
     return call(
         {"message": "Successfully logged out"},

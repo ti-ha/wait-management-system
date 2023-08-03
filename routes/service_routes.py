@@ -8,6 +8,7 @@ service_blueprint = Blueprint("service", __name__)
 @service_blueprint.route("/servicerequests/queue", methods = ['GET'], endpoint='show_request_queue')
 @token_required
 def show_request_queue(current_user):
+    """ Shows the current queue of service requests """
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
         return jsonify({"error": "Access denied"}), 401
     
@@ -19,6 +20,7 @@ def show_request_queue(current_user):
 @service_blueprint.route("/servicerequests/history", methods = ['GET'], endpoint='show_request_history')
 @token_required
 def show_request_history(current_user):
+    """ Shows all service requests captured within the service request history """
     if current_user.__class__ is not Manager:
         return jsonify({"error": "Must be a Manager to make this request"}), 401
     
@@ -30,6 +32,8 @@ def show_request_history(current_user):
 @service_blueprint.route("/servicerequests/queue", methods = ['POST'], endpoint="add_request_to_queue")
 def add_request_to_queue():
     """
+    Adds a service request to the queue for wait staff
+    
     JSON FORMAT:
     {
         "subject": "string",
@@ -63,6 +67,7 @@ def add_request_to_queue():
 @service_blueprint.route("/servicerequests/<id>", methods = ['GET'], endpoint="get_service_request")
 @token_required
 def get_service_request(current_user, id):
+    """ Gets all service requests assigned to a specified id """
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
         return jsonify({"error": "Must be a Staff Member to perform this request"}), 401
     
@@ -75,6 +80,8 @@ def get_service_request(current_user, id):
 @service_blueprint.route("/servicerequests/<id>", methods = ['PATCH'], endpoint="update_service_request")
 def update_service_request(id):
     """
+    Updates a service request specified by the request id 
+
     JSON FORMAT:
     {
         "subject": "string"
@@ -99,6 +106,7 @@ def update_service_request(id):
 @service_blueprint.route("/servicerequests/<id>", methods = ['DELETE'], endpoint="delete_service_request")
 @token_required
 def delete_service_request(current_user, id):
+    """ Delete a service request by its id """
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
         return jsonify({"error": "Must be a Staff Member to perform this request"}), 401
     
@@ -112,7 +120,8 @@ def delete_service_request(current_user, id):
 @service_blueprint.route("/servicerequests/<id>/state", methods = ['POST'], endpoint = "transition_service_request_state")
 @token_required
 def transition_service_request_state(current_user, id):
-    """
+    """ Transition the service request to its next state
+
         Empty post request to update the state of a service request
     """
     if current_user.__class__ not in [Manager, KitchenStaff, WaitStaff]:
@@ -127,6 +136,7 @@ def transition_service_request_state(current_user, id):
 @service_blueprint.route("/servicerequests/<id>/assign", methods = ['POST'], endpoint = "assign_request_to_me")
 @token_required
 def assign_request_to_me(current_user, id):
+    """ Assign the service request to the current user """
     if current_user.__class__ is not WaitStaff:
         return jsonify({"error": "Must be a WaitStaff to perform this request"}), 401
     
@@ -140,6 +150,7 @@ def assign_request_to_me(current_user, id):
 @service_blueprint.route("/servicerequests/<id>/unassign", methods = ['POST'], endpoint = "unassign_request_from_me")
 @token_required
 def unassign_request_from_me(current_user, id):
+    """ Unassign the service request to the current user """
     if current_user.__class__ is not WaitStaff:
         return jsonify({"error": "Must be a WaitStaff to perform this request"})
     
@@ -153,6 +164,7 @@ def unassign_request_from_me(current_user, id):
 @service_blueprint.route("/servicerequests/me", methods = ['GET'], endpoint = "view_my_requests")
 @token_required
 def view_my_requests(current_user):
+    """ View all the service request assigned to the current user """
     if current_user.__class__ is not WaitStaff:
         return jsonify({"error": "Must be a WaitStaff to perform this request"})
     
