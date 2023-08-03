@@ -2,8 +2,8 @@ import json
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from wms import MenuHandler, TableHandler, OrderManagerHandler, UserHandler, DbHandler
-from wms.DbHandler import Category, MenuItem, Deal, User, Table, Order
-
+from wms.DbHandler import Category, MenuItem, Deal, User, Table, Order, OrderMenu
+from itertools import repeat
 
 def init_categories(session: Session, menu_handler: MenuHandler):
     """Initialise categories from existing database
@@ -76,7 +76,7 @@ def init_orders(session: Session, om_handler: OrderManagerHandler, table_handler
                                     Order.state, Order.customer)).fetchall()
     order_deal = session.execute(select(Order.id, Deal.id)
                                 .join(Order.deals)).fetchall()
-    order_menu = session.execute(select(Order.id, MenuItem.id)
+    order_menu = session.execute(select(Order.id, MenuItem.id, OrderMenu.quantity)
                                 .join(Order.menu_items)).fetchall()
 
     for order, table, state, customer in orders:
@@ -84,10 +84,11 @@ def init_orders(session: Session, om_handler: OrderManagerHandler, table_handler
         for o_deal, deal in order_deal:
             if o_deal == order:
                 deals.append(deal)
+        # TODO
         items = []
-        for o_menu, item in order_menu:
+        for o_menu, item, quantity in order_menu:
             if o_menu == order:
-                items.append(item)
+                items.extend(repeat(item, quantity))
         om_handler.add_order(table, items, deals, customer)
 
         om_handler.order_manager.set_state(order, int(state))

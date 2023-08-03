@@ -39,12 +39,6 @@ class DealMenu(Base):
     deal_id = mapped_column(ForeignKey('deal.id'), primary_key=True)
     menu_item_id = mapped_column(ForeignKey('menu_item.id'), primary_key=True)
 
-class OrderMenu(Base):
-    """Association table for order and menu items"""
-    __tablename__ = 'order_menu'
-    order_id = mapped_column(ForeignKey('order.id'), primary_key=True)
-    menu_item_id = mapped_column(ForeignKey('menu_item.id'), primary_key=True)
-
 class OrderDeal(Base):
     """"Association table for order and deal"""
     __tablename__ = 'order_deal'
@@ -78,7 +72,7 @@ class MenuItem(Base):
     image_url = mapped_column(String(256))
     category: Mapped[Category] = relationship(back_populates="menu_items")
     deals: Mapped[List[Deal]] = relationship(secondary='deal_menu', back_populates='menu_items')
-    orders: Mapped[List[Order]] = relationship(secondary='order_menu', back_populates='menu_items')
+    orders: Mapped[List[OrderMenu]] = relationship(back_populates='menu_item')
 
 class Table(Base):
     """Table for table"""
@@ -95,9 +89,18 @@ class Order(Base):
     customer = mapped_column(Integer, ForeignKey('user.id'))
     table: Mapped[Table] = relationship(back_populates='orders')
     table_id = mapped_column(Integer, ForeignKey('table.id'))
-    menu_items: Mapped[List[MenuItem]] = relationship(secondary='order_menu', back_populates='orders')
+    menu_items: Mapped[List[OrderMenu]] = relationship(back_populates='order')
     deals: Mapped[List[Deal]] = relationship(secondary='order_deal',back_populates='orders')
     datetime = mapped_column(DateTime, nullable=False)
+
+class OrderMenu(Base):
+    """Association table for order and menu items"""
+    __tablename__ = 'order_menu'
+    order_id = mapped_column(ForeignKey('order.id'), primary_key=True)
+    menu_item_id = mapped_column(ForeignKey('menu_item.id'), primary_key=True)
+    quantity = mapped_column(Integer, nullable=False)
+    order: Mapped[List[Order]] = relationship(back_populates='menu_items')
+    menu_item: Mapped[List[MenuItem]] = relationship(back_populates='orders')
 
 class User(Base):
     """Table for user"""

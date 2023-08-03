@@ -3,6 +3,8 @@ from wms import Table, Bill, States, DbHandler
 from wms.DbHandler import Order as OrderTable
 from wms.DbHandler import MenuItem as MenuTable
 from wms.DbHandler import Deal as DealTable
+from wms.DbHandler import OrderMenu as OrderMenu
+
 from .Order import Order
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update, delete
@@ -111,15 +113,29 @@ class OrderManager:
             items = session.scalars(select(MenuTable).filter(MenuTable.id.in_(order.menu_item_ids)))
             deals = session.scalars(select(DealTable).filter(DealTable.id.in_(order.deal_ids)))
             if session.get(OrderTable, order.id) is None:
-                session.add(OrderTable(
-                    id=order.id,
-                    state = order.state_value,
-                    customer = str(order.customer),
-                    table_id=table.id,
-                    menu_items = items.fetchall(),
-                    deals = deals.fetchall(),
-                    datetime = datetime.now()
-                ))
+                o = OrderTable()
+                order_menu_ls = []
+                for item in items:
+                    order_menu = OrderMenu(quantity=self.get_menu_item_count(order.id, int(item.id)))
+                    order_menu.menu_item = item
+                    order_menu_ls.append(order_menu)
+                o.menu_items.extend(order_menu_ls)
+                o.id = order.id
+                o.state = order.state_value
+                o.customer = str(order.customer)
+                o.table_id = table.id
+                o.deals = deals.fetchall()
+                o.datetime = datetime.now()
+                session.add(o)
+                # session.add(o(
+                #     id=order.id,
+                #     state = order.state_value,
+                #     customer = str(order.customer),
+                #     table_id=table.id,
+                #     # menu_items = items.fetchall(),
+                #     deals = deals.fetchall(),
+                #     datetime = datetime.now()
+                # ))
             # try: 
             session.commit()
             # except:
@@ -131,6 +147,26 @@ class OrderManager:
             self.__map[table.id] = [order.id]
         table.add_order(order)
 
+    def get_menu_item_count(self, order_id: int, menu_item_id: int):
+        """ Gets the number of times a menu item with generic id menu_item_id
+        occurs in an order with matching order_id
+
+        Args:
+            order_id (int): the order_id to be matched
+            menu_item_id (int): the menu_item_id being searched
+
+        Raises:
+            ValueError: _description_
+
+        Returns:
+            _type_: _description_
+        """
+        order = self.get_order(order_id)
+        if order is None:
+            raise ValueError("Not a valid order_id")
+        
+        return len([i for i in order.menu_items if i.id == menu_item_id])
+    
     def remove_order(self, order: Order, table: Table):
         """ Removing orders from list of orders and relational map
 

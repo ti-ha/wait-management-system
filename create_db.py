@@ -51,14 +51,12 @@ def create_tables(app):
     
     order.add_order(0, [0, 1], [], None)
     order.change_order_state(0)
-    order.change_order_state(0)
 
-    order.add_order(1, [], [1], None)
-    order.change_order_state(1)
+    order.add_order(0, [1, 1, 2], [], None)
     order.change_order_state(1)
     order.change_order_state(1)
 
-    order.add_order(2, [5, 6], [0, 1, 2], None)
+    order.add_order(2, [5, 5, 5, 5, 5, 6, 6, 6], [0, 1, 2], None)
     order.change_order_state(2)
     order.change_order_state(2)
     order.change_order_state(2)
@@ -70,17 +68,13 @@ def create_tables(app):
     user.add_user("WaitStaff", "A", "WaitStaff", "12345")
     user.add_user("KitchenStaff", "A", "KitchenStaff", "12345")
 
-    user.login("Manager", "A", "12345")
-    user.logout("Manager", "A")
-    user.login("Manager", "A", "12345")
-
     srm = app.srm_handler.srm
 
     srm.add_request(0, "Spoon", "I need an extra spoon")
 
 def main():
     app = Application()
-    app.om_handler.add_order(0, [1], [1], 1)
+    # app.om_handler.add_order(0, [1], [1], 1)
     # app.om_handler.add_order(0, [1, 2], [], None)
     # app.om_handler.add_order(0, [1, 2, 3], [], None)
 
