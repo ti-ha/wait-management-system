@@ -141,7 +141,46 @@ improving efficiency - I'm really proud of the approach I took, definitely
 pushed me out of my comfort zone. In the meantime, Gordon has completed his work
 on Restaurant Manager, the database team is hard at work, and Sami is steadily
 implementing all the methods we provide in the frontend. No doubt, because
-we'reclose to being done, everyone is working overtime to reach the finish line
+we're close to being done, everyone is working overtime to reach the finish line
 quicker. The backend team is now mostly done with Sprint 3 leading into Week 9
 Wednesday. We may actually have enough time to do the report and do it well!
 Phew.
+
+Week 10
+
+The project is reaching completion! On Sunday we had a meeting to discuss the
+final report. We've more or less split it into three parts by team
+(Frontend/Backend/Database) for most of the sections. There are a few sections
+that are solely Frontend, and I'm going to be handling the Installation Guide in
+addition to UML Diagrams and other backend documentation. I completed a diagram
+for each subsystem in the backend together with Gordon before our Tuesday 6pm
+meeting.
+
+On Tuesday we discussed the demo that would occur the next day. We agreed that
+it would still be best for Sami to do the actual demonstration (i.e. control the
+screen) as he has a far superior understanding of the frontend interface than
+the rest of us, however due to the requirement that everyone speaks, we devised
+an order for each objective and everyone got 1-2 objectives to be in charge of
+delivering. Mine were Personalised Deals and Order Food. On Wednesday we
+completed the demo, and everything ran smoothly enough.
+
+On Thursday, I became a temporary database engineer. Together with Ravi, I
+helped get the database to finally be persistent. Although it was a close call
+timing-wise, we managed to get everything that needed to be stored in the
+database stored by Thursday night. That night, I verified that our project works
+on the CSE servers and wrote an install script so that the markers do not need
+to worry about the specifics of ensuring the dependencies are installed - one
+command will set up the whole system. I wanted to do the same for a run script
+but couldn't manage to get it to work properly - it caused too many issues too
+close to the deadline so we just scrapped it. 
+
+Crazy enough, on Thursday at 9pm, we finished the project completely. The report
+has a few sections outstanding, but we're done. At last. Glad to be done. I've
+learned a lot about project management, people, strategy, stress, endurance,
+conflict resolution, merge-conflict resolution, and myself. And incidentally a
+bit of programming. This has been the hardest, most mentally and emotionally
+draining course I've ever done, but also the most rewarding now that it's over.
+
+So long, and thanks for all the fish!
+
+Signed Timothy Handley z5205601
