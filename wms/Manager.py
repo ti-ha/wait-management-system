@@ -4,7 +4,7 @@ from .User import User
 # only important difference is type.
 class Manager(User):
     def __init__(self, firstname: str, lastname: str, password: str, 
-                 password_hash: str = None)):
+                 password_hash: str = None):
         """ Constructor of the Manager class that inherits the User Class
 
         Args:
