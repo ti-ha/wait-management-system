@@ -6,15 +6,7 @@ class MenuItem():
     # Unique id
     __id_iter = itertools.count()
 
-    def __init__(self, name: str, price: float, image_url: str = "None"):
-    # __tablename__ = 'menu_item'
-
-    # # _id = Column(Integer, primary_key=True, autoincrement='auto')
-    # # _name = Column(String(40), nullable=False)
-    # # _price = Column(Double(2), nullable=False)
-    # # _category = Column(Integer, ForeignKey('category.categoryId'))
-    # # _image_url = Column(String(256))
-    
+    def __init__(self, name: str, price: float, image_url: str = "None"):    
         """ Constructor for the MenuItem class
 
         Args:
@@ -23,13 +15,11 @@ class MenuItem():
             image_url (str, optional): URL of an image of the menu item. 
             Defaults to "None".
         """
-
         self.__id = next(MenuItem.__id_iter)
         self.__name = name
         self.__price = price
         self.__image_url = image_url
         self.__visible = True
-        # self.__db_engine = db_engine
 
     @property
     def id(self) -> itertools.count:
