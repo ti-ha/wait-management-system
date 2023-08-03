@@ -48,8 +48,7 @@ sleep 1
 
 # Install dependencies for frontend
 echo -e "\e[1A\e[KInstalling frontend dependencies..."
-cd frontend 
-npm install > $bin 2>&1
+cd frontend && npm install > $bin 2>&1
 echo -e "\e[1A\e[KInstalling frontend dependencies... OK"
 cd ..
 sleep 1
