@@ -1,5 +1,3 @@
-# capstone-project-3900w18cromanticcheese
-
 # Setup (On local machines *NOT CSE*)
 The following instructions are for running the system on your local machine.
 They will not work on CSE Servers (Scroll down to the next heading for CSE
@@ -33,7 +31,7 @@ $ python app.py
 If you use a different command to run your installation of Python 3.9
 for any reason, substitute it for `python` in the command above.
 
-### Windows
+### Mac
 
 In the working directory, run the following:
 ```
@@ -115,15 +113,21 @@ test functionality.
 
 ## Manager
 firstname: Manager
+
 lastname: One
+
 password: Manager
 
 ## Wait Staff
 firstname: WaitStaff
+
 lastname: One
+
 password: waitstaff
 
 ## Kitchen Staff
 firstname: KitchenStaff
+
 lastname: One
+
 password: kitchenstaff
