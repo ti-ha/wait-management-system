@@ -3,26 +3,29 @@
 # Set up virtual environment
 echo -e "Setting up virtual environment..."
 rm -rf venv
-py -3.9 -m venv venv
 
 case "$(uname -sr)" in
 
    Darwin*)
+     python3 -m venv venv
      source venv/bin/activate     # OS X
      bin=/dev/null
      ;;
 
    Linux*Microsoft*)
+     python3 -m venv venv
      source venv/bin/activate     # Windows Subsystem for Linux
      bin=/dev/null
      ;;
 
    Linux*)
+     python3 -m venv venv
      source venv/bin/activate     # Linux
      bin=/dev/null
      ;;
 
    CYGWIN*|MINGW*|MINGW32*|MSYS*)
+     py -3.9 -m venv venv
      source venv/Scripts/activate # Windows
      bin=nul
      ;;
