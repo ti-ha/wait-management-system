@@ -238,7 +238,7 @@ class PersonalisedDealEngine():
         # Check if the user already has personalised deals, making a list out of them
         if self.menu_handler.menu.user_has_personalised(user):
             preexisting = [i for i in self.menu_handler.menu.deals 
-                           if isinstance(i, PersonalisedDeal) and i.user == user]
+                           if isinstance(i, PersonalisedDeal) and i.user == user and i.user != None]
         else:
             preexisting = []
 

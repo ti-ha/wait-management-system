@@ -1,24 +1,61 @@
-# capstone-project-3900w18cromanticcheese
+# Setup on local machines (*NOT CSE*)
+The following instructions are for running the system on your local machine.
+They will not work on CSE Servers (Scroll down to the next heading for CSE
+specific instructions)
 
-## Running the Server
-To setup, you must have the latest version of python 3 installed.
+## Backend Setup
+To setup, you must have Python 3.9 installed. Get it here:
+https://www.python.org/downloads/release/python-3911/
 
-## Windows
 
-Run `. venv/Scripts/activate` in the working directory to initialise the virtual environment.
+### Windows
 
-Then run `python app.py` to start the Flask application. 
-The server will be running on http://localhost:5000
+In the working directory, run the following:
+```
+$ chmod +x ./install
+$ ./install
+``` 
+to install dependencies. This will
+automatically install a virtual environment and allocate the correct packages to
+that virtual environment, then build the frontend, before printing an OK
+message.
 
-## Mac/UNIX
+Then, in a separate terminal, run the following command in the working directory
+to run the server:
 
-Run `source venv/Scripts/activate` in the working directory to initialise the virtual environment.
+```
+$ source venv/Scripts/activate
+$ python app.py
+```
 
-Then run `python app.py` to start the Flask application. 
-The server will be running on http://localhost:5000
+If you use a different command to run your installation of Python 3.9
+for any reason, substitute it for `python` in the command above.
+
+### Mac
+
+In the working directory, run the following:
+```
+$ chmod +x ./install
+$ ./install
+``` 
+to install dependencies. This will
+automatically install a virtual environment and allocate the correct packages to
+that virtual environment, then build the frontend, before printing an OK
+message.
+
+Then, in a separate terminal, run the following command in the working directory
+to run the server:
+
+```
+$ source venv/bin/activate
+$ python app.py
+```
+
+If you use a different alias to run your installation of Python 3.9
+for any reason, substitute it for `python` in the command above.
 
 ________________________________________________________________________________
-## Running the Frontend
+## Running the Frontend (Win/MacOS/Linux)
 
 Make sure you have the latest version of node installed.
 
@@ -29,30 +66,68 @@ Once that is completed, run `npm start`.
 
 The frontend will be running on http://localhost:3000
 
-**IMPORTANT NOTE**: Ensure that the frontend/.env file is configured with the correct API URL. The API URL is currently
-configured to **http://127.0.0.1:5001** which is correct for CSE systems. To check your API URL, please look at the terminal
-upon starting the flask application in the backend. The URL that the server is running on will be the appropriate API URL.
+________________________________________________________________________________
+# Setup (CSE)
 
-## Creating the database
+Setup for CSE has been streamlined for submission purposes to remove the chances
+of an error occurring preventing markers from properly evaluating the codebase.
 
-Make sure you have the latest version of PostgreSQL installed and the virtual environment running
-
-### Windows
-
-Open psql.exe and run the following command:
-```
-$   \i 'C:/%PATHTOREPO%/create_db.sql'
-```
-
-### Mac/UNIX
-
+## Step 1
 In the working directory, run the following:
 ```
-$   initdb /usr/local/var/postgres
-$   pg_ctl -D /usr/local/var/postgres start
-$   psql -U postgres -f %PATHTOREPO%/create_db_.sql
+$ chmod +x ./install
+$ ./install
+``` 
+to install dependencies. This will
+automatically install a virtual environment and allocate the correct packages to
+that virtual environment, then build the frontend, before printing an OK
+message.
+
+## Step 2
+In the working directory, run the following:
+```
+$ chmod +x ./run
+$ ./run
 ```
 
-## Running the database
+And wait. CSE Servers are not by any means fast; The server will take a while to
+get started. Once the server is ready, it will automatically open a browser with
+the app landing page.
 
-With the virtual environment running, run `python init_db.py` in the working directory
+# Database configuration
+
+For the purposes of marking, we have included two `.db` files in the root
+directory of the project. To use either one, simply rename it to `wms_db.db` and
+restart the Python server.
+
+`wms_db_empty.db` Contains a complete menu, and three users, but no order data,
+and matches the `wms_db.db` working file included in the repository.
+
+`wms_db_with_orderdata.db` Contains all of the data in `wms_db_empty.db` in
+addition to historical user data.
+
+# Sample user credentials
+
+We have added one of each Staff member type to the system so you can log in and
+test functionality.
+
+## Manager
+firstname: Manager
+
+lastname: One
+
+password: Manager
+
+## Wait Staff
+firstname: WaitStaff
+
+lastname: One
+
+password: waitstaff
+
+## Kitchen Staff
+firstname: KitchenStaff
+
+lastname: One
+
+password: kitchenstaff

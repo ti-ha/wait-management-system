@@ -14,14 +14,14 @@ def create_tables(app):
     """
     menu = app.menu_handler
     
-    menu.add_category("Entrees")
-    menu.add_menu_item("Entrees", "Meatloaf", 3, MEATLOAF_URL)
-    menu.add_menu_item("Entrees", "Arancini Balls", 9, ARANCINI_BALLS_URL)
-    menu.add_menu_item("Entrees", "Greek Salad", 6.5, GREEK_SALAD_URL)
-    menu.add_menu_item("Entrees", "Salt and Pepper Squid", 8.5, SALT_AND_PEPPER_SQUID_URL)
+    #menu.add_category("Entrees")
+    #menu.add_menu_item("Entrees", "Meatloaf", 3, MEATLOAF_URL)
+    #menu.add_menu_item("Entrees", "Arancini Balls", 9, ARANCINI_BALLS_URL)
+    #menu.add_menu_item("Entrees", "Greek Salad", 6.5, GREEK_SALAD_URL)
+    #menu.add_menu_item("Entrees", "Salt and Pepper Squid", 8.5, SALT_AND_PEPPER_SQUID_URL)
 
-    menu.add_category("Mains")
-    menu.add_menu_item("Mains", "Burger", 12, PLACEHOLDER)
+    #menu.add_category("Mains")
+    #menu.add_menu_item("Mains", "Burger", 12, PLACEHOLDER)
     menu.add_menu_item("Mains", "Item 2", 12, PLACEHOLDER)
     menu.add_menu_item("Mains", "Item 3", 12, PLACEHOLDER)
     menu.add_menu_item("Mains", "Item 4", 12, PLACEHOLDER)
@@ -49,15 +49,15 @@ def create_tables(app):
 
     order = app.om_handler
     
-    order.add_order(0, [1, 1, 2, 3], [], None)
+    #order.add_order(0, [1, 1, 2, 3], [], None)
     # order.add_order(0, [2, 2], [])
     # order.change_order_state(0)
 
-    order.add_order(0, [4, 4], [0, 1], None)
+    #order.add_order(0, [4, 4], [0, 1], None)
     # order.change_order_state(1)
     # order.change_order_state(1)
 
-    order.add_order(2, [5, 5, 5, 6, 6], [0, 1, 2], None)
+    #order.add_order(2, [5, 5, 5, 6, 6], [0, 1, 2], None)
     # order.change_order_state(2)
     # order.change_order_state(2)
     # order.change_order_state(2)
@@ -79,7 +79,7 @@ def main():
     # app.om_handler.add_order(0, [1, 2], [], None)
     # app.om_handler.add_order(0, [1, 2, 3], [], None)
 
-    # create_tables(app)
+    #create_tables(app)
 
 if __name__ == '__main__':
     main()
