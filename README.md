@@ -31,7 +31,7 @@ $ python app.py
 If you use a different command to run your installation of Python 3.9
 for any reason, substitute it for `python` in the command above.
 
-### Mac
+### Mac/UNIX
 
 In the working directory, run the following:
 ```
@@ -84,15 +84,25 @@ that virtual environment, then build the frontend, before printing an OK
 message.
 
 ## Step 2
-In the working directory, run the following:
+In the working directory open a new terminal and in the root directory of the
+project run the following:
 ```
-$ chmod +x ./run
-$ ./run
+$ source venv/bin/activate
+$ python3 app.py
 ```
 
-And wait. CSE Servers are not by any means fast; The server will take a while to
+This will start the backend development server. Then, in **another** terminal
+window while that is running, run the following commands from the root directory
+of the project:
+```
+$ cd frontend/
+$ npm start
+```
+
+And wait. CSE Servers are not by any means fast; The server will take a while
+(2-3 minutes depending on current server load and RAM allocation) to
 get started. Once the server is ready, it will automatically open a browser with
-the app landing page.
+the app landing page and you're good to go!
 
 # Database configuration
 
