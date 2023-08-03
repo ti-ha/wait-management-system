@@ -31,3 +31,15 @@ Week 5
 Week 7
   Finished menu and user testing, started testing on orders, tables, etc.
   Implemented database for menu_item/category using SQLalchemy, rest soon to follow
+
+Week 8
+  Refactored database and implemented ORM model using SQLAlchemy in the Backend,
+  Established relationship patterns using association objects for the menu items, order, and deals.
+
+Week 9
+  Created mock data for initial database configuration.
+  Implemented backend writing to the database in realtime for all data types.
+  Implemented backend initialisation by querying data from the database and create Python objects.
+
+Week 10
+  Final checks and bug fixing.
