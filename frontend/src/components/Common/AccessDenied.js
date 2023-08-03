@@ -17,8 +17,8 @@ export default function AccessDenied({ userType }) {
     return (
         <Box display="flex" flexDirection="column" justifyContent="space-between" minHeight="100vh" p={2} boxSizing="border-box">
             <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" flexGrow={1} textAlign="center">
-                <Typography variant="h2">{deniedHeading}</Typography>
-                <Typography variant="body1">{deniedMessage}</Typography>
+                <Typography variant="h2" sx={{ mb: 3 }}>{deniedHeading}</Typography>
+                <Typography variant="body1" sx={{ mb: 3 }}>{deniedMessage}</Typography>
                 <Button variant="contained" color="primary" component={Link} to={backLink}>
                     {userType === 'KitchenStaff' || userType === 'WaitStaff' ? "Back to Staff Page" : "Back to Ordering"}
                 </Button>
@@ -30,4 +30,5 @@ export default function AccessDenied({ userType }) {
             }
         </Box>
     );
+    
 }

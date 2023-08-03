@@ -35,9 +35,9 @@ class States(Enum):
 
 class State:
 
-    def __init__(self):
+    def __init__(self, value):
         """ Constructor for the State class """
-        self.__state = States(0)
+        self.__state = States(value)
 
     def transition_state(self):
         """ Moves state to the next one """
@@ -64,7 +64,14 @@ class State:
             return "completed"
         else:
             raise ValueError("State outside bounds")
-            
+        
+    @state.setter
+    def state(self, val: int):
+        # if val in range(-1, 5):
+        self.__state = States(val)
+        # else:
+            # raise ValueError("State outside bounds")
+
     @property
     def value(self) -> int:
         """ Converts state to int
@@ -108,7 +115,7 @@ class Order:
         """
         self.__id = next(Order.__id_iter)
         self.__bill = None
-        self.__state = State()
+        self.__state = State(0)
         self.__deals = [deals] if isinstance(deals, Deal) else deals
         self.__menu_items_ids = itertools.count()
         self.__customer = customer if customer else None
@@ -120,13 +127,13 @@ class Order:
             if menu_items.visible == False:
                 raise ValueError("Order(): One or more menu_items is currently hidden")
             self.__menu_items = [{"menu_item": menu_items,
-                                  "state": State(),
+                                  "state": State(0),
                                   "order_specific_id": next(self.__menu_items_ids)}]
         else:
             if next((i for i in menu_items if i.visible == False), None) != None:
                 raise ValueError("Order(): One or more menu_items is currently hidden")
             self.__menu_items = [{"menu_item": m,
-                                  "state": State(),
+                                  "state": State(0),
                                   "order_specific_id": next(self.__menu_items_ids)}
                                   for m in menu_items]
 
@@ -146,6 +153,10 @@ class Order:
         return self.__deals
     
     @property
+    def deal_ids(self) -> list[int]:
+        return [d.id for d in self.deals]
+    
+    @property
     def customer(self) -> int:
         """ Returns the customer id assigned to the order"""
         return self.__customer
@@ -154,6 +165,11 @@ class Order:
     def menu_items(self) -> list[MenuItem]:
         """ Returns list of menu items in the order """
         return [i["menu_item"] for i in self.__menu_items]
+    
+    @property
+    def menu_item_ids(self) -> list[int]:
+        """ Returns list of menu items ids in the order """
+        return [it.id for it in self.menu_items]
 
     @property
     def menu_item_states(self) -> list[dict]:
@@ -169,6 +185,16 @@ class Order:
     def state_value(self) -> int:
         """ Returns the current value of the state of the order """
         return self.__state.value
+    
+    @property
+    def state_obj(self) -> State:
+        return self.__state
+    
+    @state_obj.setter
+    def state_obj(self, state: State):
+        self.__state = state
+        for i in self.menu_item_states:
+            i["state"] = State(self.state_value)
 
     def get_menu_item_state_obj(self, id: int) -> State:
         """Gets the state of a menu_item within the order
@@ -183,10 +209,14 @@ class Order:
             str: The state of the menu_item
         """
         menu_item_state = next((i["state"] for i in self.menu_item_states if i["order_specific_id"] == id), None)
-        if menu_item_state == None:
+        if menu_item_state is None:
             raise ValueError("Order: get_menu_item_state(): menu_item does not exist in order")
         
         return menu_item_state
+    
+    def update_menu_state(self):
+        while min([i["state"].value for i in self.menu_item_states]) > self.state_value:
+            self.change_state()
 
     def change_menu_item_state_by_id(self, id: int):
         """Transitions the state of a menu item to the next state, looking up by order_specific_id
@@ -203,7 +233,15 @@ class Order:
         """ Transitions state to the next one """
         self.__state.transition_state()
 
-    def add_deal(self, deal: Deal):
+    def set_state(self, val: int):
+        """ Sets the state of an order to a specified value
+
+        Args:
+            val (int): New state value for the order
+        """
+        self.state_obj = State(val)
+
+    def add_deal(self, deal):
         """ Adding a deal item to the order
 
         Args:
@@ -224,7 +262,7 @@ class Order:
                 raise ValueError("Order: add_deal(): Deal has expired")
             elif deal.user != self.customer:
                 raise ValueError("Order: add_deal(): That is not your deal")
-            elif next((i for i in deal.menu_items if i.visible == False) != None):
+            elif next((i for i in deal.menu_items if i.visible is False) is not None):
                 raise ValueError("Order: add_deal(): One or more menu_items is hidden")
 
         self.deals.append(deal)
@@ -307,7 +345,7 @@ class Order:
         Returns:
             dict: New dictionary after deal discount is applied to menu items
         """
-        if deal.visible == False:
+        if deal.visible is False:
             discount = 0
         else:
             discount = deal.discount
@@ -325,16 +363,20 @@ class Order:
             {menuitem: price, ... , menuitem: price}.
             We do not want to modify the existing objects
         """
-        if self.bill != None:
+        if self.bill is not None:
             return self.bill
         
         pricedict = {}
         for i in self.menu_items:
-            pricedict[i.name] = i.price
+            if i.name not in pricedict.keys():
+                pricedict[i.name] = i.price
+            else:
+                pricedict[i.name] += i.price
 
         # For each deal in the order, apply it to the price dictionary
         for i in self.deals:
             pricedict = self.apply_deal(pricedict, i)
+
 
         # Add the prices in pricedict together
         finalcost = sum([float(pricedict[i]) for i in pricedict])

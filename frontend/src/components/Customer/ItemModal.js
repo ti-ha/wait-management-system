@@ -1,65 +1,73 @@
 import React from "react";
-import { Modal, Fade, Box, IconButton } from "@mui/material"
-import { Add, Remove } from "@mui/icons-material"
+import { Modal, Fade, Box, IconButton, Button, Typography } from "@mui/material";
+import { Add, Remove } from "@mui/icons-material";
 
 export default function ItemModal({ item, onClose, onAddToOrder, quantity, setQuantity }) {
 
     const handleIncreaseQuantity = () => {
-        setQuantity(quantity + 1)
+        setQuantity(quantity + 1);
     }
 
     const handleDecreaseQuantity = () => {
-        setQuantity(quantity - 1)
+        if (quantity > 0) {
+            setQuantity(quantity - 1);
+        }
     }
-
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-        display: 'flex',     
-        flexDirection: 'column',
-        alignItems: 'center',
-    };
 
     return (
         <Modal
             open={true}
-            onClose={onClose} 
+            onClose={onClose}
             closeAfterTransition
         >
             <Fade in={true}>
-                <Box sx={style}>
-                    <div className="modalContent">
-                        <h2>{item.name}</h2>
-                        <Box 
-                            component="img"
-                            src={item.imageURL} 
-                            alt={item.name} 
-                            sx={{
-                                width: '100%',
-                                maxHeight: '200px',
-                                objectFit: 'cover',
-                            }}
-                        />
-                        <div>
-                            <p>Quantity</p>
-                            <IconButton onClick={handleDecreaseQuantity}>
-                                <Remove />
-                            </IconButton>
-                            <span>{quantity}</span>
-                            <IconButton onClick={handleIncreaseQuantity}>
-                                <Add />
-                            </IconButton>
-                        </div>
-                        <button onClick={onAddToOrder}>Add to Order</button>
-                        <button onClick={onClose}>Cancel</button>
-                    </div>
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '50%',
+                        maxWidth: '500px', // Note: corrected "maxwidth" to "maxWidth"
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                        borderRadius: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                    <h2>{item.name}</h2>
+                    <Box
+                        component="img"
+                        src={item.imageURL}
+                        alt={item.name}
+                        sx={{
+                            width: '100%',
+                            maxHeight: '200px',
+                            objectFit: 'cover',
+                        }}
+                    />
+                    <Box display="flex" alignItems="center" mt={2}>
+                        <Typography variant="h6">Quantity</Typography>
+                        <IconButton onClick={handleDecreaseQuantity} disabled={quantity === 0}>
+                            <Remove />
+                        </IconButton>
+                        <span>{quantity}</span>
+                        <IconButton onClick={handleIncreaseQuantity}>
+                            <Add />
+                        </IconButton>
+                    </Box>
+                    <Box display="flex" justifyContent="center" mt={2} gap={2}>
+                        <Button variant="contained" color="primary" onClick={onAddToOrder}>
+                            Add to Order
+                        </Button>
+                        <Button variant="contained" color="secondary" onClick={onClose}>
+                            Cancel
+                        </Button>
+                    </Box>
                 </Box>
             </Fade>
         </Modal>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Box, Button } from '@mui/material';
-import './BillModal.css'
+import { Modal, Box, Button, Typography, Table, TableHead, TableRow, TableCell, TableBody, Paper } from '@mui/material';
 
 export default function BillModal({ orders, onClose }) {
 
@@ -65,25 +64,35 @@ export default function BillModal({ orders, onClose }) {
             onClose={onClose}
         >
             <Box sx={style}>
-                <h2 >Bill</h2>
-                <div className="billOrder">
-                    <strong>Item Name</strong>
-                    <strong>Quantity</strong>
-                    <strong>Price</strong>
-                </div>
-                {aggregatedOrders.map((item, index) => (
-                    <div key={index} className="billOrder">
-                        <p>{item.name}</p>
-                        <p>{item.quantity}</p>
-                        <p>${(item.price * item.quantity).toFixed(2)}</p>
-                    </div>
-                ))}
-                <div className="billOrder">
-                    <strong>Total:</strong>
-                    <strong>${total.toFixed(2)}</strong>
-                </div>
-                <Button variant="contained" onClick={onClose}>Close</Button>
+                <Typography variant="h4" mb={2}>Bill</Typography>
+                <Paper elevation={3}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell><strong>Item Name</strong></TableCell>
+                                <TableCell align="center"><strong>Quantity</strong></TableCell>
+                                <TableCell align="center"><strong>Price</strong></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {aggregatedOrders.map((item, index) => (
+                                <TableRow key={index}>
+                                    <TableCell>{item.name}</TableCell>
+                                    <TableCell align="center">{item.quantity}</TableCell>
+                                    <TableCell align="center">${(item.price * item.quantity).toFixed(2)}</TableCell>
+                                </TableRow>
+                            ))}
+                            <TableRow>
+                                <TableCell colSpan={2}><strong>Total:</strong></TableCell>
+                                <TableCell colSpan={2} align="center"><strong>${total.toFixed(2)}</strong></TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                </Paper>
+                <Box mt={2}>
+                    <Button variant="contained" onClick={onClose}>Close</Button>
+                </Box>
             </Box>
         </Modal>
     );
-};
+}

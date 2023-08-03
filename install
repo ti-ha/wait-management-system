@@ -1,0 +1,65 @@
+#!/bin/bash
+
+# Set up virtual environment
+echo -e "Setting up virtual environment..."
+rm -rf venv
+
+case "$(uname -sr)" in
+
+   Darwin*)
+     python3 -m venv venv
+     source venv/bin/activate     # OS X
+     bin=/dev/null
+     ;;
+
+   Linux*Microsoft*)
+     python3 -m venv venv
+     source venv/bin/activate     # Windows Subsystem for Linux
+     bin=/dev/null
+     ;;
+
+   Linux*)
+     python3 -m venv venv
+     source venv/bin/activate     # Linux
+     bin=/dev/null
+     ;;
+
+   CYGWIN*|MINGW*|MINGW32*|MSYS*)
+     py -3.9 -m venv venv
+     source venv/Scripts/activate # Windows
+     bin=nul
+     ;;
+     
+   *)
+     echo 'Other OS'              # We don't do that here
+     exit
+     ;;
+esac
+echo -e "\e[1A\e[KSetting up virtual environment... OK "
+sleep 1
+
+# Install dependencies for backend
+echo -e "\e[1A\e[KInstalling backend dependencies..."
+python3 -m pip install --upgrade pip > $bin 2>&1
+pip3 install -r requirements.txt --disable-pip-version-check > $bin 2>&1
+deactivate
+echo -e "\e[1A\e[KInstalling backend dependencies... OK"
+sleep 1
+
+# Install dependencies for frontend
+echo -e "\e[1A\e[KInstalling frontend dependencies..."
+cd frontend && npm install > $bin 2>&1
+echo -e "\e[1A\e[KInstalling frontend dependencies... OK"
+cd ..
+sleep 1
+
+# Cleanup on windows
+case "$(uname -sr)" in
+
+   CYGWIN*|MINGW*|MINGW32*|MSYS*)
+     rm nul
+     rm frontend/nul
+     ;;
+esac
+
+echo -e "\e[1A\e[KDone"

@@ -6,18 +6,21 @@ class User:
     # Unique identifier starting from 0
     __id_iter = itertools.count()
 
-    def __init__(self, firstname: str, lastname: str, password: str):
+    def __init__(self, firstname: str, lastname: str, password: str, 
+                 existing_hash: str =None):
         """ Constructor for the User Class
 
         Args:
             firstname (str): First Name of the User
             lastname (str): Last Name of the User
             password (str): Password of the User
+            existing_hash (str, optional): Existing hashed password. Defaults to
+            None.
         """
         self.__id = next(User.__id_iter)
         self.__firstname = firstname
         self.__lastname = lastname
-        self.__password = generate_password_hash(password)
+        self.__password = generate_password_hash(password) if existing_hash is None else existing_hash
         self.__logged_in = False
 
     @property

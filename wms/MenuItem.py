@@ -1,4 +1,5 @@
 import itertools
+# from sqlalchemy import Column, Integer, Double, String, ForeignKey
 
 class MenuItem():
 
@@ -6,6 +7,14 @@ class MenuItem():
     __id_iter = itertools.count()
 
     def __init__(self, name: str, price: float, image_url: str = "None"):
+    # __tablename__ = 'menu_item'
+
+    # # _id = Column(Integer, primary_key=True, autoincrement='auto')
+    # # _name = Column(String(40), nullable=False)
+    # # _price = Column(Double(2), nullable=False)
+    # # _category = Column(Integer, ForeignKey('category.categoryId'))
+    # # _image_url = Column(String(256))
+    
         """ Constructor for the MenuItem class
 
         Args:
@@ -14,11 +23,13 @@ class MenuItem():
             image_url (str, optional): URL of an image of the menu item. 
             Defaults to "None".
         """
+
         self.__id = next(MenuItem.__id_iter)
         self.__name = name
         self.__price = price
         self.__image_url = image_url
         self.__visible = True
+        # self.__db_engine = db_engine
 
     @property
     def id(self) -> itertools.count:
@@ -30,12 +41,18 @@ class MenuItem():
         """ Returns menu item name """
         return self.__name
     
+    #TODO add UPDATE statements in all setters to update database
     @name.setter
     def name(self, name: str):
         """ Sets the menu item name """
         if not isinstance(name, str):
             raise TypeError("MenuItem: menu_item.set_name(name): argument is not string")
         self.__name = name
+        # stmt = (
+        #     update(menu_item).
+        #     where(menu_item.c._id == self.id).
+        #     values(_name = self.name)
+        # )
     
     @property
     def price(self) -> float:

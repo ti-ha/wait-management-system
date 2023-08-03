@@ -96,13 +96,14 @@ class PersonalisedDealEngine():
         # Generate data structure for counting menu_items by frequency in order
         user_frequencies = {}
         for order in self.order_manager_handler.order_manager.history:
-            if order.customer not in user_frequencies.keys():
+            if order.customer != None and order.customer not in user_frequencies.keys():
                 user_frequencies[order.customer] = { menu_item.id: 1 
                                                     for menu_item in order.menu_items 
                                                     if menu_item.visible }
-            else:
+            elif order.customer != None:
                 for menu_item in order.menu_items:
-                    if menu_item.visible:
+                    if menu_item and menu_item.visible:
+                        print(order.customer, menu_item.id)
                         user_frequencies[order.customer][menu_item.id] += 1
 
         # flatten user_frequencies into three arrays for the surprise library
@@ -225,7 +226,7 @@ class PersonalisedDealEngine():
         # Check if the user already has personalised deals, making a list out of them
         if self.menu_handler.menu.user_has_personalised(user):
             preexisting = [i for i in self.menu_handler.menu.deals 
-                           if isinstance(i, PersonalisedDeal) and i.user == user]
+                           if isinstance(i, PersonalisedDeal) and i.user == user and i.user != None]
         else:
             preexisting = []
 
@@ -247,7 +248,8 @@ class PersonalisedDealEngine():
 
         # Add the new deals to the menu
         for i in deals:
-            self.menu_handler.menu.add_deal(i)
+            print(i.jsonify())
+            self.menu_handler.menu.add_deal(i, [j.name for j in i.menu_items])
 
         # Combine the two lists
         deals += preexisting

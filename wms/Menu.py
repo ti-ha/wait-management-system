@@ -1,22 +1,36 @@
 from __future__ import annotations
 from difflib import SequenceMatcher as sm
-from wms import Category, MenuItem, Deal
+from wms.DbHandler import Category as CategoryTable
+from wms.DbHandler import Deal as DealTable
+from wms.DbHandler import MenuItem as MenuTable
+
+
+from wms import Category, MenuItem, Deal, DbHandler
 from .PersonalisedDeal import PersonalisedDeal
+from sqlalchemy.orm import Session
+from sqlalchemy import delete, select
 
 class Menu():
 
-    def __init__(self, categories: list[Category] = None, deals: list[Deal] = None):
+    def __init__(self, db: DbHandler, categories: list[Category] = None, deals: list[Deal] = None):
         """ Constructor for the Menu class
 
         Args:
+            db (DbHandler): Database handler to ensure database persistence
             categories (list[Category], optional): Different menu categories. 
             Defaults to None.
             deals (list[Deal], optional): Different menu deals. 
             Defaults to None.
         """
+        self.__db = db
         self.__categories = [] if categories is None else categories
         self.__deals = [] if deals is None else deals
  
+    @property
+    def db(self) -> DbHandler:
+        """Returns db handler"""
+        return self.__db
+    
     @property
     def categories(self) -> list[Category]:
         """ Returns a list of categories """
@@ -56,10 +70,20 @@ class Menu():
             TypeError: Raised if category argument is not of type category
             ValueError: Raised if category already exists in the menu
         """
+        if not isinstance(category, Category):
+            raise TypeError("Menu: add_category(): Object is not of type Category")
+        
         if self.get_category(category.name) is not None:
             raise ValueError("Menu: add_category(): Category already exists")
-       
+        
         self.__categories.append(category)
+        with Session(self.db.engine) as session:
+            session.add(CategoryTable(id=category.id, name=category.name))
+            try: 
+                session.commit()
+            except:
+                session.rollback()
+
 
     def remove_category(self, name: str) -> (Category | None):
         """ Removes a category, if that category exists, from the menu.
@@ -79,15 +103,24 @@ class Menu():
         for i in self.categories:
             if i.name == name:
                 self.__categories.remove(i)
+                with Session(self.db.engine) as session:
+                    session.execute(delete(CategoryTable).where(
+                        CategoryTable.name == name)
+                    )
+                    try: 
+                        session.commit()
+                    except:
+                        session.rollback()
                 return i
         
         raise ValueError("Menu: menu.remove_category(): not in categories")
     
-    def add_deal(self, deal: Deal):
+    def add_deal(self, deal: Deal, menu_items: list[str]) -> None:
         """ Adds a new deal to the menu
 
         Args:
             deal (Deal): Deal to be added to the menu
+            menu_items (list[str]): List of menu items that the deal applies to
 
         Raises:
             TypeError: Raised if deal object is not of type Deal
@@ -98,8 +131,21 @@ class Menu():
         
         if deal in self.__deals:
             raise ValueError("Menu: add_deal(): Deal already exists")
-        
         self.__deals.append(deal)
+        with Session(self.db.engine) as session:
+            res = session.scalars(select(MenuTable).filter(MenuTable.name.in_(menu_items)))
+            if session.get(DealTable, deal.id) is None:
+                session.add(DealTable(
+                    id=deal.id,
+                    discount = deal.discount,
+                    menu_items = res.fetchall(),
+                    orders = []
+                ))
+            try: 
+                session.commit()
+            except:
+                session.rollback()
+
     
     def remove_deal(self, deal: Deal) -> Deal:
         """ Removes a deal from the menu.
@@ -121,6 +167,14 @@ class Menu():
             raise ValueError("Menu: menu.remove_deal(): not in deals")
         
         self.__deals.remove(deal)
+        with Session(self.db.engine) as session:
+            session.execute(delete(DealTable).where(
+                DealTable.id == deal.id)
+            )
+            try: 
+                session.commit()
+            except:
+                session.rollback()
         return deal
     
     def user_has_personalised(self, user: str) -> bool:

@@ -1,0 +1,8 @@
+#!/bin/bash
+# This only works on CSE because I could not figure out how to do this for every OS
+wd=$(pwd)
+
+# Initialise virtualenv
+xterm -e "cd $wd && source venv/bin/activate && python3 app.py" &
+
+xterm -e "cd $wd/frontend && npm start" &

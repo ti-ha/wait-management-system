@@ -1,6 +1,14 @@
 from __future__ import annotations
-from wms import Table, Bill, States
+from wms import Table, Bill, States, DbHandler
+from wms.DbHandler import Order as OrderTable
+from wms.DbHandler import MenuItem as MenuTable
+from wms.DbHandler import Deal as DealTable
+from wms.DbHandler import OrderMenu as OrderMenu
+
 from .Order import Order
+from sqlalchemy.orm import Session
+from sqlalchemy import select, update, delete
+from datetime import datetime
 
 class OrderManager:
     def __init__(self):
@@ -86,7 +94,7 @@ class OrderManager:
 
         return order_list
     
-    def add_order(self, order: Order, table: Table):
+    def add_order(self, order: Order, table: Table, db: DbHandler):
         """ Adding orders to list of orders and relational map
 
         Args:
@@ -100,13 +108,65 @@ class OrderManager:
             raise ValueError("OrderManager: add_order(): Order already exists")
         self.orders.append(order)
         self.history.append(order)
+        with Session(db.engine) as session:
+            items = session.scalars(select(MenuTable).filter(MenuTable.id.in_(order.menu_item_ids)))
+            deals = session.scalars(select(DealTable).filter(DealTable.id.in_(order.deal_ids)))
+            if session.get(OrderTable, order.id) is None:
+                o = OrderTable()
+                order_menu_ls = []
+                for item in items:
+                    order_menu = OrderMenu(quantity=self.get_menu_item_count(order.id, int(item.id)))
+                    order_menu.menu_item = item
+                    order_menu_ls.append(order_menu)
+                o.menu_items.extend(order_menu_ls)
+                o.id = order.id
+                o.state = order.state_value
+                o.customer = str(order.customer)
+                o.table_id = table.id
+                o.deals = deals.fetchall()
+                o.datetime = datetime.now()
+                session.add(o)
+                # session.add(o(
+                #     id=order.id,
+                #     state = order.state_value,
+                #     customer = str(order.customer),
+                #     table_id=table.id,
+                #     # menu_items = items.fetchall(),
+                #     deals = deals.fetchall(),
+                #     datetime = datetime.now()
+                # ))
+            # try: 
+            session.commit()
+            # except:
+                # session.rollback() 
 
         if table.id in self.__map.keys():
             self.__map[table.id] += [order.id]
         else:
             self.__map[table.id] = [order.id]
         table.add_order(order)
+        order.calculate_bill()
 
+    def get_menu_item_count(self, order_id: int, menu_item_id: int):
+        """ Gets the number of times a menu item with generic id menu_item_id
+        occurs in an order with matching order_id
+
+        Args:
+            order_id (int): the order_id to be matched
+            menu_item_id (int): the menu_item_id being searched
+
+        Raises:
+            ValueError: _description_
+
+        Returns:
+            _type_: _description_
+        """
+        order = self.get_order(order_id)
+        if order is None:
+            raise ValueError("Not a valid order_id")
+        
+        return len([i for i in order.menu_items if i.id == menu_item_id])
+    
     def remove_order(self, order: Order, table: Table):
         """ Removing orders from list of orders and relational map
 
@@ -117,17 +177,17 @@ class OrderManager:
         Raises:
             ValueError: Raised when table does not have that order object
         """
-        if order not in self.__orders:
+        if order not in self.orders and order not in self.history:
             raise ValueError("OrderManager: remove_order(): Order does not exist")
 
         if table.id in self.map.keys():
             self.__map[table.id].remove(order.id)
             table.remove_order(order)
-            self.orders.remove(order)
         else:
             raise ValueError("OrderManager: remove_order(): Table does not have supplied order")
+        self.orders.remove(order)
         
-    def change_state(self, order: int | Order):
+    def change_state(self, order: int | Order, db: DbHandler):
         """ Move item along to the next stage
 
         Args:
@@ -138,12 +198,43 @@ class OrderManager:
             TypeError: Raised when order argument is not of type Order or Integer
         """
         if isinstance(order, int):
+            #self.update_db_state(order, db)
             order = self.get_order(order)
         elif isinstance(order, Order):
+            #self.update_db_state(order.id, db)
             pass
         else:
             raise TypeError("OrderManager: change_state(): Not a valid Order obj or order_id")
         order.change_state()
+        order.update_menu_state()
+        self.update_db_state(order.id, db)
+
+    def set_state(self, order: int, val: int):
+        """ Set order to specified state 
+        
+        Args:
+            order (integer): Order id to have its state progressed to the 
+            next state
+        """
+        self.get_order(order).set_state(val)
+    
+    def update_db_state(self, order: int, db: DbHandler):
+        """Update order state in database
+        
+        Args:
+            order (int): the order id to have its state progressed to the next state
+            db (DbHandler): database handler object
+        """
+        with Session(db.engine) as session:
+        #try:
+            target = session.execute(select(OrderTable).where(
+                OrderTable.id == order
+            )).scalar_one()
+            if self.get_order(order).state_value == target.state + 1:
+                target.state += 1
+            session.commit()
+        #except:
+            #session.rollback()
 
     def change_menu_item_state(self, order: int | Order, id: int):
         """ Changes the menu_item state of a menu_item within a specified order
