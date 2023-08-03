@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, session
 from flask_cors import CORS
 import uuid, os
+from pathlib import Path
 
 # import the API routes
 from routes import *
@@ -34,7 +35,8 @@ def home():
 if __name__ == '__main__':
     # Set .env to match server
     server_port = 5001
-    with open("frontend\.env", 'w') as f:
+    frontend_env = Path("frontend/.env")
+    with open(frontend_env, 'w') as f:
         f.write(f"REACT_APP_API_URL=http://127.0.0.1:{str(server_port)}")
 
     # run the app    
