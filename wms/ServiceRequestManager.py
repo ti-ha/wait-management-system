@@ -1,36 +1,30 @@
-from wms import ServiceRequest
+from wms import ServiceRequest, Table
 
 class ServiceRequestManager:
     def __init__(self):
+        """ Constructor for the ServiceRequestManager class """
         self.__queue = []
         # Once a Service Request is removed from the queue it cannot be changed.
         self.__history = []
 
     @property
     def queue(self) -> list[ServiceRequest]:
-        """ The list of active service requests in the queue.
-
-        Returns:
-            list[ServiceRequest]: List of service requests
-        """
+        """ Gets the list of active service requests in the queue """
         return self.__queue
     
     @property
     def history(self) -> list[ServiceRequest]:
-        """ The list of all service requests including those that have been archived.
-
-        Returns:
-            list[ServiceRequest]: List of service requests
-        """
+        """ Gets the list of all service requests including those that have been 
+        archived """
         return self.__history
     
-    def add_request(self, table, subject, summary):
-        """Adds a request to the queue.
+    def add_request(self, table: Table, subject: str, summary: str):
+        """ Adds a request to the queue.
 
         Args:
             table (Table): The table at which the request originates
-            subject (string): The subject field of the request
-            summary (string): The summary field of the request
+            subject (str): The subject field of the request
+            summary (str): The summary field of the request
         """
         request_active = next((i for i in self.queue if i.table == table), None)
         
@@ -40,8 +34,8 @@ class ServiceRequestManager:
         else:
             raise Exception("ServiceRequestManager: add_request(): A request is already active at this table")
 
-    def get_request(self, id) -> ServiceRequest:
-        """Gets a request from the queue that matches the id.
+    def get_request(self, id: int) -> ServiceRequest:
+        """ Gets a request from the queue that matches the id.
 
         Args:
             id (int): The id to be searched for
@@ -51,8 +45,8 @@ class ServiceRequestManager:
         """
         return next((i for i in self.queue if i.id == id), None)
     
-    def update_request(self, id, subject, summary):
-        """Updates a request with matching id, based on a provided subject or
+    def update_request(self, id: int, subject: str, summary: str):
+        """ Updates a request with matching id, based on a provided subject or
         summary.
 
         Args:
@@ -70,8 +64,8 @@ class ServiceRequestManager:
         else:
             raise ValueError("ServiceRequestManager: update_request(): Invalid id")
     
-    def remove_request(self, id):
-        """Removes a request with matching id from the queue. It will persist in
+    def remove_request(self, id: int):
+        """ Removes a request with matching id from the queue. It will persist in
         the history.
 
         Args:
@@ -81,8 +75,8 @@ class ServiceRequestManager:
         request.set_as_deleted()
         self.queue.remove(request)
     
-    def transition_request_state(self, id):
-        """Moves the request that corresponds to id forward one state. If the
+    def transition_request_state(self, id: int):
+        """ Moves the request that corresponds to id forward one state. If the
         state reaches "completed", the request is removed from the queue.
 
         Args:
@@ -100,7 +94,7 @@ class ServiceRequestManager:
         if request.status == "completed":
             self.queue.remove(request)
 
-    def jsonify(self):
+    def jsonify(self) -> dict:
         """ Returns a JSON-style dictionary object with all the service requests
         in the queue, sorted by timestamp.
 
@@ -110,7 +104,7 @@ class ServiceRequestManager:
         return {"queue": [i.jsonify() for i in 
                           sorted(self.queue, key = lambda x: x.timestamp)]}
     
-    def jsonify_history(self):
+    def jsonify_history(self) -> dict:
         """ Returns a JSON-style dictionary object with all the service requests
         in the request history, sorted by timestamp.
 
@@ -120,7 +114,7 @@ class ServiceRequestManager:
         return {"requests": [i.jsonify() for i in
                              sorted(self.history, key = lambda x: x.timestamp)]}
     
-    def get_staffmember_requests_json(self, id):
+    def get_staffmember_requests_json(self, id: int) -> dict:
         """ Returns a JSON-style dictionary object with all the service requests
         assigned to a user matching id, sorted by timestamp.
 
@@ -135,8 +129,8 @@ class ServiceRequestManager:
                              sorted([i for i in self.queue if i.assignee is not None and i.assignee.id == id],
                                      key= lambda x: x.timestamp, )]}
     
-    def get_request_json(self, id):
-        """Returns a JSON-style dictionary with all the relevant information
+    def get_request_json(self, id: int) -> dict:
+        """ Returns a JSON-style dictionary with all the relevant information
         pertaining to a single request matching the request id.
 
         Args:

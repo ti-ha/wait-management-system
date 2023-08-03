@@ -24,8 +24,15 @@ class PersonalisedDealEngine():
     collaborative filtering. Gets better the more the system is used.
     '''
 
-    def __init__(self, user_handler, order_manager_handler):
-        """ Constructor. loads the data initially on creation """
+    def __init__(self, user_handler: UserHandler, order_manager_handler: OrderManagerHandler):
+        """ Constructor for the PersonalisedDealEngine Class. Class loads the 
+        data initially on creation
+
+        Args:
+            user_handler (UserHandler): UserHandler object utilised with the engine
+            order_manager_handler (OrderManagerHandler): OrderManagerHandler object 
+            utilised with the engine
+        """
         self.__user_handler = user_handler
         self.__order_manager_handler = order_manager_handler
         self.__data = self.load_data()
@@ -34,48 +41,27 @@ class PersonalisedDealEngine():
 
     @property
     def user_handler(self) -> UserHandler:
-        """ Returns the user_handler of the application
-
-        Returns:
-            UserHandler: The UserHandler declared in Application
-        """
+        """ Returns the user_handler of the application """
         return self.__user_handler
     
     @property
     def order_manager_handler(self) -> OrderManagerHandler:
-        """Returns the OrderManagerHandler of the application
-
-        Returns:
-            OrderManagerHandler: The OrderManagerHandler declared in the Application
-        """
+        """ Returns the OrderManagerHandler of the application """
         return self.__order_manager_handler
     
     @property
     def menu_handler(self) -> MenuHandler:
-        """Returns the MenuHandler of the application
-
-        Returns:
-            MenuHandler: The MenuHandler declared in the Application. It's
-            borrowed from the OrderManagerHandler
-        """
+        """ Returns the MenuHandler of the application """
         return self.order_manager_handler.menu_handler
     
     @property
     def data(self) -> dict:
-        """Returns the data generated in load_data()
-
-        Returns:
-            dict: A dictionary containing all the data used to train the algorithm
-        """
+        """ Returns the data generated in load_data() """
         return self.__data
     
     @data.setter
     def data(self, data: dict):
-        """ Setter for the trainset data
-
-        Args:
-            data (dict): The data to be passed in
-        """
+        """ Setter for the trainset data """
         self.__data = data
 
     @property
@@ -132,7 +118,7 @@ class PersonalisedDealEngine():
         return ratings_dict
     
     def dataset(self) -> Dataset:
-        """Creates a Pandas Dataset for use with the Surprise library
+        """ Creates a Pandas Dataset for use with the Surprise library
 
         Returns:
             DatasetAutoFolds: The Pandas dataset
@@ -166,11 +152,11 @@ class PersonalisedDealEngine():
             algo.fit(training_set)
             self.algorithm = algo
     
-    def generate_prediction(self, user, id) -> int:
-        """Generate a prediction for a user of their rating of an item with id <id>
+    def generate_prediction(self, user: str, id: int) -> int:
+        """ Generate a prediction for a user of their rating of an item with id <id>
 
         Args:
-            user (string): The user whose prediction is to be generated
+            user (str): The user whose prediction is to be generated
             id (int): The id of the item whose rating is being predicted
 
         Returns:
@@ -191,7 +177,7 @@ class PersonalisedDealEngine():
         
         return prediction.est
     
-    def generate_top_predictions(self, user, coeff) -> list[int]:
+    def generate_top_predictions(self, user: str, coeff: int) -> list[int]:
         """ Generates the top menu item predictions for a user.
 
         Args:
@@ -222,7 +208,7 @@ class PersonalisedDealEngine():
         
         return predictions
     
-    def make_deals(self, user) -> list[dict]:
+    def make_deals(self, user: str) -> list[dict]:
         """ Parses the output from generate_predictions, performing necessary
         checks for item visibility and whether the user already has valid deals.
         Adds the generated deals to the system if all goes well so they can be
@@ -230,7 +216,7 @@ class PersonalisedDealEngine():
         by the API and is the entrypoint of the class
 
         Args:
-            user (string): The id of the user whose personalised deals are being added
+            user (str): The id of the user whose personalised deals are being added
 
         Returns:
             list[dict]: The list of jsonified personalised deals of the user. 
