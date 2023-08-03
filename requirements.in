@@ -1,0 +1,7 @@
+Flask==2.3.2
+flask_cors==4.0.0
+pandas==2.0.3
+PyJWT==2.8.0
+SQLAlchemy==2.0.19
+surprise==0.1
+Werkzeug==2.3.6

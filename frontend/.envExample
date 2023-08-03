@@ -1,5 +1,0 @@
-# Rename this file to .env
-# Put your API URL in there. This will be the URL of where the backend server is running.
-# This is typically http://localhost:5000 (Windows) or http://127.0.0.1:5000 (Mac).
-# If you are unsure, look at the terminal when starting the backend server, the route will be displayed there.
-REACT_APP_API_URL=<insert-api-url-here>
