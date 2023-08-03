@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Initialise backend
+# Initialise virtualenv
 case "$(uname -sr)" in
 
    Darwin*)
@@ -25,4 +25,4 @@ case "$(uname -sr)" in
      ;;
 esac
 
-pip3 freeze
+python app.py &
