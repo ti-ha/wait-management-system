@@ -32,4 +32,10 @@ def home():
     return jsonify({"message": "Hello world!"}), 200
     
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001)
+    # Set .env to match server
+    server_port = 5001
+    with open("frontend\.env", 'w') as f:
+        f.write(f"REACT_APP_API_URL=http://127.0.0.1:{str(server_port)}")
+
+    # run the app    
+    app.run(host='0.0.0.0', port=server_port)

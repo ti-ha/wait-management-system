@@ -59,7 +59,6 @@ def init_tables(session: Session, table_handler: TableHandler):
         table_handler (TableHandler): Table handler
     """
     tables = session.scalars(select(Table.limit).order_by(Table.id)).fetchall()
-    print(tables)
     for table in tables:
         table_handler.add_table(table, None)
 

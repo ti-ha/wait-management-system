@@ -15,7 +15,7 @@ class Base(DeclarativeBase):
 class DbHandler():
     """A class to handle database functions"""
     def __init__(self):
-        self.__engine = create_engine("sqlite+pysqlite:///wms_db.db", echo=True)
+        self.__engine = create_engine("sqlite+pysqlite:///wms_db.db", echo=False)
         self.__session = sessionmaker(self.engine)
 
     @property
